@@ -1,5 +1,5 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%; /* Buena práctica para que los layouts de altura completa funcionen bien */
+  height: 100%; 
 }
