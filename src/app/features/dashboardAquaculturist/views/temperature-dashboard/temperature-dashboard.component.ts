@@ -5,7 +5,8 @@ import {
   ApexTheme, ChartComponent, ApexLegend
 } from "ng-apexcharts";
 import { TimeRange } from '../../temperature/domain/models/time-range.enum';
-export type ChartOptions = {
+
+type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   xaxis: ApexXAxis;

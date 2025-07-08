@@ -2,6 +2,7 @@ import { Component, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TemperatureDashboardComponent } from './views/temperature-dashboard/temperature-dashboard.component';
 import { WeightDashboardComponent } from './views/weight-dashboard/weight-dashboard.component';
+import { WaterMonitoringDashboardComponent } from './views/water-monitoring-dashboard/water-monitoring-dashboard.component';
 
 const routes: Routes = [
   {
@@ -11,6 +12,10 @@ const routes: Routes = [
   {
     path: 'weight',
     component: WeightDashboardComponent
+  },
+  {
+    path: 'waterMonitoring',
+    component: WaterMonitoringDashboardComponent
   },
 ];
 

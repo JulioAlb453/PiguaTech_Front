@@ -9,7 +9,7 @@ import {
   ChartComponent,
 } from 'ng-apexcharts';
 
-export type ChartOption = {
+type ChartOption = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   xaxis: ApexXAxis;
