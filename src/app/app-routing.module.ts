@@ -13,6 +13,12 @@ const routes: Routes = [
       import('./features/dashboardAquaculturist/dashboardAquaculturist.module')
         .then(m => m.DashboardAquaculturistModule)
   },
+  // {
+  //   path: 'dashboard',
+  //   loadChildren: () => 
+  //     import('./features/dashboardAquaculturist/dashboardAquaculturist.module')
+  //       .then(m => m.DashboardAquaculturistModule)
+  // },
 
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];

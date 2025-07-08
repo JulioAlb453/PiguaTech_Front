@@ -1,13 +1,17 @@
 import { Component, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TemperatureDashboardComponent } from './views/temperature-dashboard/temperature-dashboard.component';
-import path from 'node:path/win32';
+import { WeightDashboardComponent } from './views/weight-dashboard/weight-dashboard.component';
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'temperature',
     component: TemperatureDashboardComponent
-  }
+  },
+  {
+    path: 'weight',
+    component: WeightDashboardComponent
+  },
 ];
 
 @NgModule({

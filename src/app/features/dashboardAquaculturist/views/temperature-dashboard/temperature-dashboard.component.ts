@@ -4,8 +4,7 @@ import {
   ApexDataLabels, ApexTitleSubtitle, ApexStroke, ApexGrid,
   ApexTheme, ChartComponent, ApexLegend
 } from "ng-apexcharts";
-import { TimeRange } from '../../domain/models/time-range.enum';
-
+import { TimeRange } from '../../temperature/domain/models/time-range.enum';
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;

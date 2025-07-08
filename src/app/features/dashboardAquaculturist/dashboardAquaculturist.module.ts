@@ -4,11 +4,13 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 
 import { DashboardAquaculturistRoutingModule } from './dashboardAquaculturist-routing.module';
 import { TemperatureDashboardComponent } from './views/temperature-dashboard/temperature-dashboard.component';
+import { WeightDashboardComponent } from './views/weight-dashboard/weight-dashboard.component';
 
 
 @NgModule({
   declarations: [
-    TemperatureDashboardComponent
+    TemperatureDashboardComponent,
+    WeightDashboardComponent
   ],
   imports: [
     CommonModule,
