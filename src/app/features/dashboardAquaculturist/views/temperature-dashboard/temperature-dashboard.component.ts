@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
-  ApexAxisChartSeries, ApexChart, ApexXAxis, ApexYAxis, // <-- CORRECCIÓN: Añadido ApexYAxis
+  ApexAxisChartSeries, ApexChart, ApexXAxis, ApexYAxis, 
   ApexDataLabels, ApexTitleSubtitle, ApexStroke, ApexGrid,
   ApexTheme, ChartComponent, ApexLegend
 } from "ng-apexcharts";
