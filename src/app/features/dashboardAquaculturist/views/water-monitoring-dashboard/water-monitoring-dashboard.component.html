@@ -1,0 +1,74 @@
+<main class="habitat-page">
+  <header class="habitat-page__header">
+    <h1>Monitoreo del Hábitat</h1>
+    <h2>Calidad del Agua</h2>
+  </header>
+
+  <!-- Contenedor principal con dos columnas -->
+  <div class="habitat-page__content-grid">
+    
+    <!-- Columna 1: Turbidez -->
+    <section class="habitat-page__metric-section">
+      <div class="habitat-page__metric-card">
+        <label class="habitat-page__metric-title">{{ turbidityMetric.title }}</label>
+        <div class="habitat-page__metric-value">
+          <span>{{ turbidityMetric.value }}</span>
+          <span class="habitat-page__metric-unit">{{ turbidityMetric.unit }}</span>
+        </div>
+        <p class="habitat-page__metric-trend habitat-page__metric-trend--positive">
+          Últimos 7 días +{{ turbidityMetric.trend }}%
+        </p>
+      </div>
+      <div class="habitat-page__chart-container">
+        <apx-chart
+          [series]="turbidityChartOptions.series!"
+          [chart]="turbidityChartOptions.chart!"
+          [stroke]="turbidityChartOptions.stroke!"
+          [fill]="turbidityChartOptions.fill!"
+          [tooltip]="turbidityChartOptions.tooltip!"
+          [xaxis]="turbidityChartOptions.xaxis!"
+        ></apx-chart>
+      </div>
+    </section>
+
+    <!-- Columna 2: Volumen -->
+    <section class="habitat-page__metric-section">
+      <div class="habitat-page__metric-card">
+        <label class="habitat-page__metric-title">{{ volumeMetric.title }}</label>
+        <div class="habitat-page__metric-value">
+          <span>{{ volumeMetric.value }}</span>
+          <span class="habitat-page__metric-unit">{{ volumeMetric.unit }}</span>
+        </div>
+        <p class="habitat-page__metric-trend habitat-page__metric-trend--negative">
+          Últimos 7 días {{ volumeMetric.trend }}%
+        </p>
+      </div>
+      <div class="habitat-page__chart-container">
+        <apx-chart
+          [series]="volumeChartOptions.series!"
+          [chart]="volumeChartOptions.chart!"
+          [plotOptions]="volumeChartOptions.plotOptions!"
+          [dataLabels]="volumeChartOptions.dataLabels!"
+          [tooltip]="volumeChartOptions.tooltip!"
+          [xaxis]="volumeChartOptions.xaxis!"
+        ></apx-chart>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Eje X compartido visualmente -->
+  <div class="habitat-page__shared-xaxis">
+    <div class="habitat-page__chart-xaxis">
+      <span *ngFor="let day of turbidityChartOptions.xaxis?.categories">{{ day }}</span>
+    </div>
+    <div class="habitat-page__chart-xaxis">
+      <span *ngFor="let day of volumeChartOptions.xaxis?.categories">{{ day }}</span>
+    </div>
+  </div>
+
+  <footer class="habitat-page__actions">
+    <button class="habitat-page__button habitat-page__button--secondary">Ver Historial</button>
+    <button class="habitat-page__button habitat-page__button--primary">Establecer Alertas</button>
+  </footer>
+</main>

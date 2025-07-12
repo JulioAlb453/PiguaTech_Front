@@ -1,0 +1,60 @@
+<main class="dashboard-page">
+  <!-- El header de la aplicación iría aquí arriba -->
+  <!-- <app-header></app-header> -->
+
+  <header class="dashboard-page__header">
+    <h1>Temperatura del Agua</h1>
+  </header>
+
+  <div class="dashboard-page__time-selector">
+    <button
+      (click)="setTimeRange(TimeRange.Daily)"
+      [class.dashboard-page__time-selector-button--active]="activeRange === TimeRange.Daily"
+      class="dashboard-page__time-selector-button"
+    >
+      Diario
+    </button>
+    <button
+      (click)="setTimeRange(TimeRange.Weekly)"
+      [class.dashboard-page__time-selector-button--active]="activeRange === TimeRange.Weekly"
+      class="dashboard-page__time-selector-button"
+    >
+      Semanal
+    </button>
+    <button
+      (click)="setTimeRange(TimeRange.Monthly)"
+      [class.dashboard-page__time-selector-button--active]="activeRange === TimeRange.Monthly"
+      class="dashboard-page__time-selector-button"
+    >
+      Mensual
+    </button>
+  </div>
+
+  <section class="dashboard-page__chart-container">
+    <div id="chart">
+      <apx-chart
+        #chart
+        [series]="chartOptions.series!"
+        [chart]="chartOptions.chart!"
+        [xaxis]="chartOptions.xaxis!"
+        [stroke]="chartOptions.stroke!"
+        [dataLabels]="chartOptions.dataLabels!"
+        [grid]="chartOptions.grid!"
+        [title]="chartOptions.title!"
+        [legend]="chartOptions.legend!"
+        [theme]="chartOptions.theme!"
+        [tooltip]="chartOptions.tooltip!" 
+      ></apx-chart>
+    </div>
+  </section>
+
+  <section class="dashboard-page__alerts-section">
+    <h2>Alertas</h2>
+    <div class="dashboard-page__alert-control">
+      <label for="temp-range">Rango de Temperatura</label>
+      <!-- Aquí iría un slider o dos inputs para el rango -->
+      <div class="dashboard-page__slider-placeholder"></div>
+      <button class="dashboard-page__action-button">Establecer Alerta</button>
+    </div>
+  </section>
+</main>
