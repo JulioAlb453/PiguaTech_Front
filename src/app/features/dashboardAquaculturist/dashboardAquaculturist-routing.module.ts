@@ -1,0 +1,31 @@
+import { Component, NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { TemperatureDashboardComponent } from './views/temperature-dashboard/temperature-dashboard.component';
+import { WeightDashboardComponent } from './views/weight-dashboard/weight-dashboard.component';
+import { WaterMonitoringDashboardComponent } from './views/water-monitoring-dashboard/water-monitoring-dashboard.component';
+import { GrowthMonitoringDashboardComponent } from './views/growth-monitoring-dashboard/growth-monitoring-dashboard.component';
+
+const routes: Routes = [
+  {
+    path: 'temperature',
+    component: TemperatureDashboardComponent
+  },
+  {
+    path: 'weight',
+    component: WeightDashboardComponent
+  },
+  {
+    path: 'growth',
+    component:GrowthMonitoringDashboardComponent
+  },
+  {
+    path: 'waterMonitoring',
+    component: WaterMonitoringDashboardComponent
+  },
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+export class DashboardAquaculturistRoutingModule { }

@@ -1,0 +1,154 @@
+:host {
+  display: block;
+  padding: 2rem 4rem;
+  background-color: var(--background-color, #222);
+  color: var(--text-color, #e0e0e0);
+  font-family: "Montserrat", sans-serif;
+  height: 100vh; 
+  --primary-color: #f39c12;
+  --background-color: hsl(0, 0%, 7%);
+  --surface-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --text-secundary-color: #a0a0a0;
+  --acent-color: #f31212;
+  --input-bg-color: #2a2a2a;
+  
+}
+
+
+.growth-page {
+  #{&}__header {
+    margin-bottom: 2rem;
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+
+  #{&}__main-focus {
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: var(--text-secundary-color, #a0a0a0);
+      margin-bottom: 1.5rem;
+    }
+  }
+
+
+  #{&}__time-selector {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+  }
+
+  #{&}__time-selector-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid #444;
+    background-color: #2b2b2b;
+    color: var(--text-secundary-color, #a0a0a0);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    svg {
+      transition: transform 0.2s ease;
+    }
+
+    &--active {
+      background-color: var(--primary-color, #f39c12);
+      color: #121212;
+      border-color: var(--primary-color, #f39c12);
+      font-weight: 600;
+
+      svg {
+        stroke: #121212;
+      }
+    }
+
+    &:hover:not(&--active) {
+      border-color: #777;
+      color: var(--text-color, #f0f0f0);
+    }
+  }
+
+  #{&}__kpi-card {
+    margin-bottom: 1rem;
+    label {
+      font-size: 0.9rem;
+      color: var(--text-secundary-color, #a0a0a0);
+    }
+  }
+
+  #{&}__kpi-value {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  #{&}__kpi-trend {
+    font-size: 0.9rem;
+    margin: 0.25rem 1rem 0;
+
+    
+    &--positive {
+      color: #2ecc71;
+    }
+    &--negative {
+      color: #e74c3c;
+    }
+  }
+
+  #{&}__chart-container {
+    height: 300px;
+    margin-top: 1rem;
+    position: relative;
+  }
+
+  #{&}__chart-xaxis {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-secundary-color, #a0a0a0);
+    margin-top: -1.5rem;
+  }
+
+  #{&}__footer {
+    margin-top: 5rem;
+    h3 {
+        font-size: 1.25rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+    }
+}
+
+#{&}__key-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+#{&}__metric-card {
+    background-color: #2b2b2b;
+    border: 1px solid var(--primary-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+
+    
+    label {
+      display: block;
+      margin-bottom: 0.75rem;
+      color: var(--text-secundary-color, #a0a0a0);
+    }
+
+    span {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+  }
+}
