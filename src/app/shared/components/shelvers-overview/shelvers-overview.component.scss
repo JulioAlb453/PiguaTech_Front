@@ -1,5 +1,4 @@
-// Importa las funciones de tema de Material para acceder a los colores
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 
 $status-optimo: #27ae60;
 $status-atencion: #f39c12;
@@ -8,20 +7,41 @@ $status-alerta: #e74c3c;
 :host {
   display: block;
   font-family: "Montserrat", sans-serif;
-  color: var(--text-color, #f0f0f0);
+  background-color: #333;
+  --primary-color: #f39c12;
+  --background-color: hsl(0, 0%, 7%);
+  --surface-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --text-secundary-color: #a0a0a0;
+  --acent-color: #f31212;
+  --input-bg-color: #2a2a2a;
+  height: 100vh;
 }
 
 .shelves-overview {
   padding: 2rem;
-  background-color: #2b2b2b;
-  height: 100vh;
+  height: auto;
 
   #{&}__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 1rem;
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin: 0;
+      color: var(--text-color);
+    }
+  }
+
+  #{&}__status {
     margin-bottom: 2rem;
-    h2 { font-size: 1.75rem; font-weight: 600; margin: 0; }
+    .status-indicator {
+      font-size: 1rem;
+      color: #666;
+      font-weight: 500;
+    }
   }
 
   #{&}__actions {
@@ -29,84 +49,115 @@ $status-alerta: #e74c3c;
     align-items: center;
     gap: 1rem;
   }
-  
+
   #{&}__pagination {
     display: flex;
     align-items: center;
     gap: 1rem;
   }
-  
+
   #{&}__page-info {
     font-weight: 500;
-    color: var(--text-secundary-color, #a0a0a0);
+    color: var(--text-secundary-color, #666);
   }
 
   #{&}__carousel {
     display: flex;
-    align-items: stretch; 
+    flex-direction: column;
     gap: 1.5rem;
   }
 
   #{&}__cards-container {
-    flex-grow: 1;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
   }
 
   #{&}__card {
-    --mdc-outlined-card-outline-color: var(--card-status-color, #555);
-    border-width: 2px;
-    background-color: #2b2b2b;
+    border-width: 1px;
+    background-color: var(--background-color);
     display: flex;
-    flex-direction: column; // Para alinear el footer al fondo
+    flex-direction: column;
     transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
 
     &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
-    
-    &--optimo { --card-status-color: #{$status-optimo}; }
-    &--atencion { --card-status-color: #{$status-atencion}; }
-    &--alerta { --card-status-color: #{$status-alerta}; }
+
+    &--optimo {
+      border-left: 4px solid $status-optimo;
+      .status-tag--optimo {
+        background-color: rgba($status-optimo, 0.1);
+        color: $status-optimo;
+      }
+    }
+    &--atencion {
+      border-left: 4px solid $status-atencion;
+      .status-tag--atencion {
+        background-color: rgba($status-atencion, 0.1);
+        color: $status-atencion;
+      }
+    }
+    &--alerta {
+      border-left: 4px solid $status-alerta;
+      .status-tag--alerta {
+        background-color: rgba($status-alerta, 0.1);
+        color: $status-alerta;
+      }
+    }
   }
 
   #{&}__card-header {
-    // El color del subtítulo se hereda, pero podemos forzarlo si es necesario
-    .mat-mdc-card-subtitle {
-      text-transform: capitalize;
+    padding: 1rem 1rem 0;
+    .mat-mdc-card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #333;
     }
   }
 
-  #{&}__card-icon-container {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem 0;
-    // Asignamos el color de estado al relleno del SVG
-    color: var(--card-status-color, #fff);
-  }
-
-  #{&}__card-icon {
-    width: 60%;
-    max-width: 120px;
-    height: auto;
-  }
-  
   #{&}__card-content {
-    p { margin: 0; }
+    padding: 0 1rem 1rem;
+    p {
+      margin: 0 0 0.5rem 0;
+      color: #666;
+    }
+
+    .status-tag {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: capitalize;
+      margin-top: 0.5rem;
+    }
   }
 
   #{&}__card-actions {
+    padding: 0 1rem 1rem;
     justify-content: flex-end;
+    a {
+      font-weight: 500;
+      text-decoration: none;
+    }
+  }
+
+  #{&}__navigation {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
   }
 }
 
 // Media Query para responsividad
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   .shelves-overview__cards-container {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
   }
 }
