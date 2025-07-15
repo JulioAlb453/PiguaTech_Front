@@ -27,6 +27,12 @@
     }
   }
 
+  #{&}__content-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+
   #{&}__metrics-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
