@@ -1,0 +1,116 @@
+:host {
+  display: block;
+  padding: 2rem 4rem;
+  background-color: var(--background-color, #222);
+  color: var(--text-color, #e0e0e0);
+  font-family: "Montserrat", sans-serif;
+  height: 100vh; 
+  --primary-color: #f39c12;
+  --background-color: hsl(0, 0%, 7%);
+  --surface-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --text-secundary-color: #a0a0a0;
+  --acent-color: #f31212;
+  --input-bg-color: #2a2a2a;
+  
+}
+
+.habitat-page {
+  #{&}__header {
+    margin-bottom: 2rem;
+    h1 { font-size: 2.25rem; font-weight: 600; margin: 0; }
+    h2 { 
+      font-size: 1.25rem; 
+      font-weight: 400; 
+      margin: 0.5rem 0 0;
+      color: var(--text-secundary-color, #a0a0a0);
+    }
+  }
+
+  #{&}__content-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+
+  #{&}__metrics-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 3rem;
+  }
+
+  #{&}__metric-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  #{&}__metric-title {
+    font-size: 0.9rem;
+    color: var(--text-secundary-color, #a0a0a0);
+    text-transform: uppercase;
+  }
+
+  #{&}__metric-value {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    
+    span:first-child {
+      font-size: 2.75rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+  }
+
+  #{&}__metric-trend {
+    font-size: 0.9rem;
+    margin: 0;
+    &--positive { color: #2ecc71; }
+    &--negative { color: #e74c3c; }
+  }
+
+  #{&}__chart-section {
+    margin-top: -2rem; 
+    position: relative;
+  }
+
+  #{&}__chart-xaxis {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-secundary-color, #a0a0a0);
+    padding: 0 1rem;
+    margin-top: -1rem;
+  }
+
+  #{&}__actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+  }
+
+  #{&}__button {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+
+    &:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+
+    &--primary {
+      background-color: var(--primary-color, #f39c12);
+      color: #121212;
+    }
+    
+    &--secondary {
+      background-color: #2b2b2b;
+      color: var(--text-color, #f0f0f0);
+      border: 1px solid #444;
+    }
+  }
+}

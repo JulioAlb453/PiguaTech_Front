@@ -1,0 +1,111 @@
+:host {
+  display: block;
+  padding: 2rem 4rem;
+  background-color: var(--background-color, #222);
+  color: var(--text-color, #e0e0e0);
+  font-family: "Montserrat", sans-serif;
+  height: 100vh; 
+  --primary-color: #f39c12;
+  --background-color: hsl(0, 0%, 7%);
+  --surface-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --text-secundary-color: #a0a0a0;
+  --acent-color: #f31212;
+  --input-bg-color: #2a2a2a;
+  
+}
+
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; 
+
+  #{&}__header {
+    h1 {
+      font-size: 2.25rem; 
+      margin: 0;
+      font-weight: 600;
+    }
+  }
+
+  // Estilo para el selector de tiempo (Diario/Semanal/Mensual)
+  #{&}__time-selector {
+    display: inline-flex; 
+    // background-color: var(--surface-color, #2b2b2b);
+    border-radius: 10px;
+    padding: 6px;
+    border: 1px solid #444;
+  }
+
+  #{&}__time-selector-button {
+    flex: 1;
+    padding: 0.6rem 1.5rem;
+    border: none;
+    background-color: transparent;
+    color: var(--text-secundary-color, #a0a0a0);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s, color 0.2s;
+
+    &--active {
+      background-color: var(--primary-color, #f39c12);
+      color: #121212;
+      font-weight: 700;
+    }
+  }
+  
+  // Contenedor principal para la gráfica
+  #{&}__chart-card {
+    background-color: var(--surface-color, #2b2b2b);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid #444;
+  }
+
+  // Sección de Alertas
+  #{&}__alerts-section {
+    background-color: var(--surface-color, #2b2b2b);
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
+    border: 1px solid #444;
+
+    h2 {
+      font-size: 1.25rem;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+  }
+
+  #{&}__alert-control {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  #{&}__slider-placeholder {
+    flex-grow: 1;
+    height: 8px;
+    background: linear-gradient(90deg, #775DD0 0%, #00E396 50%, #FF4560 100%);
+    border-radius: 5px;
+    max-width: 450px;
+  }
+
+  #{&}__action-button {
+    background-color: var(--primary-color, #f39c12);
+    color: #121212;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}
