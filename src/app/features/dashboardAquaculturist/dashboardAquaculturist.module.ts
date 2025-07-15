@@ -11,7 +11,6 @@ import { GrowthMonitoringDashboardComponent } from './views/growth-monitoring-da
 
 @NgModule({
   declarations: [
-    TemperatureDashboardComponent,
     WeightDashboardComponent,
     WaterMonitoringDashboardComponent,
     GrowthMonitoringDashboardComponent,
@@ -19,7 +18,8 @@ import { GrowthMonitoringDashboardComponent } from './views/growth-monitoring-da
   imports: [
     CommonModule,
     DashboardAquaculturistRoutingModule,
-    NgApexchartsModule
+    NgApexchartsModule,
+    TemperatureDashboardComponent
     
   ]
 })

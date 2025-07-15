@@ -1,135 +1,139 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import {
-  ApexAxisChartSeries, ApexChart, ApexXAxis, ApexYAxis, 
-  ApexDataLabels, ApexTitleSubtitle, ApexStroke, ApexGrid,
-  ApexTheme, ChartComponent, ApexLegend
-} from "ng-apexcharts";
-import { TimeRange } from '../../temperature/domain/models/time-range.enum';
+// Importaciones de Angular
+import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common'; // <-- IMPORTANTE: Necesario para *ngIf, etc. en componentes standalone
+import { Subscription } from 'rxjs';
 
-type ChartOptions = {
+// Importaciones de la librería de gráficas
+import {
+  ApexAxisChartSeries, ApexChart, ApexXAxis, ApexYAxis,
+  ApexStroke, ApexGrid, ApexDataLabels, ChartComponent, NgApexchartsModule // <-- IMPORTANTE: Se importa el módulo del gráfico
+} from "ng-apexcharts";
+
+// Importa aquí tus servicios y modelos (descomenta cuando los tengas)
+// import { GetTemperatureUseCaseService } from '../../temperature/application/usesCases/get-temperature-use-case.service';
+// import { TemperatureData } from '../../temperature/domain/models/temperature-data.model';
+
+// Definimos el tipo completo para evitar errores
+export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   xaxis: ApexXAxis;
   yaxis: ApexYAxis;
-  dataLabels: ApexDataLabels;
-  grid: ApexGrid;
   stroke: ApexStroke;
-  title: ApexTitleSubtitle;
-  theme: ApexTheme;
-  legend: ApexLegend;
-  colors: string[];
-  tooltip: any; 
+  grid: ApexGrid;
+  dataLabels: ApexDataLabels;
 };
 
 @Component({
   selector: 'app-temperature-dashboard',
-  standalone: false,
+  standalone: true,  
+  imports: [
+    CommonModule,       
+    NgApexchartsModule   
+  ],
   templateUrl: './temperature-dashboard.component.html',
-  styleUrls: ['./temperature-dashboard.component.scss']
+  styleUrls: ['./temperature-dashboard.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  // providers: [GetTemperatureUseCaseService, ... ] 
 })
-export class TemperatureDashboardComponent implements OnInit {
+export class TemperatureDashboardComponent implements OnInit, OnDestroy {
 
   @ViewChild("chart") chart!: ChartComponent;
-  public chartOptions!: Partial<ChartOptions>;
-  public TimeRange = TimeRange;
-  public activeRange: TimeRange = TimeRange.Daily;
-  
-  constructor() { }
+  public chartOptions!: ChartOptions;
+
+  private dataSubscription!: Subscription;
+  private readonly MAX_DATA_POINTS = 20;
+
+  constructor(
+    // private readonly getTemperatureUseCase: GetTemperatureUseCaseService, 
+    private readonly cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    this.initializeChartOptions();
-    this.fetchData(this.activeRange);
+    this.initializeChartWithOptions();
+    // this.subscribeToRealtimeData(); 
   }
 
-  initializeChartOptions(): void {
+  ngOnDestroy(): void {
+    if (this.dataSubscription) {
+      this.dataSubscription.unsubscribe();
+    }
+  }
+
+  private initializeChartWithOptions(): void {
     this.chartOptions = {
+      series: [{
+        name: 'Temperatura',
+        data: []
+      }],
       chart: {
-        height: 380,
+        height: 250,
         type: 'line',
-        foreColor: '#e0e0e0',
-        toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } },
-        background: 'transparent'
+        background: 'transparent',
+        animations: {
+          enabled: true,
+          dynamicAnimation: { speed: 1000 }
+        },
+        toolbar: { show: false },
+        zoom: { enabled: false }
       },
-      colors: ['#3498db', '#2ecc71', '#85c1e9', '#e67e22'],
-      dataLabels: { enabled: false },
-      stroke: { curve: 'smooth', width: [3, 2, 2, 2], dashArray: [0, 5, 5, 3] },
-      grid: { borderColor: '#444', strokeDashArray: 4 },
+      stroke: {
+        curve: "smooth",
+        width: 3.5,
+        colors: ["#e0e0e0"]
+      },
+      dataLabels: {
+        enabled: false
+      },
+      grid: {
+        show: false
+      },
       xaxis: {
         type: 'category',
-        labels: { style: { colors: '#a0a0a0' } },
-        axisBorder: { color: '#444' },
-        axisTicks: { color: '#444' }
+        range: this.MAX_DATA_POINTS,
+        labels: {
+          style: {
+            colors: '#a0a0a0',
+            fontSize: "14px",
+            fontWeight: 500
+          }
+        },
+        axisBorder: { show: false },
+        axisTicks: { show: false }
       },
       yaxis: {
-        title: {
-          text: 'Temperatura del agua (°C)',
-          style: { color: '#a0a0a0', fontWeight: 400 }
-        },
-        labels: { style: { colors: '#a0a0a0' } }
-      },
-      legend: {
-        position: 'top',
-        horizontalAlign: 'right',
-        floating: true,
-        offsetY: -5,
-        labels: { useSeriesColors: true },
-        markers: {}
-      },
-      // AÑADIDO: Importante para el estilo del tooltip al pasar el mouse.
-      tooltip: {
-        theme: 'dark',
-        y: {
-          formatter: function(val: string){
-            return val + " °C";
-          }
-        }
+        show: false
       }
     };
   }
 
-  setTimeRange(range: TimeRange): void {
-    this.activeRange = range;
-    this.fetchData(range);
+  /*
+  private subscribeToRealtimeData(): void {
+    this.dataSubscription = this.getTemperatureUseCase.executeRealTime()
+      .subscribe({
+        next: (dataPoint: TemperatureData) => this.updateChart(dataPoint),
+        error: (err) => console.error("Error en la conexión WebSocket:", err)
+      });
   }
 
-  fetchData(range: TimeRange): void {
-    const mockData = this.getMockData(range);
-    
-    if (this.chart) {
-      this.chart.updateSeries(mockData.series, true); // true para animar el cambio
-      this.chart.updateOptions({ xaxis: { categories: mockData.categories } });
-    } else {
-      this.chartOptions.series = mockData.series;
-      this.chartOptions.xaxis!.categories = mockData.categories;
-    }
-  }
+  private updateChart(dataPoint: TemperatureData): void {
+    const currentSeriesData = this.chartOptions.series[0].data as number[];
+    const currentCategories = this.chartOptions.xaxis.categories as string[] || [];
 
-  // CORRECCIÓN 3: Actualizamos getMockData para tener datos para Diario y Semanal.
-  getMockData(range: TimeRange): { series: ApexAxisChartSeries, categories: string[] } {
-    if (range === TimeRange.Daily) {
-      return {
-        series: [
-          { name: 'Temp. Agua Actual', type: 'line', data: [18.5, 19.1, 19.4, 20.2, 21.0, 22.5, 23.1, 22.8, 22.5, 22.6, 22.2] },
-          { name: 'Temp. Ideal Máxima', type: 'line', data: [20, 20, 20.5, 20.5, 21, 21, 21.5, 21.5, 22, 22, 22] },
-          { name: 'Temp. Ideal Mínima', type: 'line', data: [17, 17, 17, 17.5, 17.5, 18, 18, 18.5, 18.5, 18.5, 18] },
-          { name: 'Temp. Crítica', type: 'line', data: [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25] }
-        ],
-        categories: ['8:00', '8:30', '9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00']
-      };
-    }
-    
-    if (range === TimeRange.Weekly) {
-      return {
-        series: [
-          { name: 'Temp. Agua Prom.', data: [18, 19, 21, 20, 22, 19, 18.5] },
-          { name: 'Temp. Ideal Prom.', data: [20, 20, 20, 20, 20, 20, 20] },
-          { name: 'Temp. Crítica Prom.', data: [25, 25, 25, 25, 25, 25, 25] }
-        ],
-        categories: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
-      };
+    currentSeriesData.push(dataPoint.value);
+    currentCategories.push(new Date(dataPoint.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }));
+
+    if (currentSeriesData.length > this.MAX_DATA_POINTS) {
+      currentSeriesData.shift();
+      currentCategories.shift();
     }
 
-    // Para Mensual, puedes agregar otra condición aquí.
-    return { series: [], categories: [] };
+    this.chart.updateOptions({
+      series: [{ data: currentSeriesData }],
+      xaxis: { categories: currentCategories }
+    });
+
+    this.cdr.markForCheck();
   }
+  */
 }

@@ -1,3 +1,5 @@
+// Ejemplo de cómo podría ser tu modelo
 export interface TemperatureData {
-// Este modelo representa los datos de temperatura de un sensor
+  value: number;
+  timestamp: string; // O Date
 }
