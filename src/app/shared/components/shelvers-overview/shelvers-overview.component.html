@@ -1,0 +1,91 @@
+<section class="shelves-overview">
+  <header class="shelves-overview__header">
+    <h2>{{ title }}</h2>
+    <div class="shelves-overview__actions">
+      <!-- Botón de notificaciones con tooltip -->
+      <button
+        mat-icon-button
+        matTooltip="Ver notificaciones"
+        aria-label="Botón de notificaciones"
+      >
+        <mat-icon>notifications</mat-icon>
+      </button>
+
+      <!-- Paginación y botón de añadir con Material -->
+      <div class="shelves-overview__pagination">
+        <span class="shelves-overview__page-info"
+          >{{ currentPage }} / {{ totalPages }}</span
+        >
+        <button
+          mat-fab-button
+          color="primary"
+          (click)="onAddShelfClick()"
+          matTooltip="Añadir nuevo estante"
+          aria-label="Añadir estante"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="shelves-overview__carousel">
+    <!-- Contenedor de las tarjetas -->
+    <div class="shelves-overview__cards-container">
+      <mat-card
+        *ngFor="let shelf of paginatedShelves"
+        class="shelves-overview__card"
+        [ngClass]="'mat-card--' + shelf.status.toLowerCase()"
+        appearance="outlined"
+      >
+        <mat-card-header class="shelves-overview__card-header">
+          <mat-card-title>{{ shelf.name }}</mat-card-title>
+          <span
+            [ngStyle]="{
+              background:
+                shelf.status === 'Optimo'
+                  ? '#27ae60'
+                  : shelf.status === 'Atencion'
+                  ? '#f39c12'
+                  : '#e74c3c',
+              color: 'white',
+              padding: '0.25rem 0.75rem',
+              'border-radius': '4px'
+            }"
+          >
+            Estado: {{ shelf.status }}
+          </span>
+        </mat-card-header>
+
+        <mat-card-content class="shelves-overview__card-content">
+          <p><strong>Zona:</strong> {{ shelf.zone }}</p>
+        </mat-card-content>
+
+        <mat-card-actions class="shelves-overview__card-actions">
+          <a mat-button color="primary" [routerLink]="[basePath, shelf.id]">
+            IR A MONITOREO <mat-icon>arrow_forward</mat-icon>
+          </a>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="shelves-overview__navigation">
+    <button
+      mat-icon-button
+      (click)="currentPage = currentPage - 1"
+      [disabled]="currentPage === 1"
+      aria-label="Página anterior"
+    >
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      (click)="currentPage = currentPage + 1"
+      [disabled]="currentPage === totalPages"
+      aria-label="Siguiente página"
+    >
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+</section>
