@@ -29,10 +29,6 @@
     </div>
   </header>
 
-  <div class="shelves-overview__status">
-    <span class="status-indicator">Estado: {{ getOverallStatus() }}</span>
-  </div>
-
   <div class="shelves-overview__carousel">
     <!-- Contenedor de las tarjetas -->
     <div class="shelves-overview__cards-container">
@@ -44,13 +40,25 @@
       >
         <mat-card-header class="shelves-overview__card-header">
           <mat-card-title>{{ shelf.name }}</mat-card-title>
+          <span
+            [ngStyle]="{
+              background:
+                shelf.status === 'Optimo'
+                  ? '#27ae60'
+                  : shelf.status === 'Atencion'
+                  ? '#f39c12'
+                  : '#e74c3c',
+              color: 'white',
+              padding: '0.25rem 0.75rem',
+              'border-radius': '4px'
+            }"
+          >
+            Estado: {{ shelf.status }}
+          </span>
         </mat-card-header>
 
         <mat-card-content class="shelves-overview__card-content">
           <p><strong>Zona:</strong> {{ shelf.zone }}</p>
-          <div class="status-tag status-tag--{{ shelf.status.toLowerCase() }}">
-            {{ shelf.status }}
-          </div>
         </mat-card-content>
 
         <mat-card-actions class="shelves-overview__card-actions">

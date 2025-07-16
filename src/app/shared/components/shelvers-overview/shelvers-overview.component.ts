@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { retry } from 'rxjs';
 
 export type ShelfStatus = 'Optimo' | 'Atencion' | 'Alerta';
 export interface Shelf {
@@ -18,9 +19,12 @@ export interface Shelf {
 @Component({
   selector: 'app-shelvers-overview',
   imports: [
-    CommonModule, RouterLink,
-    MatCardModule, MatButtonModule,
-    MatIconModule, MatTooltipModule
+    CommonModule,
+    RouterLink,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
   ],
   templateUrl: './shelvers-overview.component.html',
   styleUrl: './shelvers-overview.component.scss',
@@ -34,8 +38,14 @@ export class ShelversOverviewComponent {
   @Output() addShelf = new EventEmitter<void>(); //Esto servira si es quiere aumentar el numero de estanques
 
   currentPage = 1;
-  itemsPerPage = 6;
-
+  itemsPerPage = 4;
+  ngOnInit() {
+    console.log('Datos de shelves:', this.shelves);
+    console.log(
+      'Clases generadas:',
+      this.shelves.map((s) => 'status-tag--' + s.status.toLowerCase())
+    );
+  }
 
   //obtener el total de paginas que va a tener
   get totalPages(): number {
@@ -44,9 +54,9 @@ export class ShelversOverviewComponent {
 
   //Obtener la alerta correspondiente
   getOverallStatus(): string {
-    if(this.shelves.some (s => s.status  === 'Alerta')) return 'Alerta'
-    if(this.shelves.some(s => s.status === 'Atencion')) return 'Atencion'
-    return 'Optimo'
+    if (this.shelves.some((s) => s.status === 'Alerta')) return 'Alerta';
+    if (this.shelves.some((s) => s.status === 'Atencion')) return 'Atencion';
+    return 'Optimo';
   }
 
   //para la paginacion
