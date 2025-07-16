@@ -39,13 +39,6 @@ export class ShelversOverviewComponent {
 
   currentPage = 1;
   itemsPerPage = 4;
-  ngOnInit() {
-    console.log('Datos de shelves:', this.shelves);
-    console.log(
-      'Clases generadas:',
-      this.shelves.map((s) => 'status-tag--' + s.status.toLowerCase())
-    );
-  }
 
   //obtener el total de paginas que va a tener
   get totalPages(): number {
