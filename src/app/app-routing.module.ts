@@ -13,7 +13,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
 
   {
-    path: 'dashboardAcuaculturist',
+    path: 'dashboardAquaculturist',
     loadChildren: () =>
       import(
         './features/dashboardAquaculturist/dashboardAquaculturist.module'

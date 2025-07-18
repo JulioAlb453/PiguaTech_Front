@@ -7,6 +7,7 @@ import { TemperatureDashboardComponent } from './views/temperature-dashboard/tem
 import { WeightDashboardComponent } from './views/weight-dashboard/weight-dashboard.component';
 import { WaterMonitoringDashboardComponent } from './views/water-monitoring-dashboard/water-monitoring-dashboard.component';
 import { GrowthMonitoringDashboardComponent } from './views/growth-monitoring-dashboard/growth-monitoring-dashboard.component';
+import { AlertsDashboardComponent } from './views/alerts-dashboard/alerts-dashboard.component';
 
 
 @NgModule({
@@ -18,9 +19,9 @@ import { GrowthMonitoringDashboardComponent } from './views/growth-monitoring-da
   imports: [
     CommonModule,
     DashboardAquaculturistRoutingModule,
-    NgApexchartsModule,
-    TemperatureDashboardComponent
-    
+    NgApexchartsModule,  
+    TemperatureDashboardComponent  ,
+    AlertsDashboardComponent
   ]
 })
 export class DashboardAquaculturistModule { }
