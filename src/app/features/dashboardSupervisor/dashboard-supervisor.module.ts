@@ -9,13 +9,15 @@ import { ReportGeneratorComponent } from './views/report-generator/report-genera
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SummaryReportsDashboardComponent } from './views/summary-reports-dashboard/summary-reports-dashboard.component';
 
 
 
 @NgModule({
   declarations: [
     HabitatStatusDashboardComponent,
-    ReportGeneratorComponent
+    ReportGeneratorComponent,
+    SummaryReportsDashboardComponent
   ],
   imports: [
     CommonModule,
