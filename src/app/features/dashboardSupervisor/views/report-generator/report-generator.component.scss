@@ -1,0 +1,405 @@
+// Variables centralizadas para fácil mantenimiento y theming
+:host {
+  // --- THEME & LAYOUT VARIABLES ---
+  --primary-color: #f39c12;
+  --background-color: #1a1a1a;
+  --surface-color: #2b2b2b;
+  --input-bg-color: #3a3a3a;
+  --text-color: #f0f0f0;
+  --text-secondary-color: #a0a0a0;
+  --border-color: #444;
+  --error-color: #ff5252;
+  --success-color: #4caf50;
+  --disabled-opacity: 0.6;
+  --border-radius: 8px;
+  --border-radius-large: 12px;
+  --transition-speed: 0.3s;
+
+  display: block;
+  padding: 2rem 4rem;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: "Montserrat", sans-serif;
+}
+
+@mixin interactive-hover-effect {
+  transition: transform var(--transition-speed) ease,
+    box-shadow var(--transition-speed) ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.report-generator__scrollable {
+  height: 100vh;
+  width: 100%;
+  overflow-y: auto;
+  padding: 2rem 4rem;
+  box-sizing: border-box;
+
+  max-width: 1600px;
+  margin: 0 auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-color) var(--surface-color);
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: var(--surface-color);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 4px;
+  }
+}
+
+.report-generator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background-color: var(--background-color);
+
+  // --- HEADER ---
+  &__header {
+    margin-bottom: 2.5rem;
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+      color: var(--primary-color);
+    }
+    p {
+      color: var(--text-secondary-color);
+      margin: 0;
+      font-size: 1.1rem;
+    }
+  }
+
+  // --- SECTIONS ---
+  &__section {
+    margin-bottom: 3rem;
+    background: var(--surface-color);
+    padding: 2rem;
+    border-radius: var(--border-radius-large);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &__section-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  // --- FORM ELEMENTS (Chips, Inputs) ---
+  &__chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  &__chip {
+    padding: 0.8rem 1.5rem;
+    border: 1px solid var(--border-color);
+    background-color: transparent;
+    color: var(--text-secondary-color);
+    border-radius: var(--border-radius);
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+
+    &:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    &--active {
+      font-weight: 600;
+
+      &.report-generator__chip--current-state {
+        background-color: rgba(33, 150, 243, 0.2);
+        border-color: #2196f3;
+        color: #f0f0f0;
+      }
+
+      &.report-generator__chip--historical-data {
+        background-color: rgba(156, 39, 176, 0.2);
+        border-color: #9c27b0;
+        color: #f0f0f0;
+      }
+
+      &.report-generator__chip--growth-analysis {
+        background-color: rgba(76, 175, 80, 0.2);
+        border-color: #4caf50;
+        color: #f0f0f0;
+      }
+    }
+
+    &--active {
+      font-weight: 600;
+
+      // Color específico para cada formato cuando está activo
+      &.report-generator__chip--pdf {
+        background-color: rgba(244, 67, 54, 0.2);
+        border-color: #f44336;
+        color: #f0f0f0;
+      }
+
+      &.report-generator__chip--csv {
+        background-color: rgba(33, 150, 243, 0.2);
+        border-color: #2196f3;
+        color: #2196f3;
+      }
+
+      &.report-generator__chip--excel {
+        background-color: rgba(76, 175, 80, 0.2);
+        border-color: #4caf50;
+        color: #4caf50;
+      }
+    }
+  }
+
+  &__date-range {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  &__form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+      font-size: 0.95rem;
+      color: var(--text-secondary-color);
+    }
+
+    input[type="date"] {
+      background-color: var(--input-bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 0.8rem 1rem;
+      color: var(--text-color);
+      font-size: 1rem;
+      font-family: "Montserrat", sans-serif;
+      transition: all var(--transition-speed) ease;
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.3);
+      }
+
+      &::-webkit-calendar-picker-indicator {
+        filter: invert(0.8) sepia(1) saturate(5) hue-rotate(350deg);
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity var(--transition-speed);
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  &__error-message {
+    color: var(--error-color);
+    font-size: 0.9rem;
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+
+  // --- SUBMIT BUTTON ---
+  &__submit-container {
+    margin-top: 3rem;
+    text-align: center;
+  }
+
+  &__submit-button {
+    @include interactive-hover-effect;
+    background-color: var(--primary-color);
+    color: var(--background-color);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+
+    &:disabled {
+      opacity: var(--disabled-opacity);
+      transform: none;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .mat-spinner::ng-deep circle {
+      stroke: var(--background-color) !important;
+    }
+  }
+
+  // --- TABLE FOR PREVIOUS REPORTS ---
+  &__table {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-large);
+    overflow: hidden; // Importante para que los bordes redondeados afecten a los hijos
+  }
+
+  &__table-header,
+  &__table-row {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1.5fr 1fr;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    gap: 1.5rem;
+  }
+
+  &__table-header {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary-color);
+    background-color: rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  &__table-row {
+    transition: background-color var(--transition-speed) ease;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--border-color);
+    }
+    &:hover {
+      background-color: rgba(243, 156, 18, 0.05);
+    }
+  }
+
+  &__table-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-start;
+  }
+
+  &__format-tag {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary-color);
+
+    &--PDF {
+      background-color: rgba(244, 67, 54, 0.2);
+      color: #f44336;
+    }
+    &--CSV,
+    &--EXCEL {
+      // Grupo para formatos de hoja de cálculo
+      background-color: rgba(76, 175, 80, 0.2);
+      color: var(--success-color);
+    }
+  }
+
+  &__action-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color var(--transition-speed) ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary-color);
+
+    mat-icon {
+      font-size: 1.25rem;
+    }
+
+    &:hover {
+      color: var(--primary-color);
+      background-color: rgba(243, 156, 18, 0.1);
+    }
+  }
+}
+
+// --- RESPONSIVE STYLES ---
+@media (max-width: 992px) {
+  :host {
+    padding: 2rem;
+    .report-generator-scrollable {
+      padding: 2rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  :host {
+    padding: 1rem;
+  }
+
+  .report-generator-scrollable {
+    padding: 1rem;
+  }
+
+  .report-generator {
+    &__header {
+      text-align: center;
+      h1 {
+        font-size: 1.8rem;
+      }
+    }
+
+    &__section {
+      padding: 1.5rem;
+    }
+
+    // Adaptar la tabla a una vista de tarjetas en móviles
+    &__table-header {
+      display: none; // Ocultar cabecera en móvil
+    }
+
+    &__table-row {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      padding: 1.5rem;
+    }
+
+    &__table-cell {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      // Usar el data-label para crear etiquetas para cada "celda"
+      &::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-secondary-color);
+        margin-right: 1rem;
+      }
+    }
+
+    &__table-actions {
+      justify-content: flex-end;
+    }
+  }
+}

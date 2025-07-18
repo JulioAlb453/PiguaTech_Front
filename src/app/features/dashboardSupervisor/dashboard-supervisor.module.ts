@@ -5,16 +5,24 @@ import { DashboardSupervisorRoutingModule } from './dashboard-supervisor-routing
 import { HabitatStatusDashboardComponent } from './views/habitat-status-dashboard/habitat-status-dashboard.component';
 
 import { MatIconModule } from '@angular/material/icon';
+import { ReportGeneratorComponent } from './views/report-generator/report-generator.component';
+import { ReactiveFormsModule } from '@angular/forms';
+
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 
 @NgModule({
   declarations: [
-    HabitatStatusDashboardComponent
+    HabitatStatusDashboardComponent,
+    ReportGeneratorComponent
   ],
   imports: [
     CommonModule,
     DashboardSupervisorRoutingModule,
-    MatIconModule
+    MatIconModule,
+    ReactiveFormsModule,
+    MatProgressSpinnerModule
   ]
 })
 export class DashboardSupervisorModule { }
