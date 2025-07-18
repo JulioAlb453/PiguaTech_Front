@@ -1,0 +1,52 @@
+<main class="habitat-status-page">
+  <header class="habitat-status-page__header">
+    <div class="habitat-status-page__title-block">
+      <h1>Estado del Hábitat</h1>
+    </div>
+    <div class="habitat-status-page__actions">
+      <button class="habitat-status-page__icon-button" aria-label="Notificaciones">
+        <mat-icon>notifications</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <section class="habitat-status-page__section">
+    <h2>Condiciones Actuales</h2>
+    <div class="habitat-status-page__metrics-grid">
+      <div *ngFor="let metric of currentConditions" class="habitat-status-page__metric-card">
+        <label>{{ metric.name }}</label>
+        <p class="habitat-status-page__metric-value">
+          {{ metric.curretValue }}{{ metric.unit }}
+        </p>
+        <p 
+          class="habitat-status-page__metric-trend"
+          [ngClass]="{
+            'habitat-status-page__metric-trend--positive': metric.trend > 0,
+            'habitat-status-page__metric-trend--negative': metric.trend < 0
+          }"
+        >
+          {{ metric.trend > 0 ? '+' : '' }}{{ metric.trend }}{{ metric.unit }}
+        </p>
+      </div>
+    </div>
+    <p class="habitat-status-page__last-update">
+      Última actualización: {{ lastUpdate | date:'yyyy-MM-dd HH:mm' }}
+    </p>
+  </section>
+
+  <section class="habitat-status-page__section">
+    <h2>Indicadores de Parámetros</h2>
+    <ul class="habitat-status-page__indicator-list">
+      <li *ngFor="let indicator of parameterIndicators" class="habitat-status-page__indicator-item">
+        <div class="habitat-status-page__indicator-icon">
+          <mat-icon>{{ indicator.icon }}</mat-icon>
+        </div>
+        <div class="habitat-status-page__indicator-details">
+          <span class="habitat-status-page__indicator-name">{{ indicator.name }}</span>
+          <span class="habitat-status-page__indicator-range">Rango Óptimo: {{ indicator.optimalRange }}</span>
+        </div>
+        <div class="habitat-status-page__indicator-status" [ngClass]="'status--' + indicator.state"></div>
+      </li>
+    </ul>
+  </section>
+</main>
