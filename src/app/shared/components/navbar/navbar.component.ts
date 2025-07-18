@@ -1,10 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+
+import { NavbarService } from './navbar.service';
 
 type UserRole = 'supervisor' | 'acuitultor';
 
@@ -26,10 +28,19 @@ interface NavLink {
   ],
   standalone: true,
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css',
+  styleUrl: './navbar.component.scss',
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   @Input() userRole: UserRole = 'acuitultor';
+
+  showNavbar = true;
+  constructor(private navbarService: NavbarService) {}
+
+  ngOnInit(): void {
+    this.navbarService.showNavbar$.subscribe((show) => {
+      this.showNavbar = show;
+    });
+  }
 
   private supervisorLinks: NavLink[] = [
     {
@@ -54,6 +65,12 @@ export class NavbarComponent {
         { label: 'Habitat (Turbidez/volumen)', path: '/dashboard/habitat' },
       ],
     },
-    
+    { label: 'Alert', path: '/alerts' },
   ];
+
+  get navLinks(): NavLink[] {
+    return this.userRole === 'supervisor'
+      ? this.supervisorLinks
+      : this.acuicultorLinks;
+  }
 }

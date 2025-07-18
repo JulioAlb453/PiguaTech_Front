@@ -1,1 +1,44 @@
-<p>navbar works!</p>
+<nav class="navbar">
+  <div class="navbar__brand">
+    <img src="Logo.svg" alt="">
+    <span class="navbar__header">PiguaTech</span>
+  </div>
+
+  <div class="navbar__links">
+    <ng-container *ngFor="let link of navLinks">
+      
+      <a 
+        *ngIf="!link.children"
+        [routerLink]="link.path"
+        routerLinkActive="navbar__link--active"
+        class="navbar__link"
+      >
+        {{ link.label }}
+      </a>
+      
+      <button 
+        *ngIf="link.children"
+        [matMenuTriggerFor]="menu" 
+        class="navbar__link navbar__link--menu"
+      >
+        {{ link.label }}
+        <mat-icon>expand_more</mat-icon>
+      </button>
+      
+      <mat-menu #menu="matMenu" class="navbar__dropdown-menu">
+        <a 
+          *ngFor="let child of link.children"
+          mat-menu-item
+          [routerLink]="child.path"
+          routerLinkActive="navbar__dropdown-item--active"
+        >
+          {{ child.label }}
+        </a>
+      </mat-menu>
+    </ng-container>
+  </div>
+
+  <div class="navbar__user-profile">
+    <img src="https://i.pravatar.cc/40" alt="Avatar del usuario">
+  </div>
+</nav>
