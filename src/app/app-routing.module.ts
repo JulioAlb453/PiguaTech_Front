@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/views/login/login.component';
-import { ShelversOverviewComponent } from './shared/components/shelvers-overview/shelvers-overview.component';
 import { ShelversOverviewFatherComponentComponent } from './shared/components/shelvers-overview-father-component/shelvers-overview-father-component.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { DashboardSupervisorModule } from './features/dashboardSupervisor/dashboard-supervisor.module';
 
 const routes: Routes = [
   {
@@ -13,11 +13,19 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
 
   {
-    path: 'dashboard',
+    path: 'dashboardAcuaculturist',
     loadChildren: () =>
       import(
         './features/dashboardAquaculturist/dashboardAquaculturist.module'
       ).then((m) => m.DashboardAquaculturistModule),
+  },
+  {
+    path: 'dashboardSupervisor',
+    loadChildren: () =>
+      import(
+      './features/dashboardSupervisor/dashboard-supervisor.module'
+      ).then((m) => m.DashboardSupervisorModule)
+    
   },
 
   {
@@ -29,7 +37,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes), DashboardSupervisorModule, ],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

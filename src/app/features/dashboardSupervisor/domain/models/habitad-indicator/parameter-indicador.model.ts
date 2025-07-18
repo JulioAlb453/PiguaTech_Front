@@ -4,6 +4,7 @@ export interface ParameterIndicador {
     //para comparar el estado actual con el rango optimo
     name: string,
     optimalRange: string
+    icon: string
     state: ParameterState
 
 }
