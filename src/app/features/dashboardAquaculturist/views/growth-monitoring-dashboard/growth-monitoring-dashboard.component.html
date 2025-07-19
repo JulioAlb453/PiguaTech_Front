@@ -33,7 +33,7 @@
     </div>
 
     <div class="growth-page__kpi-card" *ngIf="kpiData">
-      <label>Peso Promedio ({{ kpiData.unit }})</label>
+      <label>Peso Promedio {{ kpiData.unit }}</label>
       <span class="growth-page__kpi-value">{{ kpiData.value }}</span>
       <p
         class="growth-page__kpi-trend"
@@ -50,11 +50,12 @@
     <div class="growth-page__chart-container">
       <apx-chart
         #chart
+        *ngIf="chartOptions"
+        [tooltip]="chartOptions.tooltip!"
         [series]="chartOptions.series!"
         [chart]="chartOptions.chart!"
         [stroke]="chartOptions.stroke!"
         [fill]="chartOptions.fill!"
-        [tooltip]="chartOptions.tooltip!"
         [xaxis]="chartOptions.xaxis!"
         [dataLabels]="chartOptions.dataLabels!"
       ></apx-chart>
@@ -66,13 +67,15 @@
     </div>
   </section>
 
-  <footer class="growth-page__footer">
-    <h3>Métricas Clave de Crecimiento</h3>
-    <div class="growth-page__key-metrics">
-      <div *ngFor="let metric of keyMetrics" class="growth-page__metric-card">
-        <label>{{ metric.label }}</label>
-        <span>{{ metric.value }}</span>
+  <div class="growth-page__footer-container">
+    <footer class="growth-page__footer">
+      <h3>Métricas Clave de Crecimiento</h3>
+      <div class="growth-page__key-metrics">
+        <div *ngFor="let metric of keyMetrics" class="growth-page__metric-card">
+          <label>{{ metric.label }}</label>
+          <span>{{ metric.value }}</span>
+        </div>
       </div>
-    </div>
-  </footer>
+    </footer>
+  </div>
 </main>
