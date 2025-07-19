@@ -1,124 +1,124 @@
-:host {
-  display: block;
-  background-color: #1a1a1a;
-  border-bottom: 1px solid #333;
-}
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 2rem;
-  height: 64px;
-
-  #{&}__header {
-    color: #FAF7F7;
-    font-weight: 500;
-    font-size: 2rem;
+  :host {
+    display: block;
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #333;
   }
 
-  #{&}__brand {
+  .navbar {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 0.75rem;
-    font-size: 1.5rem;
-    font-weight: 700;
+    padding: 0.75rem 2rem;
+    height: 64px;
 
-    img {
-      display: block;
-      border: none;
-      outline: none;
-      box-shadow: none;
+    #{&}__header {
+      color: #FAF7F7;
+      font-weight: 500;
+      font-size: 2rem;
+    }
 
-      
-      path {
-        fill: currentColor;
+    #{&}__brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+
+      img {
+        display: block;
+        border: none;
+        outline: none;
+        box-shadow: none;
+
+        
+        path {
+          fill: currentColor;
+        }
+
+        * {
+          stroke: none;
+          vector-effect: non-scaling-stroke;
+        }
       }
 
-      * {
-        stroke: none;
-        vector-effect: non-scaling-stroke;
+      &:hover img {
+        filter: brightness(1.2); 
       }
     }
 
-    &:hover img {
-      filter: brightness(1.2); 
+    #{&}__logo-icon {
+      width: 32px;
+      height: 32px;
+    }
+
+    #{&}__links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    #{&}__link {
+      color: var(--text-secundary-color, #ffffff);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 0.25rem;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+
+      &:hover {
+        color: var(--text-color, #f0f0f0);
+      }
+
+      &--active {
+        color: var(--primary-color, #f39c12);
+        border-bottom-color: var(--primary-color, #f39c12);
+      }
+
+      // Estilos para el botón de menú
+      &--menu {
+        background: none;
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+      }
+    }
+
+    #{&}__user-profile {
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid #555;
+      }
     }
   }
 
-  #{&}__logo-icon {
-    width: 32px;
-    height: 32px;
-  }
-
-  #{&}__links {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-  }
-
-  #{&}__link {
-    color: var(--text-secundary-color, #ffffff);
-    text-decoration: none;
-    font-weight: 500;
-    padding: 0.5rem 0.25rem;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-
-    &:hover {
-      color: var(--text-color, #f0f0f0);
+  // --- ESTILOS PARA EL MENÚ DESPLEGABLE DE MATERIAL ---
+  // Usamos ::ng-deep para asegurarnos de que los estilos se apliquen
+  // al panel del menú, que se renderiza fuera del componente.
+  ::ng-deep .navbar__dropdown-menu {
+    .mat-mdc-menu-panel {
+      background-color: #2b2b2b !important;
+      border: 1px solid #444;
     }
 
-    &--active {
-      color: var(--primary-color, #f39c12);
-      border-bottom-color: var(--primary-color, #f39c12);
+    .mat-mdc-menu-item {
+      color: var(--text-secundary-color, #a0a0a0) !important;
+
+      &:hover,
+      &:focus {
+        background-color: #3c3c3c !important;
+        color: var(--text-color, #f0f0f0) !important;
+      }
     }
 
-    // Estilos para el botón de menú
-    &--menu {
-      background: none;
-      border: none;
-      font-family: inherit;
-      font-size: inherit;
+    // Estilo para el item activo en el desplegable
+    .navbar__dropdown-item--active {
+      background-color: rgba(243, 156, 18, 0.1) !important;
+      color: var(--primary-color, #f39c12) !important;
+      font-weight: 600;
     }
   }
-
-  #{&}__user-profile {
-    img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 2px solid #555;
-    }
-  }
-}
-
-// --- ESTILOS PARA EL MENÚ DESPLEGABLE DE MATERIAL ---
-// Usamos ::ng-deep para asegurarnos de que los estilos se apliquen
-// al panel del menú, que se renderiza fuera del componente.
-::ng-deep .navbar__dropdown-menu {
-  .mat-mdc-menu-panel {
-    background-color: #2b2b2b !important;
-    border: 1px solid #444;
-  }
-
-  .mat-mdc-menu-item {
-    color: var(--text-secundary-color, #a0a0a0) !important;
-
-    &:hover,
-    &:focus {
-      background-color: #3c3c3c !important;
-      color: var(--text-color, #f0f0f0) !important;
-    }
-  }
-
-  // Estilo para el item activo en el desplegable
-  .navbar__dropdown-item--active {
-    background-color: rgba(243, 156, 18, 0.1) !important;
-    color: var(--primary-color, #f39c12) !important;
-    font-weight: 600;
-  }
-}
