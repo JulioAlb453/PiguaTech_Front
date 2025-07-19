@@ -1,3 +1,4 @@
+// Variables para colores, fuentes, etc. (se mantienen igual)
 :host {
   display: block;
   background-color: #121212;
@@ -9,20 +10,20 @@
 .dashboard {
   display: flex;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1700px;
   min-height: 100vh;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 2rem 1.5rem; 
   box-sizing: border-box;
-
-  @media (min-width: 768px) {
-    padding: 4rem 2.5rem;
+  @media (min-width: 1024px) {
+    padding: 3rem 2.5rem;
   }
 
   &__content {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start; 
+    gap: 2.5rem;
     flex-grow: 1;
     width: 100%;
   }
@@ -31,6 +32,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    gap: 1.5rem; 
   }
   
   &__header {
@@ -38,15 +40,18 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin-bottom: 2.5rem;
   }
   
   &__title {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 600;
     margin: 0;
 
     @media (min-width: 768px) {
+      font-size: 2rem;
+    }
+
+    @media (min-width: 1024px) {
       font-size: 2.5rem;
     }
   }
@@ -62,6 +67,7 @@
     cursor: pointer;
     border: none;
     padding: 0;
+    flex-shrink: 0; 
 
     svg {
       color: #e0e0e0;
@@ -74,7 +80,6 @@
     background-color: #2a2a2a;
     border-radius: 12px;
     padding: 5px;
-    margin-bottom: 2.5rem;
     gap: 5px;
 
     @media (min-width: 768px) {
@@ -88,12 +93,18 @@
     border: none;
     background-color: transparent;
     color: #a0a0a0;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
+    padding: 0.6rem 0.5rem;
+    font-size: 0.8rem; 
     font-weight: 500;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
+    white-space: nowrap; 
+
+    @media (min-width: 768px) {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+    }
 
     &--active {
       background-color: #f39c12;
@@ -103,32 +114,31 @@
   }
   
   &__trend {
-    margin-bottom: 1rem;
     width: 100%;
   }
 
   &__trend-title {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #a0a0a0;
-    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #e0e0e0;
+    margin: 0 0 1rem 0;
   }
   
   &__trend-main {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.5rem;
+    gap: 1rem;
 
     @media (min-width: 768px) {
       flex-direction: row;
       align-items: baseline;
-      gap: 1rem;
+      gap: 1.5rem;
     }
   }
 
   &__trend-value {
-    font-size: 3rem;
+    font-size: 2.5rem; 
     font-weight: 700;
     line-height: 1;
     margin: 0;
@@ -138,19 +148,42 @@
     }
   }
 
-  &__trend-period {
+  &__trend-summary {
+    display: flex;
+    gap: 1.5rem;
+  }
+  
+  &__summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  &__summary-label {
+    font-size: 0.8rem;
     color: #a0a0a0;
     font-weight: 500;
-    margin: 0;
+    margin-bottom: 0.25rem;
+    
+    @media (min-width: 768px) {
+      font-size: 0.9rem;
+    }
+    
+    &--limit-high { color: #F94144; }
+    &--limit-low { color: #577399; }
   }
-
-  &__trend-change--positive {
-    color: #2ecc71;
+  
+  &__summary-value {
+    font-size: 1rem;
     font-weight: 600;
+    color: #e0e0e0;
+
+    @media (min-width: 768px) {
+      font-size: 1.2rem;
+    }
   }
 
   &__chart {
-    margin-bottom: 2rem;
     width: 100%;
   }
 
@@ -159,9 +192,13 @@
   }
   
   &__alerts-title {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 600;
     margin: 0 0 1.5rem 0;
+
+    @media (min-width: 768px) {
+      font-size: 1.5rem;
+    }
   }
 
   &__alert-control {
@@ -173,19 +210,20 @@
     @media (min-width: 768px) {
       flex-direction: row;
       align-items: center;
-      gap: 1.5rem;
     }
   }
 
   &__alert-label {
     font-size: 1rem;
     color: #a0a0a0;
+    white-space: nowrap;
   }
 
   &__slider {
     height: 8px;
     background-color: #2a2a2a;
     border-radius: 10px;
+    width: 100%;
 
     @media (min-width: 768px) {
       flex-grow: 1;
@@ -204,10 +242,23 @@
     cursor: pointer;
     transition: transform 0.2s ease;
     width: 100%;
-
+    
     @media (min-width: 768px) {
-      width: auto;
+      width: auto; 
       padding: 0.8rem 1.8rem;
+    }
+  }
+}
+
+:host ::ng-deep {
+  .apexcharts-tooltip.apexcharts-theme-dark {
+    background: #1E1E1E;
+    color: #FFFFFF;
+    border: 1px solid #333333;
+
+    .apexcharts-tooltip-title {
+      background: #2A2A2A;
+      border-bottom: 1px solid #333333;
     }
   }
 }
