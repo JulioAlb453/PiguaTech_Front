@@ -1,13 +1,29 @@
 // Importaciones de Angular
-import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common'; // <-- IMPORTANTE: Necesario para *ngIf, etc. en componentes standalone
 import { Subscription } from 'rxjs';
 
 // Importaciones de la librería de gráficas
 import {
-  ApexAxisChartSeries, ApexChart, ApexXAxis, ApexYAxis,
-  ApexStroke, ApexGrid, ApexDataLabels, ChartComponent, NgApexchartsModule // <-- IMPORTANTE: Se importa el módulo del gráfico
-} from "ng-apexcharts";
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexXAxis,
+  ApexYAxis,
+  ApexStroke,
+  ApexGrid,
+  ApexDataLabels,
+  ApexLegend,
+  ApexTooltip,
+  ChartComponent,
+  NgApexchartsModule,
+} from 'ng-apexcharts';
 
 // Importa aquí tus servicios y modelos (descomenta cuando los tengas)
 // import { GetTemperatureUseCaseService } from '../../temperature/application/usesCases/get-temperature-use-case.service';
@@ -22,36 +38,40 @@ export type ChartOptions = {
   stroke: ApexStroke;
   grid: ApexGrid;
   dataLabels: ApexDataLabels;
+  legend: ApexLegend;
+  colors: string[];
+  tooltip: ApexTooltip;
 };
 
 @Component({
   selector: 'app-temperature-dashboard',
-  standalone: true,  
-  imports: [
-    CommonModule,       
-    NgApexchartsModule   
-  ],
+  standalone: true,
+  imports: [CommonModule, NgApexchartsModule],
   templateUrl: './temperature-dashboard.component.html',
-  styleUrls: ['./temperature-dashboard.component.css'],
+  styleUrls: ['./temperature-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  // providers: [GetTemperatureUseCaseService, ... ] 
+  // providers: [GetTemperatureUseCaseService, ... ]
 })
 export class TemperatureDashboardComponent implements OnInit, OnDestroy {
-
-  @ViewChild("chart") chart!: ChartComponent;
+  @ViewChild('chart') chart!: ChartComponent;
   public chartOptions!: ChartOptions;
 
   private dataSubscription!: Subscription;
   private readonly MAX_DATA_POINTS = 20;
 
+  // Datos para mostrar en la UI
+  public currentTemperature: number = 18.5;
+  public averageHigh: number = 29.8;
+  public averageLow: number = 7.3;
+
   constructor(
-    // private readonly getTemperatureUseCase: GetTemperatureUseCaseService, 
+    // private readonly getTemperatureUseCase: GetTemperatureUseCaseService,
     private readonly cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.initializeChartWithOptions();
-    // this.subscribeToRealtimeData(); 
+    // this.subscribeToRealtimeData();
   }
 
   ngOnDestroy(): void {
@@ -61,53 +81,124 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
   }
 
   private initializeChartWithOptions(): void {
-    this.chartOptions = {
-      series: [{
-        name: 'Temperatura',
-        data: []
-      }],
+    // --- DATOS DE EJEMPLO PARA LAS TRES SERIES ---
+    const categories = [
+      'Ene',
+      'Feb',
+      'Mar',
+      'Abr',
+      'May',
+      'Jun',
+      'Jul',
+      'Ago',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dic',
+    ];
+
+    const tempDataMaxLimit = [30, 30, 31, 31, 32, 32, 33, 33, 32, 31, 30, 30];
+    const tempDataMinLimit = [10, 10, 11, 11, 12, 12, 13, 13, 12, 11, 10, 10];
+
+    const tempActualData = tempDataMinLimit.map((min, index) => {
+      const max = tempDataMaxLimit[index];
+      return parseFloat((min + Math.random() * (max - min)).toFixed(1));
+    });
+
+   this.chartOptions = {
+      series: [
+        { name: 'Límite Máximo', data: tempDataMaxLimit },
+        { name: 'Temperatura Actual', data: tempActualData },
+        { name: 'Límite Mínimo', data: tempDataMinLimit }
+      ],
       chart: {
-        height: 250,
+        height: 320,
         type: 'line',
-        background: 'transparent',
-        animations: {
-          enabled: true,
-          dynamicAnimation: { speed: 1000 }
-        },
+        background: '#1a1a1a', // Fondo oscuro
+        foreColor: '#ffffff', // Color de texto blanco
         toolbar: { show: false },
-        zoom: { enabled: false }
+        zoom: { enabled: false },
+        dropShadow: {
+          enabled: true,
+          color: '#000000',
+          top: 10,
+          left: 7,
+          blur: 10,
+          opacity: 0.2
+        }
       },
+      colors: ["#FF4560", "#00E396", "#775DD0"], 
       stroke: {
         curve: "smooth",
-        width: 3.5,
-        colors: ["#e0e0e0"]
+        width: [2.5, 4, 2.5],
+        dashArray: [5, 0, 5]
       },
       dataLabels: {
         enabled: false
       },
       grid: {
-        show: false
+        borderColor: '#333333', // Líneas de grid más suaves
+        strokeDashArray: 3,
+        yaxis: { 
+          lines: { 
+            show: true 
+          } 
+        },
+        xaxis: { 
+          lines: { 
+            show: false 
+          } 
+        }
       },
       xaxis: {
-        type: 'category',
-        range: this.MAX_DATA_POINTS,
-        labels: {
-          style: {
-            colors: '#a0a0a0',
-            fontSize: "14px",
-            fontWeight: 500
-          }
+        categories: categories,
+        labels: { 
+          style: { 
+            colors: '#ffffff', // Texto blanco
+            fontSize: "14px" 
+          } 
         },
-        axisBorder: { show: false },
-        axisTicks: { show: false }
+        axisBorder: { 
+          show: false 
+        },
+        axisTicks: { 
+          show: false 
+        }
       },
       yaxis: {
-        show: false
+        labels: {
+          style: { 
+            colors: '#ffffff', // Texto blanco
+            fontSize: '14px' 
+          },
+          formatter: (val) => `${val.toFixed(0)}°C`
+        }
+      },
+      legend: {
+        show: true,
+        position: 'top',
+        horizontalAlign: 'right',
+        fontSize: '14px',
+        labels: { 
+          colors: '#ffffff' // Texto blanco
+        },
+        markers: {
+          strokeWidth: 4
+        }
+      },
+      tooltip: {
+        enabled: true,
+        shared: true,
+        theme: 'dark', // Tooltip oscuro
+        style: {
+          fontSize: '14px'
+        }
       }
     };
   }
+}
 
-  /*
+/*
   private subscribeToRealtimeData(): void {
     this.dataSubscription = this.getTemperatureUseCase.executeRealTime()
       .subscribe({
@@ -136,4 +227,3 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
   */
-}

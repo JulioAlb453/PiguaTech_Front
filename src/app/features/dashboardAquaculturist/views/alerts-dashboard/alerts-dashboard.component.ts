@@ -13,9 +13,9 @@ export interface Alert {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './alerts-dashboard.component.html',
-  styleUrl: './alerts-dashboard.component.css'
+  styleUrl: './alerts-dashboard.component.scss'
 })
-export class AlertsDashboardComponent {
+export class   AlertsDashboardComponent {
 
   alerts: Alert[] = [
     {
