@@ -1,11 +1,18 @@
-import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { TimeRange } from '../models/time-range.enum';
+import { TemperatureData } from '../models/temperature-data.model'; // Asegúrate de que este modelo exista
 
-@Injectable({
-  providedIn: 'root'
-})
-export class IMonitoringService {
+// Suponiendo que tu modelo de datos históricos se ve así:
+export interface HistoricalTemperatureData {
+  series: any[]; // O un tipo más específico
+  categories: string[];
+}
 
-  //interfaz para los casos de uso
-  // Esta interfaz define los métodos que deben implementarse para el monitoreo de datos
-  constructor() { }
+export abstract class IMonitoringService {
+  // Este método ya lo tienes para datos históricos
+  abstract getData(range: TimeRange): Observable<HistoricalTemperatureData>;
+
+  // AÑADIMOS ESTE MÉTODO PARA TIEMPO REAL
+  // Devuelve un flujo continuo de puntos de datos de temperatura.
+  abstract getRealTimeData(): Observable<TemperatureData>; 
 }
