@@ -15,7 +15,7 @@ export interface Alert {
   templateUrl: './alerts-dashboard.component.html',
   styleUrl: './alerts-dashboard.component.css'
 })
-export class AlertsDashboardComponent {
+export class   AlertsDashboardComponent {
 
   alerts: Alert[] = [
     {
