@@ -34,6 +34,7 @@ export class NavbarComponent implements OnInit {
   @Input() userRole: UserRole = 'acuitultor';
 
   showNavbar = true;
+  public isMobileMenuOpen = false;
   constructor(private navbarService: NavbarService) {}
 
   ngOnInit(): void {
@@ -72,5 +73,12 @@ export class NavbarComponent implements OnInit {
     return this.userRole === 'supervisor'
       ? this.supervisorLinks
       : this.acuicultorLinks;
+  }
+
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+  isMobile(): boolean{
+    return window.innerHeight < 992
   }
 }
