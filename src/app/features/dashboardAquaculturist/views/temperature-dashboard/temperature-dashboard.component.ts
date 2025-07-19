@@ -32,7 +32,7 @@ export type ChartOptions = {
     NgApexchartsModule   
   ],
   templateUrl: './temperature-dashboard.component.html',
-  styleUrls: ['./temperature-dashboard.component.css'],
+  styleUrls: ['./temperature-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   // providers: [GetTemperatureUseCaseService, ... ] 
 })
