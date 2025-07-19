@@ -61,12 +61,12 @@ export class NavbarComponent implements OnInit {
       label: 'Graficas',
       path: '#',
       children: [
-        { label: 'Temperatura', path: '/dashboard/temperature' },
-        { label: 'crecimiento', path: '/dasboard/grow' },
-        { label: 'Habitat (Turbidez/volumen)', path: '/dashboard/habitat' },
+        { label: 'Temperatura', path: '/dashboardAquaculturist/temperature' },
+        { label: 'crecimiento', path: '/dashboardAquaculturist/growth' },
+        { label: 'Habitat (Turbidez/volumen)', path: '/dashboardAquaculturist/waterMonitoring' },
       ],
     },
-    { label: 'Alert', path: '/alerts' },
+    { label: 'Alert', path: '/dashboardAquaculturist/alertsDashboard' },
   ];
 
   get navLinks(): NavLink[] {
