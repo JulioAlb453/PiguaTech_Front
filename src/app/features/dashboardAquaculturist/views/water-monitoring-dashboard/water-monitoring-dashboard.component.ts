@@ -71,7 +71,7 @@ export class WaterMonitoringDashboardComponent implements OnInit {
       chart: {
         height: 340,
         type: 'area',
-        foreColor: '#f39c12',
+        foreColor: '#ffffffff',
 
         toolbar: { show: false },
         zoom: { enabled: false },
@@ -178,7 +178,7 @@ export class WaterMonitoringDashboardComponent implements OnInit {
       },
       plotOptions: {
         bar: {
-          columnWidth: '60%',
+          columnWidth: '80%',
           borderRadius: 4,
           colors: {
             ranges: [

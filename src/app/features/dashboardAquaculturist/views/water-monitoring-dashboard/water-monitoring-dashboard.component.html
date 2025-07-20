@@ -51,20 +51,21 @@
           [dataLabels]="volumeChartOptions.dataLabels!"
           [tooltip]="volumeChartOptions.tooltip!"
           [xaxis]="volumeChartOptions.xaxis!"
-        ></apx-chart>
-      </div>
-    </section>
-
-  </div>
-
-  <!-- Eje X compartido visualmente -->
-  <div class="habitat-page__shared-xaxis">
-    <div class="habitat-page__chart-xaxis">
-      <span *ngFor="let day of turbidityChartOptions.xaxis?.categories">{{ day }}</span>
+          ></apx-chart>
+          <div class="habitat-page__chart-xaxis">
+          </div>
+        </div>
+      </section>
+      
     </div>
-    <div class="habitat-page__chart-xaxis">
-      <span *ngFor="let day of volumeChartOptions.xaxis?.categories">{{ day }}</span>
+    
+    <!-- Eje X compartido visualmente -->
+    <div class="habitat-page__shared-xaxis">
+      <div class="habitat-page__chart-xaxis">
+        <span *ngFor="let day of turbidityChartOptions.xaxis?.categories">{{ day }}</span>
+        <span *ngFor="let day of volumeChartOptions.xaxis?.categories">{{ day }}</span>
     </div>
+    
   </div>
 
   <footer class="habitat-page__actions">
