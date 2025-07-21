@@ -31,7 +31,7 @@ interface NavLink {
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent implements OnInit {
-  @Input() userRole: UserRole = 'acuitultor';
+  @Input() userRole: UserRole = 'supervisor';
 
   showNavbar = true;
   public isMobileMenuOpen = false;
@@ -48,8 +48,8 @@ export class NavbarComponent implements OnInit {
       label: 'Resumen',
       path: '#',
       children: [
-        { label: 'Estado del habitat', path: '/dasboard/habitat-status' },
-        { label: 'Vista principal', path: '/dashboard/supervisor' },
+        { label: 'Estado del habitat', path: '/dashboardSupervisor/summary' },
+        { label: 'Vista principal', path: '/dashboardSupervisor/home' },
       ],
     },
     { label: 'Reportes', path: '/reports' },
