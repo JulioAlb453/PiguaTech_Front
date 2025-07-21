@@ -31,7 +31,7 @@ interface NavLink {
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent implements OnInit {
-  @Input() userRole: UserRole = 'supervisor';
+  @Input() userRole: UserRole = 'acuitultor';
 
   showNavbar = true;
   public isMobileMenuOpen = false;
