@@ -18,7 +18,6 @@
   --transition-curve: cubic-bezier(0.4, 0, 0.2, 1);
 
   display: block;
-  padding: 2rem 4rem;
   background: linear-gradient(135deg, var(--background-color) 0%, #0f0f0f 100%);
   color: var(--text-color);
   font-family: "Montserrat", sans-serif;
@@ -86,6 +85,10 @@
   border-color: rgba($color, 0.5);
 }
 
+.report-generator{
+  margin-top: 2rem;
+}
+
 .report-generator__scrollable {
   height: 100vh;
   width: 100%;
@@ -93,8 +96,9 @@
   overflow-x: hidden;
   padding: 2rem 4rem;
   box-sizing: border-box;
-  max-width: 1600px;
-  margin: 0 auto;
+  max-width: 1800px;
+  margin: 1 auto;
+
 
   scrollbar-width: thin;
   scrollbar-color: var(--primary-color) var(--surface-color);

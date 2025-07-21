@@ -9,7 +9,7 @@ $status-alerta: #e74c3c;
   background-color: #1a1a1a;
   border-bottom: 1px solid #333;
   position: relative;
-  z-index: 1001; 
+  z-index: 100; 
 }
 
 .navbar {
@@ -17,8 +17,9 @@ $status-alerta: #e74c3c;
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 2rem;
-  height: 64px;
+  height: 40px;
   position: relative;
+  
 
   #{&}__brand {
     display: flex;
