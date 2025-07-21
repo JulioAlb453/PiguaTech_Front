@@ -1,32 +1,26 @@
-// Importa las funciones de tema de Material si necesitas acceder a los colores del tema
 @use "@angular/material" as mat;
 
-// --- VARIABLES ---
-// Variables de estado para los colores de las tarjetas que podrías reutilizar
 $status-optimo: #27ae60;
 $status-atencion: #f39c12;
 $status-alerta: #e74c3c;
 
-// --- ESTILO DEL CONTENEDOR DEL COMPONENTE ---
 :host {
   display: block;
   background-color: #1a1a1a;
   border-bottom: 1px solid #333;
-  // Position relative para que el menú móvil se ancle correctamente si se usa position: absolute
   position: relative;
-  z-index: 1001; // Asegura que el navbar esté por encima de otro contenido
+  z-index: 100; 
 }
 
-// --- ESTILOS PRINCIPALES DEL NAVBAR ---
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 2rem;
-  height: 64px;
-  position: relative; // Para el z-index del menú móvil
+  height: 40px;
+  position: relative;
+  
 
-  // --- Sección de la marca (logo y nombre) ---
   #{&}__brand {
     display: flex;
     align-items: center;
@@ -46,13 +40,11 @@ $status-alerta: #e74c3c;
     height: 32px;
   }
 
-  // --- Sección de enlaces de navegación ---
   #{&}__links {
     display: flex;
     gap: 1.5rem;
     align-items: center;
 
-    // Modificador para la versión de escritorio
     &--desktop {
       display: flex;
     }
@@ -79,7 +71,6 @@ $status-alerta: #e74c3c;
       border-bottom-color: var(--primary-color, #f39c12);
     }
 
-    // Estilos para que los botones de menú se vean como enlaces
     &--menu {
       background: none;
       border: none;
@@ -88,7 +79,6 @@ $status-alerta: #e74c3c;
     }
   }
 
-  // --- Sección de acciones del lado derecho ---
   #{&}__actions {
     display: flex;
     align-items: center;
@@ -104,38 +94,36 @@ $status-alerta: #e74c3c;
     }
   }
 
-  // --- Botón de hamburguesa para móvil ---
   #{&}__hamburger {
-    display: none; // Oculto por defecto en escritorio
+    display: none;
     background: none;
     border: none;
     color: var(--text-color, #f0f0f0);
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 50%;
-    z-index: 1002; // Por encima del resto del navbar
+    z-index: 1002;
 
     &:hover {
       background-color: rgba(255, 255, 255, 0.1);
     }
   }
 
-  // --- Menú desplegable para MÓVIL ---
   #{&}__mobile-menu {
-    position: absolute; // Se posiciona relativo al :host
-    top: 64px; // Justo debajo del navbar
+    position: absolute;
+    top: 64px; 
     left: 0;
     right: 0;
     background-color: #1a1a1a;
     z-index: 1000;
     padding: 1rem 0;
-    transform: translateY(-120%); // Oculto fuera de la pantalla
+    transform: translateY(-120%);
     transition: transform 0.3s ease-in-out;
     border-bottom: 1px solid #333;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
     &--open {
-      transform: translateY(0); // Lo hace visible
+      transform: translateY(0); 
     }
   }
 
@@ -152,7 +140,7 @@ $status-alerta: #e74c3c;
     }
 
     &--child {
-      padding-left: 3rem; // Indentación para sub-items
+      padding-left: 3rem; 
       font-size: 1rem;
       color: #ccc;
     }
@@ -170,24 +158,21 @@ $status-alerta: #e74c3c;
   
 }
 
-// --- MEDIA QUERY PARA RESPONSIVIDAD ---
-// Breakpoint para tablets y móviles
 @media (max-width: 992px) {
   .navbar {
     #{&}__links--desktop {
-      display: none !important; // Ocultamos los enlaces de escritorio
+      display: none !important;
     }
 
     #{&}__hamburger {
-      display: flex; // Mostramos el botón de hamburguesa
+      display: flex; 
       align-items: center;
       justify-content: center;
     }
   }
 }
 
-// --- ESTILOS PARA EL MENÚ DESPLEGABLE DE ANGULAR MATERIAL (PARA ESCRITORIO) ---
-// Usamos ::ng-deep para aplicar estilos a los elementos que se renderizan fuera del componente.
+
 ::ng-deep .navbar__dropdown-menu {
   .mat-mdc-menu-panel {
     background-color: #2b2b2b !important;
@@ -213,10 +198,9 @@ $status-alerta: #e74c3c;
   @media (max-width: 767px) {
     .navbar {
       #{&}__links--desktop {
-        display: none; // Asegúrate de que los enlaces de escritorio estén ocultos
+        display: none;
       }
 
-      // No mostramos el botón de hamburguesa en móviles
       #{&}__hamburger {
         display: none;
       }

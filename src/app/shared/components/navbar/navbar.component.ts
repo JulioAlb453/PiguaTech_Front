@@ -48,12 +48,11 @@ export class NavbarComponent implements OnInit {
       label: 'Resumen',
       path: '#',
       children: [
-        { label: 'Estado del habitat', path: '/dasboard/habitat-status' },
-        { label: 'Vista principal', path: '/dashboard/supervisor' },
+        { label: 'Estado del habitat', path: '/dashboardSupervisor/summary' },
+        { label: 'Vista principal', path: '/dashboardSupervisor/home' },
       ],
     },
-    { label: 'Reportes', path: '/reports' },
-    { label: 'Alertas', path: '/alerts' },
+    { label: 'Reportes', path: '/dashboardSupervisor/reports' },
   ];
 
   private acuicultorLinks: NavLink[] = [
