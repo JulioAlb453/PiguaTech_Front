@@ -52,8 +52,7 @@ export class NavbarComponent implements OnInit {
         { label: 'Vista principal', path: '/dashboardSupervisor/home' },
       ],
     },
-    { label: 'Reportes', path: '/reports' },
-    { label: 'Alertas', path: '/alerts' },
+    { label: 'Reportes', path: '/dashboardSupervisor/reports' },
   ];
 
   private acuicultorLinks: NavLink[] = [
