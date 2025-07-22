@@ -1,0 +1,99 @@
+<section class="register">
+  <header class="register__header">
+    <h1 class="register__title">Registro de Usuario</h1>
+    <p class="register__subtitle">Monitoreo de Piguas (Camarones)</p>
+  </header>
+
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register__form form">
+    <div class="form__field">
+      <label for="names" class="form__label">Nombre Completo</label>
+      <input
+        type="text"
+        id="names"
+        formControlName="names"
+        class="form__input"
+        placeholder="Ingrese su nombre completo"
+        [ngClass]="{ 'form__input--error': registerForm.get('names')?.invalid && registerForm.get('names')?.touched }"
+      >
+      <div *ngIf="registerForm.get('names')?.invalid && registerForm.get('names')?.touched" class="form__error">
+        <span *ngIf="registerForm.get('names')?.errors?.['required']">El nombre es requerido</span>
+        <span *ngIf="registerForm.get('names')?.errors?.['minlength']">Mínimo 3 caracteres</span>
+      </div>
+    </div>
+
+    <div class="form__field">
+      <label for="email" class="form__label">Correo Electrónico</label>
+      <input
+        type="email"
+        id="email"
+        formControlName="email"
+        class="form__input"
+        placeholder="Ingrese su correo electrónico"
+        [ngClass]="{ 'form__input--error': registerForm.get('email')?.invalid && registerForm.get('email')?.touched }"
+      >
+      <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="form__error">
+        <span *ngIf="registerForm.get('email')?.errors?.['required']">El email es requerido</span>
+        <span *ngIf="registerForm.get('email')?.errors?.['email']">Ingrese un email válido</span>
+      </div>
+    </div>
+
+    <div class="form__field">
+      <label for="password" class="form__label">Contraseña</label>
+      <input
+        type="password"
+        id="password"
+        formControlName="password"
+        class="form__input"
+        placeholder="Ingrese su contraseña"
+        [ngClass]="{ 'form__input--error': registerForm.get('password')?.invalid && registerForm.get('password')?.touched }"
+      >
+      <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="form__error">
+        <span *ngIf="registerForm.get('password')?.errors?.['required']">La contraseña es requerida</span>
+        <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Mínimo 8 caracteres</span>
+      </div>
+    </div>
+
+    <div class="form__field">
+      <label for="confirmPassword" class="form__label">Confirmar Contraseña</label>
+      <input
+        type="password"
+        id="confirmPassword"
+        formControlName="confirmPassword"
+        class="form__input"
+        placeholder="Confirme su contraseña"
+        [ngClass]="{ 'form__input--error': registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched }"
+      >
+      <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="form__error">
+        <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Confirme su contraseña</span>
+      </div>
+      <div *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched" class="form__error">
+        Las contraseñas no coinciden
+      </div>
+    </div>
+
+    <div class="form__field">
+      <label for="rol" class="form__label">Rol de Usuario</label>
+      <select
+        id="rol"
+        formControlName="rol"
+        class="form__select"
+      >
+        <option [value]="UserRole.Acuicultor">Acuicultor</option>
+        <option [value]="UserRole.Supervisor">Supervisor</option>
+      </select>
+    </div>
+
+    <div *ngIf="errorMessage" class="form__serverError">
+      {{ errorMessage }}
+    </div>
+
+    <button type="submit" class="form__submit" [disabled]="isLoading">
+      <span *ngIf="!isLoading">Registrarse</span>
+      <span *ngIf="isLoading">Procesando...</span>
+    </button>
+
+    <div class="form__footer">
+      <p>¿Ya tienes una cuenta? <a routerLink="/auth/login" class="form__link">Inicia sesión</a></p>
+    </div>
+  </form>
+</section>

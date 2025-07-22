@@ -1,17 +1,28 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LoginComponent } from './views/login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { provideHttpClient } from '@angular/common/http'; // Nueva forma en Angular 19
+
+import { LoginComponent } from './views/login/login.component';
+import { RegisterComponent } from './views/register/register.component';
+import { RegisterUseCaseService } from './application/use-case/register.use-case.service';
+import { AuthAPIService } from './infraestructure/authRepository/auth-api.service';
 
 @NgModule({
   declarations: [
     LoginComponent,
+    RegisterComponent
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule
+  ],
+  providers: [
+    provideHttpClient(), 
+    
+    AuthAPIService,
+    RegisterUseCaseService,
+
   ]
 })
-
-// Este módulo de Angular agrupa todos los componentes, servicios y otros módulos relacionados con la autenticación.
-export class AuthModule { }
+export class AuthModule {}

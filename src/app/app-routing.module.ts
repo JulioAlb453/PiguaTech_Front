@@ -4,6 +4,7 @@ import { LoginComponent } from './features/auth/views/login/login.component';
 import { ShelversOverviewFatherComponentComponent } from './shared/components/shelvers-overview-father-component/shelvers-overview-father-component.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { DashboardSupervisorModule } from './features/dashboardSupervisor/dashboard-supervisor.module';
+import { RegisterComponent } from './features/auth/views/register/register.component';
 
 const routes: Routes = [
   {
@@ -11,6 +12,7 @@ const routes: Routes = [
     component: ShelversOverviewFatherComponentComponent,
   },
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent},
 
   {
     path: 'dashboardAquaculturist',
