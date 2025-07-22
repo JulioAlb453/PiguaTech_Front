@@ -1,0 +1,124 @@
+// Variables
+$primaryColor: #2c3e50;
+$secondaryColor: #3498db;
+$errorColor: #e74c3c;
+$successColor: #2ecc71;
+$lightGray: #ecf0f1;
+$darkGray: #bdc3c7;
+
+.register {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+  &__header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  &__title {
+    color: $primaryColor;
+    margin-bottom: 0.5rem;
+  }
+
+  &__subtitle {
+    color: $darkGray;
+    font-size: 1rem;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    font-weight: 600;
+    color: $primaryColor;
+  }
+
+  &__input, &__select {
+    padding: 0.75rem;
+    border: 1px solid $darkGray;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $secondaryColor;
+    }
+
+    &--error {
+      border-color: $errorColor;
+    }
+  }
+
+  &__error {
+    color: $errorColor;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  &__serverError {
+    padding: 0.75rem;
+    background-color: rgba($errorColor, 0.1);
+    color: $errorColor;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.875rem;
+  }
+
+  &__submit {
+    background-color: $secondaryColor;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: darken($secondaryColor, 10%);
+    }
+
+    &:disabled {
+      background-color: $darkGray;
+      cursor: not-allowed;
+    }
+  }
+
+  &__footer {
+    text-align: center;
+    font-size: 0.875rem;
+    color: $darkGray;
+  }
+
+  &__link {
+    color: $secondaryColor;
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .register {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+}

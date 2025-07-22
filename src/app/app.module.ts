@@ -15,7 +15,7 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
     BrowserModule,
     AppRoutingModule,
     AuthModule,
-    NavbarComponent
+    NavbarComponent,
   ],
   providers: [
     provideClientHydration(withEventReplay())
