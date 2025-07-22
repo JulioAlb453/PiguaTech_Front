@@ -6,7 +6,7 @@ import { provideHttpClient } from '@angular/common/http'; // Nueva forma en Angu
 import { LoginComponent } from './views/login/login.component';
 import { RegisterComponent } from './views/register/register.component';
 import { RegisterUseCaseService } from './application/use-case/register.use-case.service';
-import { AuthAPIService } from './infraestructure/authRepository/auth-api.service';
+import { AuthAPIService } from './infraestructure/authAPI.service';
 
 @NgModule({
   declarations: [

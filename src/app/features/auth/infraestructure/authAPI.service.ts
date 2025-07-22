@@ -10,9 +10,11 @@ import { CredentialModel } from '../domain/models/credential.model';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthRepositoryService implements IAuthRepository {
+export class AuthAPIService implements IAuthRepository {
+
+  //basicamente este sera nuestro api service
   private readonly USERS_KEY = 'piguatech_users';
-  private readonly API_URL = 'https://tu-api.com/auth'; // Cambiar por tu URL real
+  private readonly API_URL = 'https://tu-api.com/auth'; 
 
   constructor(private http: HttpClient) {}
 
