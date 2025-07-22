@@ -12,7 +12,7 @@
     <div class="loginPage__formContainer">
         <h1 class="loginPage__title">Iniciar sesión</h1>
 
-        <form class="loginPage__form" [formGroup]="loginForm"> 
+<form class="loginPage__form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <div class="loginPage__formGroup">
             <label for="email" class="loginPage__label">Correo electrónico</label>
             <input 
