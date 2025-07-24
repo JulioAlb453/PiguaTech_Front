@@ -8,6 +8,6 @@ export class DataWaterTurbidityReposotoryService {
   constructor(private http: HttpClient) {}
 
   getTurbidityTrend(): Observable<WaterTurbidity> {
-    return this.http.get<WaterTurbidity>('http://localhost:8000/api/readings/turbidity');
+    return this.http.get<WaterTurbidity>('/api/readings/turbidity');
   }
 }
