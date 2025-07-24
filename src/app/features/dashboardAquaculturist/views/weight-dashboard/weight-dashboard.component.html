@@ -104,23 +104,22 @@
                     </p>
                   </section>
 
-                  <!-- Panel de la Gráfica (Derecha) -->
-                  <section class="weight-page__chart-panel">
-                    @if (chartOptions?.series) {
-                      <apx-chart
-                        #chart
-                        [series]="chartOptions.series!"
-                        [chart]="chartOptions.chart!"
-                        [xaxis]="chartOptions.xaxis!"
-                        [yaxis]="chartOptions.yaxis!"
-                        [plotOptions]="chartOptions.plotOptions!"
-                        [dataLabels]="chartOptions.dataLabels!"
-                        [title]="chartOptions.title!"
-                        [theme]="chartOptions.theme!"
-                      ></apx-chart>
-                    }
-                  </section>
-                </div>
+        <!-- Panel de la Gráfica (Derecha) -->
+        <section class="weight-page__chart-panel">
+      <apx-chart
+        #chart
+        *ngIf="chartOptions?.series"
+        [series]="chartOptions.series!"
+        [chart]="chartOptions.chart!"
+        [xaxis]="chartOptions.xaxis!"
+        [yaxis]="chartOptions.yaxis!"
+        [dataLabels]="chartOptions.dataLabels!"
+        [title]="chartOptions.title!"
+        [theme]="chartOptions.theme!"
+      ></apx-chart>
+
+        </section>
+      </div>
 
                 <!-- Footer con las Métricas Clave -->
                 <footer class="weight-page__metrics">
