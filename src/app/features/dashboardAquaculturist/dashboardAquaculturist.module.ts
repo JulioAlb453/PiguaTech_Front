@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 import { DashboardAquaculturistRoutingModule } from './dashboardAquaculturist-routing.module';
 import { TemperatureDashboardComponent } from './views/temperature-dashboard/temperature-dashboard.component';
@@ -19,9 +20,10 @@ import { AlertsDashboardComponent } from './views/alerts-dashboard/alerts-dashbo
   imports: [
     CommonModule,
     DashboardAquaculturistRoutingModule,
-    NgApexchartsModule,  
-    TemperatureDashboardComponent  ,
-    AlertsDashboardComponent
-  ]
+    NgApexchartsModule,
+    TemperatureDashboardComponent,
+    AlertsDashboardComponent,
+  ],
+ 
 })
-export class DashboardAquaculturistModule { }
+export class DashboardAquaculturistModule {}
