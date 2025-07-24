@@ -18,11 +18,9 @@ import { AuthAPIService } from './infraestructure/authAPI.service';
     ReactiveFormsModule
   ],
   providers: [
-    provideHttpClient(), 
-    
+    provideHttpClient(),
     AuthAPIService,
     RegisterUseCaseService,
-
   ]
 })
 export class AuthModule {}

@@ -12,8 +12,8 @@ import { AlertsDashboardComponent } from './views/alerts-dashboard/alerts-dashbo
 
 @NgModule({
   declarations: [
-    WeightDashboardComponent,
-    WaterMonitoringDashboardComponent,
+   // WeightDashboardComponent,
+   // WaterMonitoringDashboardComponent,
     GrowthMonitoringDashboardComponent,
   ],
   imports: [
