@@ -7,7 +7,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
 } from '@angular/core';
-import { CommonModule } from '@angular/common'; // <-- IMPORTANTE: Necesario para *ngIf, etc. en componentes standalone
+ // <-- IMPORTANTE: Necesario para *ngIf, etc. en componentes standalone
 import { Subscription } from 'rxjs';
 
 // Importaciones de la librería de gráficas
@@ -46,7 +46,7 @@ export type ChartOptions = {
 @Component({
   selector: 'app-temperature-dashboard',
   standalone: true,
-  imports: [CommonModule, NgApexchartsModule],
+  imports: [NgApexchartsModule],
   templateUrl: './temperature-dashboard.component.html',
   styleUrls: ['./temperature-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

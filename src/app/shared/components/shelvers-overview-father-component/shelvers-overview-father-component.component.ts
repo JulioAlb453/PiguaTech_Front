@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ShelfStatus, ShelversOverviewComponent } from '../shelvers-overview/shelvers-overview.component';
 import { Shelf } from '../shelvers-overview/shelvers-overview.component';
 
 @Component({
   selector: 'app-shelvers-overview-father-component',
-  imports: [CommonModule, ShelversOverviewComponent],
+  imports: [ShelversOverviewComponent],
   templateUrl: './shelvers-overview-father-component.component.html',
   styleUrl: './shelvers-overview-father-component.component.scss',
 })

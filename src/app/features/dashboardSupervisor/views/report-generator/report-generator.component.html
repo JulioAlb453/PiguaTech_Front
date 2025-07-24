@@ -14,10 +14,10 @@
       <section class="report-generator__section">
         <h2 class="report-generator__section-title">1. Tipo de Informe</h2>
         <div class="report-generator__chip-group">
-          <button
-            *ngFor="let type of reportTypes"
-            type="button"
-            class="report-generator__chip"
+          @for (type of reportTypes; track type) {
+            <button
+              type="button"
+              class="report-generator__chip"
             [class.report-generator__chip--active]="
               reportForm.get('reportType')?.value === type
             "
@@ -30,13 +30,14 @@
             [class.report-generator__chip--growth-analysis]="
               type === ReportType.growthAnalysis
             "
-            (click)="selectReportType(type)"
-          >
-            <mat-icon class="report-generator__chip-icon">{{
-              getReportTypeIcon(type)
-            }}</mat-icon>
-            {{ type }}
-          </button>
+              (click)="selectReportType(type)"
+              >
+              <mat-icon class="report-generator__chip-icon">{{
+                getReportTypeIcon(type)
+              }}</mat-icon>
+              {{ type }}
+            </button>
+          }
         </div>
       </section>
 
@@ -59,35 +60,37 @@
       <section class="report-generator__section">
         <h2 class="report-generator__section-title">3. Formato de Descarga</h2>
         <div class="report-generator__chip-group">
-          <button
-            *ngFor="let format of downloadFormats"
-            type="button"
-            class="report-generator__chip"
+          @for (format of downloadFormats; track format) {
+            <button
+              type="button"
+              class="report-generator__chip"
             [class.report-generator__chip--active]="
               reportForm.get('downloadFormat')?.value === format
             "
-            [class.report-generator__chip--pdf]="format === ReportFormat.PDF"
-            [class.report-generator__chip--csv]="format === ReportFormat.CSV"
-            (click)="selectDownloadFormat(format)"
-          >
-            <mat-icon class="report-generator__chip-icon">{{
-              getFormatIcon(format)
-            }}</mat-icon>
-            {{ format }}
-          </button>
+              [class.report-generator__chip--pdf]="format === ReportFormat.PDF"
+              [class.report-generator__chip--csv]="format === ReportFormat.CSV"
+              (click)="selectDownloadFormat(format)"
+              >
+              <mat-icon class="report-generator__chip-icon">{{
+                getFormatIcon(format)
+              }}</mat-icon>
+              {{ format }}
+            </button>
+          }
         </div>
       </section>
 
       <!-- MENSAJE DE ERROR -->
-      <div
-        *ngIf="reportForm.invalid && reportForm.touched"
-        class="report-generator__error-message"
-      >
-        <p>
-          Por favor, completa todos los campos requeridos para generar el
-          informe.
-        </p>
-      </div>
+      @if (reportForm.invalid && reportForm.touched) {
+        <div
+          class="report-generator__error-message"
+          >
+          <p>
+            Por favor, completa todos los campos requeridos para generar el
+            informe.
+          </p>
+        </div>
+      }
     </form>
 
     <!-- SECCIÓN: INFORMES ANTERIORES -->
@@ -104,46 +107,47 @@
         </div>
 
         <!-- Filas de la tabla (generadas dinámicamente) -->
-        <div
-          *ngFor="let report of previousReports"
-          class="report-generator__table-row"
-        >
-          <div class="report-generator__table-cell" data-label="Tipo">
-            {{ report.type }}
-          </div>
-          <div class="report-generator__table-cell" data-label="Fechas">
-            {{ report.dateRange }}
-          </div>
-          <div class="report-generator__table-cell" data-label="Formato">
-            <span
-              class="report-generator__format-tag"
-              [ngClass]="'report-generator__format-tag--' + report.format"
-            >
-              {{ report.format }}
-            </span>
-          </div>
+        @for (report of previousReports; track report) {
           <div
-            class="report-generator__table-cell report-generator__table-actions"
-            data-label="Acciones"
-          >
-            <button
-              type="button"
-              class="report-generator__action-button"
-              (click)="downloadPrevious(report)"
-              matTooltip="Descargar informe"
+            class="report-generator__table-row"
             >
-              <mat-icon>download</mat-icon>
-            </button>
-            <button
-              type="button"
-              class="report-generator__action-button"
-              (click)="deleteReport(report)"
-              matTooltip="Eliminar informe"
-            >
-              <mat-icon>delete_outline</mat-icon>
-            </button>
+            <div class="report-generator__table-cell" data-label="Tipo">
+              {{ report.type }}
+            </div>
+            <div class="report-generator__table-cell" data-label="Fechas">
+              {{ report.dateRange }}
+            </div>
+            <div class="report-generator__table-cell" data-label="Formato">
+              <span
+                class="report-generator__format-tag"
+                [ngClass]="'report-generator__format-tag--' + report.format"
+                >
+                {{ report.format }}
+              </span>
+            </div>
+            <div
+              class="report-generator__table-cell report-generator__table-actions"
+              data-label="Acciones"
+              >
+              <button
+                type="button"
+                class="report-generator__action-button"
+                (click)="downloadPrevious(report)"
+                matTooltip="Descargar informe"
+                >
+                <mat-icon>download</mat-icon>
+              </button>
+              <button
+                type="button"
+                class="report-generator__action-button"
+                (click)="deleteReport(report)"
+                matTooltip="Eliminar informe"
+                >
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
           </div>
-        </div>
+        }
       </div>
     </section>
   </div>

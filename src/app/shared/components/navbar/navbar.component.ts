@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { MatMenuModule } from '@angular/material/menu';
@@ -19,13 +19,12 @@ interface NavLink {
 @Component({
   selector: 'app-navbar',
   imports: [
-    CommonModule,
     RouterLink,
     RouterLinkActive,
     MatButtonModule,
     MatIconModule,
-    MatMenuModule,
-  ],
+    MatMenuModule
+],
   standalone: true,
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',

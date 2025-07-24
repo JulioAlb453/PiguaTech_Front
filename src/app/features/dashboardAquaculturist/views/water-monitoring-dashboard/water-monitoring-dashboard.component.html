@@ -6,7 +6,7 @@
 
   <!-- Contenedor principal con dos columnas -->
   <div class="habitat-page__content-grid">
-    
+
     <!-- Columna 1: Turbidez -->
     <section class="habitat-page__metric-section">
       <div class="habitat-page__metric-card">
@@ -51,21 +51,25 @@
           [dataLabels]="volumeChartOptions.dataLabels!"
           [tooltip]="volumeChartOptions.tooltip!"
           [xaxis]="volumeChartOptions.xaxis!"
-          ></apx-chart>
-          <div class="habitat-page__chart-xaxis">
-          </div>
+        ></apx-chart>
+        <div class="habitat-page__chart-xaxis">
         </div>
-      </section>
-      
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Eje X compartido visualmente -->
+  <div class="habitat-page__shared-xaxis">
+    <div class="habitat-page__chart-xaxis">
+      @for (day of turbidityChartOptions.xaxis?.categories; track day) {
+        <span>{{ day }}</span>
+      }
+      @for (day of volumeChartOptions.xaxis?.categories; track day) {
+        <span>{{ day }}</span>
+      }
     </div>
-    
-    <!-- Eje X compartido visualmente -->
-    <div class="habitat-page__shared-xaxis">
-      <div class="habitat-page__chart-xaxis">
-        <span *ngFor="let day of turbidityChartOptions.xaxis?.categories">{{ day }}</span>
-        <span *ngFor="let day of volumeChartOptions.xaxis?.categories">{{ day }}</span>
-    </div>
-    
+
   </div>
 
   <footer class="habitat-page__actions">

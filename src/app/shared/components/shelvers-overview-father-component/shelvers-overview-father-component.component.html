@@ -1,12 +1,15 @@
 <div class="supervisor-dashboard-container">
-  <div *ngIf="isLoading" class="loading-indicator">
-    <p>Cargando datos de estantes...</p>
-  </div>
+  @if (isLoading) {
+    <div class="loading-indicator">
+      <p>Cargando datos de estantes...</p>
+    </div>
+  }
 
-  <app-shelvers-overview
-    *ngIf="!isLoading"
-    [title]="pageTitle"
-    [shelves]="dataShelves"
-  >
-  </app-shelvers-overview>
+  @if (!isLoading) {
+    <app-shelvers-overview
+      [title]="pageTitle"
+      [shelves]="dataShelves"
+      >
+    </app-shelvers-overview>
+  }
 </div>
