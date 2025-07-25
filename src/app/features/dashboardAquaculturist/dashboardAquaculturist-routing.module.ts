@@ -5,27 +5,33 @@ import { WeightDashboardComponent } from './views/weight-dashboard/weight-dashbo
 import { WaterMonitoringDashboardComponent } from './views/water-monitoring-dashboard/water-monitoring-dashboard.component';
 import { GrowthMonitoringDashboardComponent } from './views/growth-monitoring-dashboard/growth-monitoring-dashboard.component';
 import { AlertsDashboardComponent } from './views/alerts-dashboard/alerts-dashboard.component';
+import { AcuicultorGuard } from '../auth/infraestructure/authRepository/acuicultor.guard';
 
 const routes: Routes = [
   {
     path: 'temperature',
-    component: TemperatureDashboardComponent
+    component: TemperatureDashboardComponent,
+    canActivate: [AcuicultorGuard]
   },
   {
     path: 'weight',
-    component: WeightDashboardComponent
+    component: WeightDashboardComponent,
+    canActivate: [AcuicultorGuard]
   },
   {
     path: 'growth',
-    component:GrowthMonitoringDashboardComponent
+    component: GrowthMonitoringDashboardComponent,
+    canActivate: [AcuicultorGuard]
   },
   {
     path: 'waterMonitoring',
-    component: WaterMonitoringDashboardComponent
+    component: WaterMonitoringDashboardComponent,
+    canActivate: [AcuicultorGuard]
   },
   {
     path: 'alertsDashboard',
-    component: AlertsDashboardComponent
+    component: AlertsDashboardComponent,
+    canActivate: [AcuicultorGuard]
   }
 ];
 

@@ -1,9 +1,8 @@
-// auth.repository.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { delay, mergeMap } from 'rxjs/operators';
-import { IAuthRepository,RegisterData } from '../domain/models/iauth.repository';
+import { delay, mergeMap, tap } from 'rxjs/operators';
+import { IAuthRepository, RegisterData } from '../domain/models/iauth.repository';
 import { UserModel } from '../domain/models/user.model';
 import { CredentialModel } from '../domain/models/credential.model';
 
@@ -12,7 +11,7 @@ import { CredentialModel } from '../domain/models/credential.model';
 })
 export class AuthAPIService implements IAuthRepository {
 
-  private readonly API_URL = 'http://localhost:8000/auth'; //puerto del backend
+  private readonly API_URL = 'http://localhost:8000/auth';
 
   constructor(private http: HttpClient) {}
 
@@ -35,22 +34,37 @@ export class AuthAPIService implements IAuthRepository {
       credentials
     ).pipe(
       mergeMap(response => {
-
         return this.http.get<any>(`${this.API_URL}/profile`, {
           headers: { Authorization: `Bearer ${response.access_token}` }
         }).pipe(
           mergeMap(profileResp => {
             const user = profileResp.user;
-            return of({
+            const userData: UserModel = {
               id: user.user_id?.toString() ?? '',
               name: user.full_name ?? '',
               email: user.email,
               role: user.role,
               token: response.access_token
-               } as UserModel);
+            };
+            // 👉 Guardar en localStorage
+            localStorage.setItem('user', JSON.stringify(userData));
+            return of(userData);
           })
         );
       })
     );
+  }
+
+  logout(): void {
+    localStorage.removeItem('user');
+  }
+
+  getLoggedUser(): UserModel | null {
+    const stored = localStorage.getItem('user');
+    return stored ? JSON.parse(stored) : null;
+  }
+
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('user');
   }
 }
