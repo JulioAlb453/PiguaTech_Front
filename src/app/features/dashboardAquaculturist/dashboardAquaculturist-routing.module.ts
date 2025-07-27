@@ -1,4 +1,4 @@
-import { Component, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TemperatureDashboardComponent } from './views/temperature-dashboard/temperature-dashboard.component';
 import { WeightDashboardComponent } from './views/weight-dashboard/weight-dashboard.component';
@@ -11,32 +11,37 @@ const routes: Routes = [
   {
     path: 'temperature',
     component: TemperatureDashboardComponent,
-    canActivate: [AcuicultorGuard]
+    canActivate: [AcuicultorGuard],
   },
   {
     path: 'weight',
     component: WeightDashboardComponent,
-    canActivate: [AcuicultorGuard]
+    canActivate: [AcuicultorGuard],
   },
   {
     path: 'growth',
     component: GrowthMonitoringDashboardComponent,
-    canActivate: [AcuicultorGuard]
+    canActivate: [AcuicultorGuard],
   },
   {
     path: 'waterMonitoring',
     component: WaterMonitoringDashboardComponent,
-    canActivate: [AcuicultorGuard]
+    canActivate: [AcuicultorGuard],
   },
   {
     path: 'alertsDashboard',
     component: AlertsDashboardComponent,
-    canActivate: [AcuicultorGuard]
-  }
+    canActivate: [AcuicultorGuard],
+  },
+  {
+    path: '',
+    redirectTo: 'temperature',
+    pathMatch: 'full',
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class DashboardAquaculturistRoutingModule { }
+export class DashboardAquaculturistRoutingModule {}

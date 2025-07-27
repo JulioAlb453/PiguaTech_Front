@@ -9,18 +9,23 @@ const routes: Routes = [
   {
     path: 'home',
     component: HabitatStatusDashboardComponent,
-    canActivate: [SupervisorGuard]
+    canActivate: [SupervisorGuard],
   },
   {
     path: 'reports',
     component: ReportGeneratorComponent,
-    canActivate: [SupervisorGuard]
+    canActivate: [SupervisorGuard],
   },
   {
     path: 'summary',
     component: SummaryReportsDashboardComponent,
-    canActivate: [SupervisorGuard]
-  }
+    canActivate: [SupervisorGuard],
+  },
+  {
+    path: '',
+    redirectTo: 'home',
+    pathMatch: 'full',
+  },
 ];
 
 @NgModule({

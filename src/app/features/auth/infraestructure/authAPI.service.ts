@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
-import { delay, mergeMap, tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { mergeMap, tap, map } from 'rxjs/operators';
 import { IAuthRepository, RegisterData } from '../domain/models/iauth.repository';
 import { UserModel } from '../domain/models/user.model';
 import { CredentialModel } from '../domain/models/credential.model';
@@ -13,7 +13,18 @@ export class AuthAPIService implements IAuthRepository {
 
   private readonly API_URL = 'http://localhost:8000/auth';
 
-  constructor(private http: HttpClient) {}
+  //  emitir el usuario actual
+  private currentUserSubject = new BehaviorSubject<UserModel | null>(null);
+  public currentUser$ = this.currentUserSubject.asObservable();
+
+  constructor(private http: HttpClient) {
+    if (typeof window !== 'undefined' && localStorage) {
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        this.currentUserSubject.next(JSON.parse(stored));
+      }
+    }
+  }
 
   register(data: RegisterData): Observable<UserModel> {
     const payload = {
@@ -37,7 +48,7 @@ export class AuthAPIService implements IAuthRepository {
         return this.http.get<any>(`${this.API_URL}/profile`, {
           headers: { Authorization: `Bearer ${response.access_token}` }
         }).pipe(
-          mergeMap(profileResp => {
+          tap(profileResp => {
             const user = profileResp.user;
             const userData: UserModel = {
               id: user.user_id?.toString() ?? '',
@@ -46,9 +57,19 @@ export class AuthAPIService implements IAuthRepository {
               role: user.role,
               token: response.access_token
             };
-            // 👉 Guardar en localStorage
             localStorage.setItem('user', JSON.stringify(userData));
-            return of(userData);
+            // Actualizar para notificar cambio de usuario
+            this.currentUserSubject.next(userData);
+          }),
+          map(profileResp => {
+            const user = profileResp.user;
+            return {
+              id: user.user_id?.toString() ?? '',
+              name: user.full_name ?? '',
+              email: user.email,
+              role: user.role,
+              token: response.access_token
+            } as UserModel;
           })
         );
       })
@@ -57,14 +78,15 @@ export class AuthAPIService implements IAuthRepository {
 
   logout(): void {
     localStorage.removeItem('user');
+    // no hay usuario logueado
+    this.currentUserSubject.next(null);
   }
 
   getLoggedUser(): UserModel | null {
-    const stored = localStorage.getItem('user');
-    return stored ? JSON.parse(stored) : null;
+    return this.currentUserSubject.getValue();
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('user');
+    return !!this.currentUserSubject.getValue();
   }
 }
