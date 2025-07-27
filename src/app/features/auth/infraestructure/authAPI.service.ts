@@ -1,9 +1,8 @@
-// auth.repository.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
-import { delay, mergeMap } from 'rxjs/operators';
-import { IAuthRepository,RegisterData } from '../domain/models/iauth.repository';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { mergeMap, tap, map } from 'rxjs/operators';
+import { IAuthRepository, RegisterData } from '../domain/models/iauth.repository';
 import { UserModel } from '../domain/models/user.model';
 import { CredentialModel } from '../domain/models/credential.model';
 
@@ -12,54 +11,82 @@ import { CredentialModel } from '../domain/models/credential.model';
 })
 export class AuthAPIService implements IAuthRepository {
 
-  //basicamente este sera nuestro api service
-  private readonly USERS_KEY = 'piguatech_users';
-  private readonly API_URL = 'https://tu-api.com/auth'; 
+  private readonly API_URL = 'http://localhost:8000/auth';
 
-  constructor(private http: HttpClient) {}
+  //  emitir el usuario actual
+  private currentUserSubject = new BehaviorSubject<UserModel | null>(null);
+  public currentUser$ = this.currentUserSubject.asObservable();
+
+  constructor(private http: HttpClient) {
+    if (typeof window !== 'undefined' && localStorage) {
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        this.currentUserSubject.next(JSON.parse(stored));
+      }
+    }
+  }
 
   register(data: RegisterData): Observable<UserModel> {
-
-    return of(null).pipe(
-      delay(500),
-      mergeMap(() => {
-        const users = this.getUsersFromStorage();
-        const emailExists = users.some(user => user.email === data.email);
-        
-        if (emailExists) {
-          return throwError(() => new Error(`El correo ${data.email} ya está registrado`));
-        }
-
-        const newUser: UserModel = {
-          id: this.generateId(),
-          name: data.names,
-          email: data.email,
-          role: data.rol,
-          token: 'fake-jwt-token' 
-        };
-
-        users.push(newUser);
-        localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
-        return of(newUser);
-      })
+    const payload = {
+      full_name: data.names,
+      email: data.email,
+      password: data.password,
+      confirm_password: data.password, 
+      role: data.rol
+    };
+    return this.http.post<{ msg: string }>(`${this.API_URL}/register`, payload).pipe(
+      mergeMap(() => this.login({ email: data.email, password: data.password }))
     );
   }
 
   login(credentials: CredentialModel): Observable<UserModel> {
-    const users = this.getUsersFromStorage();
-    const user = users.find(u => u.email === credentials.email);
-    
-    return user 
-      ? of(user).pipe(delay(500))
-      : throwError(() => new Error('Credenciales inválidas'));
+    return this.http.post<{ access_token: string, token_type: string }>(
+      `${this.API_URL}/login`,
+      credentials
+    ).pipe(
+      mergeMap(response => {
+        return this.http.get<any>(`${this.API_URL}/profile`, {
+          headers: { Authorization: `Bearer ${response.access_token}` }
+        }).pipe(
+          tap(profileResp => {
+            const user = profileResp.user;
+            const userData: UserModel = {
+              id: user.user_id?.toString() ?? '',
+              name: user.full_name ?? '',
+              email: user.email,
+              role: user.role,
+              token: response.access_token
+            };
+            localStorage.setItem('user', JSON.stringify(userData));
+            // Actualizar para notificar cambio de usuario
+            this.currentUserSubject.next(userData);
+          }),
+          map(profileResp => {
+            const user = profileResp.user;
+            return {
+              id: user.user_id?.toString() ?? '',
+              name: user.full_name ?? '',
+              email: user.email,
+              role: user.role,
+              token: response.access_token
+            } as UserModel;
+          })
+        );
+      })
+    );
   }
 
-  private getUsersFromStorage(): UserModel[] {
-    const users = localStorage.getItem(this.USERS_KEY);
-    return users ? JSON.parse(users) : [];
+  logout(): void {
+    localStorage.removeItem('user');
+    // no hay usuario logueado
+    this.currentUserSubject.next(null);
   }
 
-  private generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substring(2);
+  getLoggedUser(): UserModel | null {
+    return this.currentUserSubject.getValue();
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.currentUserSubject.getValue();
   }
 }
