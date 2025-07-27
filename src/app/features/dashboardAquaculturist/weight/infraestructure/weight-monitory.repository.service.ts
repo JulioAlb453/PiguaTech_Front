@@ -12,7 +12,7 @@ interface WeightTrendData {
   providedIn: 'root'
 })
 export class WeightMonitoryRepositoryService {
-  private baseUrl = 'http://localhost:8000/readings';
+  private baseUrl = 'http://127.0.0.1:8000/readings';
 
   constructor(private http: HttpClient) {}
 

@@ -11,18 +11,19 @@ import { GrowthMonitoringDashboardComponent } from './views/growth-monitoring-da
 import { AlertsDashboardComponent } from './views/alerts-dashboard/alerts-dashboard.component';
 
 
+
 @NgModule({
   declarations: [
-   // WeightDashboardComponent,
-   // WaterMonitoringDashboardComponent,
+  WeightDashboardComponent,
+    WaterMonitoringDashboardComponent,
     GrowthMonitoringDashboardComponent,
+    AlertsDashboardComponent, 
+    TemperatureDashboardComponent 
   ],
   imports: [
     CommonModule,
     DashboardAquaculturistRoutingModule,
     NgApexchartsModule,
-    TemperatureDashboardComponent,
-    AlertsDashboardComponent,
   ],
  
 })

@@ -218,23 +218,61 @@
   }
 
   /* Panel de gráficas derecho */
-  &__chart-panel {
-    background-color: var(--surface-color);
+ &__chart-panel {
+    background-color: var(--surface-color) !important;
     border-radius: 12px;
     padding: 1.5rem;
     border: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     flex-direction: column;
+    min-height: 400px; /* Altura mínima para el panel */
+    
+    /* Asegurar que el contenedor del chart tenga el tamaño correcto */
+    :ng-deep {
+      apx-chart {
+        width: 100% !important;
+        height: 100% !important;
+        
+        .apexcharts-canvas {
+          background-color: transparent !important;
+        }
+        
+        /* Personalizar colores del gráfico para el tema oscuro */
+        .apexcharts-text {
+          fill: var(--text-color) !important;
+        }
+        
+        .apexcharts-gridline {
+          stroke: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .apexcharts-tooltip {
+          background: var(--surface-light) !important;
+          border: 1px solid rgba(255, 255, 255, 0.1) !important;
+          color: var(--text-color) !important;
+        }
+        
+        .apexcharts-legend {
+          color: var(--text-color) !important;
+        }
+        
+        .apexcharts-title-text {
+          fill: var(--primary-color) !important;
+        }
+      }
+    }
 
     .chart-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
+      flex-shrink: 0; /* No se encoge */
 
       h2 {
         margin: 0;
         font-size: 1.25rem;
+        color: var(--primary-color);
       }
 
       .time-range-selector select {
@@ -244,12 +282,24 @@
         padding: 0.5rem;
         border-radius: 6px;
         font-size: 0.9rem;
+        
+        &:focus {
+          outline: none;
+          border-color: var(--primary-color);
+        }
       }
     }
 
     .chart-container {
       flex: 1;
       min-height: 300px;
+      position: relative;
+      
+      /* Si usas ng-container o div wrapper */
+      > * {
+        width: 100%;
+        height: 100%;
+      }
     }
   }
 
