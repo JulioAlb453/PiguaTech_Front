@@ -1,45 +1,36 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/views/login/login.component';
-import { ShelversOverviewFatherComponentComponent } from './shared/components/shelvers-overview-father-component/shelvers-overview-father-component.component';
-import { NotFoundComponent } from './pages/not-found/not-found.component';
-import { DashboardSupervisorModule } from './features/dashboardSupervisor/dashboard-supervisor.module';
 import { RegisterComponent } from './features/auth/views/register/register.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 const routes: Routes = [
-  {
-    path: 'home',
-    component: ShelversOverviewFatherComponentComponent,
-  },
   { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent},
+  { path: 'register', component: RegisterComponent },
 
   {
-    path: 'dashboardAquaculturist',
+    path: 'supervisor',
     loadChildren: () =>
-      import(
-        './features/dashboardAquaculturist/dashboardAquaculturist.module'
-      ).then((m) => m.DashboardAquaculturistModule),
-  },
-  {
-    path: 'dashboardSupervisor',
-    loadChildren: () =>
-      import(
-      './features/dashboardSupervisor/dashboard-supervisor.module'
-      ).then((m) => m.DashboardSupervisorModule)
-    
+      import('./features/dashboardSupervisor/dashboard-supervisor.module').then(
+        (m) => m.DashboardSupervisorModule
+      ),
   },
 
   {
-    path: '**',
-    component: NotFoundComponent,
+    path: 'acuicultor',
+    loadChildren: () =>
+      import('./features/dashboardAquaculturist/dashboardAquaculturist.module').then(
+        (m) => m.DashboardAquaculturistModule
+      ),
   },
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },
+
+  { path: '**', component: NotFoundComponent },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes), DashboardSupervisorModule, ],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
