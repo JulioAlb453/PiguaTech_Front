@@ -1,4 +1,4 @@
 export enum UserRole {
-    Acuicultor = 'acuicultor',
-    Supervisor = 'supervisor'
+  Supervisor = 'supervisor',
+  Acuicultor = 'acuicultor',
 }
