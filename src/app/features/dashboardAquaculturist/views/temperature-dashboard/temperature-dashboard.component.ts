@@ -40,7 +40,7 @@ export type ChartOptions = {
 @Component({
   selector: 'app-temperature-dashboard',
   standalone: true,
-  imports: [CommonModule, NgApexchartsModule],
+  imports: [NgApexchartsModule],
   templateUrl: './temperature-dashboard.component.html',
   styleUrls: ['./temperature-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

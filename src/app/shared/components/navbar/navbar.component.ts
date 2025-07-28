@@ -20,7 +20,6 @@ interface NavLink {
   selector: 'app-navbar',
   standalone: true,
   imports: [
-    CommonModule,
     RouterLink,
     RouterLinkActive,
     MatButtonModule,

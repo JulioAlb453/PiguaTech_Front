@@ -4,7 +4,7 @@
     <button
       class="summary-dashboard__notification-btn"
       aria-label="Ver notificaciones"
-    >
+      >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -15,7 +15,7 @@
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
-      >
+        >
         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
         <path d="M13.73 21a2 2 0 0 1-3.46 0" />
       </svg>
@@ -30,7 +30,7 @@
         <button
           class="summary-dashboard__chip summary-dashboard__chip--active"
           type="button"
-        >
+          >
           Mensual
         </button>
         <button class="summary-dashboard__chip" type="button">
@@ -47,19 +47,20 @@
           Último Mes
           <span class="summary-dashboard__card-trend--positive">+2%</span>
         </p>
-        <div
-          class="summary-dashboard__chart-container"
-          *ngIf="tempChartOptions?.series"
-        >
-          <apx-chart
-            [series]="tempChartOptions.series!"
-            [chart]="tempChartOptions.chart!"
-            [stroke]="tempChartOptions.stroke!"
-            [fill]="tempChartOptions.fill!"
-            [tooltip]="tempChartOptions.tooltip!"
-            [xaxis]="tempChartOptions.xaxis!"
-          ></apx-chart>
-        </div>
+        @if (tempChartOptions?.series) {
+          <div
+            class="summary-dashboard__chart-container"
+            >
+            <apx-chart
+              [series]="tempChartOptions.series!"
+              [chart]="tempChartOptions.chart!"
+              [stroke]="tempChartOptions.stroke!"
+              [fill]="tempChartOptions.fill!"
+              [tooltip]="tempChartOptions.tooltip!"
+              [xaxis]="tempChartOptions.xaxis!"
+            ></apx-chart>
+          </div>
+        }
         <div class="summary-dashboard__card-footer">
           <span>Semana 1</span><span>Semana 2</span><span>Semana 3</span
           ><span>Semana 4</span>
@@ -73,20 +74,21 @@
           Último Mes
           <span class="summary-dashboard__card-trend--negative">-5%</span>
         </p>
-        <div
-          class="summary-dashboard__chart-container"
-          *ngIf="turbidityChartOptions?.series"
-        >
-          <apx-chart
-            [series]="turbidityChartOptions.series!"
-            [chart]="turbidityChartOptions.chart!"
-            [plotOptions]="turbidityChartOptions.plotOptions!"
-            [xaxis]="turbidityChartOptions.xaxis!"
-            [colors]="turbidityChartOptions.colors!"
-            [legend]="turbidityChartOptions.legend!"
-            [tooltip]="turbidityChartOptions.tooltip!"
-          ></apx-chart>
-        </div>
+        @if (turbidityChartOptions?.series) {
+          <div
+            class="summary-dashboard__chart-container"
+            >
+            <apx-chart
+              [series]="turbidityChartOptions.series!"
+              [chart]="turbidityChartOptions.chart!"
+              [plotOptions]="turbidityChartOptions.plotOptions!"
+              [xaxis]="turbidityChartOptions.xaxis!"
+              [colors]="turbidityChartOptions.colors!"
+              [legend]="turbidityChartOptions.legend!"
+              [tooltip]="turbidityChartOptions.tooltip!"
+            ></apx-chart>
+          </div>
+        }
         <div class="summary-dashboard__card-footer">
           <span>Clara</span><span>Ligeramente Turbia</span><span>Turbia</span>
         </div>
@@ -99,19 +101,20 @@
           Último Mes
           <span class="summary-dashboard__card-trend--positive">+10%</span>
         </p>
-        <div
-          class="summary-dashboard__chart-container summary-dashboard__chart-container--horizontal-bar"
-          *ngIf="volumeChartOptions?.series"
-        >
-          <apx-chart
-            [series]="volumeChartOptions.series!"
-            [chart]="volumeChartOptions.chart!"
-            [plotOptions]="volumeChartOptions.plotOptions!"
-            [xaxis]="volumeChartOptions.xaxis!"
-            [colors]="volumeChartOptions.colors!"
-            [tooltip]="volumeChartOptions.tooltip!"
-          ></apx-chart>
-        </div>
+        @if (volumeChartOptions?.series) {
+          <div
+            class="summary-dashboard__chart-container summary-dashboard__chart-container--horizontal-bar"
+            >
+            <apx-chart
+              [series]="volumeChartOptions.series!"
+              [chart]="volumeChartOptions.chart!"
+              [plotOptions]="volumeChartOptions.plotOptions!"
+              [xaxis]="volumeChartOptions.xaxis!"
+              [colors]="volumeChartOptions.colors!"
+              [tooltip]="volumeChartOptions.tooltip!"
+            ></apx-chart>
+          </div>
+        }
       </article>
     </div>
   </section>
@@ -129,20 +132,21 @@
           Último Mes
           <span class="summary-dashboard__card-trend--positive">+15%</span>
         </p>
-        <div
-          class="summary-dashboard__chart-container"
-          *ngIf="weightChartOptions?.series"
-        >
-          <apx-chart
-            [series]="weightChartOptions.series!"
-            [chart]="weightChartOptions.chart!"
-            [plotOptions]="weightChartOptions.plotOptions!"
-            [xaxis]="weightChartOptions.xaxis!"
-            [colors]="weightChartOptions.colors!"
-            [legend]="weightChartOptions.legend!"
-            [tooltip]="weightChartOptions.tooltip!"
-          ></apx-chart>
-        </div>
+        @if (weightChartOptions?.series) {
+          <div
+            class="summary-dashboard__chart-container"
+            >
+            <apx-chart
+              [series]="weightChartOptions.series!"
+              [chart]="weightChartOptions.chart!"
+              [plotOptions]="weightChartOptions.plotOptions!"
+              [xaxis]="weightChartOptions.xaxis!"
+              [colors]="weightChartOptions.colors!"
+              [legend]="weightChartOptions.legend!"
+              [tooltip]="weightChartOptions.tooltip!"
+            ></apx-chart>
+          </div>
+        }
         <div class="summary-dashboard__card-footer">
           <span>Pigua 1</span><span>Pigua 2</span><span>Pigua 3</span>
         </div>
@@ -155,19 +159,20 @@
           Último Mes
           <span class="summary-dashboard__card-trend--positive">+5%</span>
         </p>
-        <div
-          class="summary-dashboard__chart-container"
-          *ngIf="populationChartOptions?.series"
-        >
-          <apx-chart
-            [series]="populationChartOptions.series!"
-            [chart]="populationChartOptions.chart!"
-            [stroke]="populationChartOptions.stroke!"
-            [fill]="populationChartOptions.fill!"
-            [xaxis]="populationChartOptions.xaxis!"
-            [tooltip]="populationChartOptions.tooltip!"
-          ></apx-chart>
-        </div>
+        @if (populationChartOptions?.series) {
+          <div
+            class="summary-dashboard__chart-container"
+            >
+            <apx-chart
+              [series]="populationChartOptions.series!"
+              [chart]="populationChartOptions.chart!"
+              [stroke]="populationChartOptions.stroke!"
+              [fill]="populationChartOptions.fill!"
+              [xaxis]="populationChartOptions.xaxis!"
+              [tooltip]="populationChartOptions.tooltip!"
+            ></apx-chart>
+          </div>
+        }
         <div class="summary-dashboard__card-footer">
           <span>Semana 1</span><span>Semana 2</span><span>Semana 3</span
           ><span>Semana 4</span>
