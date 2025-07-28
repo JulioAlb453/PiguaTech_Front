@@ -155,7 +155,7 @@ export class GrowthMonitoringDashboardComponent
         curve: 'smooth', 
         width: 2, 
         colors: ['#4CAF50'] 
-
+      },
       stroke: {
         curve: 'smooth',
         width: 9,
@@ -179,8 +179,7 @@ export class GrowthMonitoringDashboardComponent
         axisTicks: {
           show: true,
           color: '#e0e0e0'
-        }
-
+        },
           show: false,
         },
 
