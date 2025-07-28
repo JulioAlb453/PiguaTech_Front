@@ -95,12 +95,132 @@
     <section class="dashboard__alerts">
       <h2 class="dashboard__alerts-title">Alertas</h2>
       <div class="dashboard__alert-control">
-        <label class="dashboard__alert-label" for="temp-range"
-          >Rango de Temperatura</label
-        >
-        <div class="dashboard__slider"></div>
-        <button class="dashboard__action-button">Establecer Alerta</button>
+        <label class="dashboard__alert-label">
+          Rango de Temperatura Configurado
+        </label>
+        
+        <div class="dashboard__current-range">
+          <span class="dashboard__range-item dashboard__range-item--high">
+            Máx: {{ averageHigh }}°C
+          </span>
+          <span class="dashboard__range-item dashboard__range-item--low">
+            Mín: {{ averageLow }}°C
+          </span>
+        </div>
+
+        
+
+        <div class="dashboard__alert-buttons">
+          <button 
+            class="dashboard__action-button dashboard__action-button--primary"
+            (click)="openAlertModal()"
+          >
+            Configurar Alertas
+          </button>
+        </div>
       </div>
     </section>
   </main>
+
+  <div 
+    class="dashboard__modal-overlay" 
+    *ngIf="showAlertModal"
+    (click)="closeAlertModal()"
+  >
+    <div 
+      class="dashboard__modal" 
+      (click)="$event.stopPropagation()"
+    >
+      <div class="dashboard__modal-header">
+        <h3 class="dashboard__modal-title">Configurar Alertas de Temperatura</h3>
+        <button 
+          class="dashboard__modal-close"
+          (click)="closeAlertModal()"
+          aria-label="Cerrar modal"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="currentColor"
+            viewBox="0 0 256 256"
+          >
+            <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="dashboard__modal-body">
+        <div class="dashboard__form-group">
+          <label class="dashboard__form-label" for="alertHigh">
+            Temperatura Máxima (°C)
+          </label>
+          <input
+            id="alertHigh"
+            type="number"
+            class="dashboard__form-input"
+            [(ngModel)]="tempAlertHigh"
+            min="0"
+            max="50"
+            step="0.1"
+          >
+          <small class="dashboard__form-hint">
+            Se activará una alerta cuando la temperatura supere este valor
+          </small>
+        </div>
+
+        <div class="dashboard__form-group">
+          <label class="dashboard__form-label" for="alertLow">
+            Temperatura Mínima (°C)
+          </label>
+          <input
+            id="alertLow"
+            type="number"
+            class="dashboard__form-input"
+            [(ngModel)]="tempAlertLow"
+            min="0"
+            max="50"
+            step="0.1"
+          >
+          <small class="dashboard__form-hint">
+            Se activará una alerta cuando la temperatura esté por debajo de este valor
+          </small>
+        </div>
+
+        <div class="dashboard__range-preview">
+          <h4 class="dashboard__preview-title">Vista Previa del Rango</h4>
+          <div class="dashboard__preview-range">
+            <span class="dashboard__preview-value dashboard__preview-value--low">
+              {{ tempAlertLow }}°C
+            </span>
+            <div class="dashboard__preview-bar">
+              <div class="dashboard__preview-safe-zone"></div>
+            </div>
+            <span class="dashboard__preview-value dashboard__preview-value--high">
+              {{ tempAlertHigh }}°C
+            </span>
+          </div>
+          <p class="dashboard__preview-text">
+            Zona segura: {{ tempAlertLow }}°C - {{ tempAlertHigh }}°C
+          </p>  
+        </div>
+      </div>
+
+      <div class="dashboard__modal-footer">
+        <button 
+          class="dashboard__modal-button dashboard__modal-button--secondary"
+          (click)="closeAlertModal()"
+        >
+          Cancelar
+        </button>
+        <button 
+          class="dashboard__modal-button dashboard__modal-button--primary"
+          (click)="saveAlertSettings()"
+          [disabled]="tempAlertHigh <= tempAlertLow"
+        >
+          Guardar Configuración
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

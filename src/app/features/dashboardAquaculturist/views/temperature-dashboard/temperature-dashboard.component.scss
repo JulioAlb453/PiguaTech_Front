@@ -75,6 +75,141 @@ $text-secondary: #a0a0a0;
     }
   }
 
+   &__modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  &__modal {
+    background: #2b2b2b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  &__modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  &__modal-title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: $text-color;
+  }
+
+  &__modal-close {
+    background: transparent;
+    border: none;
+    color: $text-secondary;
+    cursor: pointer;
+    padding: 0.25rem;
+    
+    &:hover {
+      color: $text-color;
+    }
+  }
+
+  &__form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  &__form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: $text-secondary;
+    font-size: 0.9rem;
+  }
+
+  &__form-input {
+    width: 94%;
+    padding: 0.75rem;
+    background: #3c3c3c;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: $text-color;
+    
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+  }
+
+  &__range-preview {
+    margin: 2rem 0;
+    padding: 1rem;
+    background: #3c3c3c;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  &__preview-range {
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem 0;
+  }
+
+  &__preview-value {
+    font-weight: 600;
+    
+    &--low { color: #4ecdc4; }
+    &--high { color: $status-alerta; }
+  }
+
+  &__modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  &__modal-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    
+    &--secondary {
+      background: #3c3c3c;
+      color: $text-color;
+      
+      &:hover {
+        background: #4c4c4c;
+      }
+    }
+    
+    &--primary {
+      background: $primary-color;
+      color: #000;
+      
+      &:hover {
+        background: $primary-dark;
+      }
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+
   &__main {
     display: flex;
     flex-direction: column;
@@ -748,6 +883,8 @@ $text-secondary: #a0a0a0;
     border-radius: 8px !important;
     color: #ffffff !important;
   }
+
+  
 }
 
 // Responsive design mejorado
