@@ -22,13 +22,7 @@ import {
   NgApexchartsModule
 } from 'ng-apexcharts';
 
-import {
-  MonitoringService,
-  TimeRange,
-  TemperatureData
-} from '../../temperature/domain/input/i-monitoring.service';
-import { WebSocketService } from '../../temperature/domain/input/websocket.service';
-
+import { TimeRange } from '../../temperature/domain/input/i-monitoring.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -60,23 +54,19 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
   private readonly MAX_DATA_POINTS = 20;
   private readonly UPDATE_INTERVAL = 3000; // 3 segundos
 
-  public currentTemperature: number = 0; 
+  public currentTemperature: number = 24.5; 
   public averageHigh: number = 29.8;
   public averageLow: number = 7.3;
 
   // Estado del rango de tiempo seleccionado
   public selectedRange: TimeRange = TimeRange.Weekly;
 
-  constructor(
-    private monitoringService: MonitoringService,
-    private webSocketService: WebSocketService,
-    private cdr: ChangeDetectorRef
-  ) {}
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.initializeChartWithDefaults();
-    this.loadHistoricalData(this.selectedRange);
-    this.subscribeToRealtimeData();
+    this.loadHardcodedData(this.selectedRange);
+    this.simulateRealtimeData();
   }
 
   ngOnDestroy(): void {
@@ -86,7 +76,7 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
   // Cambiar rango y recargar datos
   onRangeChange(range: TimeRange) {
     this.selectedRange = range;
-    this.loadHistoricalData(range);
+    this.loadHardcodedData(range);
   }
 
   /** Inicializa con data mínima para que el gráfico no esté vacío */
@@ -149,46 +139,80 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
     };
   }
 
-  /** Carga datos reales del backend y reemplaza todo */
-  private loadHistoricalData(range: TimeRange): void {
-    this.monitoringService.getTemperatureData(range).subscribe({
-      next: (data: any) => {
-        const actualSeries = data.map((item: any) => item.temperature);
-        const categories = data.map((item: any) =>
-          new Date(item.date).toLocaleTimeString()
-        );
+  /** Carga datos hardcodeados según el rango seleccionado */
+  private loadHardcodedData(range: TimeRange): void {
+    let data: { temperature: number; date: string }[] = [];
+    let categories: string[] = [];
 
-        this.chartOptions.series = [
-          { name: 'Límite Máximo', data: Array(actualSeries.length).fill(this.averageHigh) },
-          { name: 'Temperatura Actual', data: actualSeries },
-          { name: 'Límite Mínimo', data: Array(actualSeries.length).fill(this.averageLow) }
-        ];
-
-        this.chartOptions.xaxis.categories = categories;
-
-        this.chart.updateOptions({
-          series: this.chartOptions.series,
-          xaxis: { categories }
+    switch (range) {
+      case TimeRange.Daily:
+        // Datos para 24 horas (cada hora)
+        for (let i = 0; i < 24; i++) {
+          const hour = i < 10 ? `0${i}:00` : `${i}:00`;
+          const temp = 15 + Math.sin(i / 4) * 10 + (Math.random() * 2 - 1);
+          data.push({ temperature: parseFloat(temp.toFixed(1)), date: hour });
+          categories.push(hour);
+        }
+        break;
+      
+      case TimeRange.Weekly:
+        // Datos para 7 días
+        const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+        days.forEach(day => {
+          const temp = 15 + Math.random() * 10;
+          data.push({ temperature: parseFloat(temp.toFixed(1)), date: day });
+          categories.push(day);
         });
-      },
-      error: (err: any) => console.error('Error loading historical data:', err)
-    });
+        break;
+      
+      case TimeRange.Monthly:
+        // Datos para 4 semanas
+        for (let i = 1; i <= 4; i++) {
+          const temp = 15 + Math.sin(i) * 5 + (Math.random() * 3 - 1.5);
+          data.push({ temperature: parseFloat(temp.toFixed(1)), date: `Sem ${i}` });
+          categories.push(`Sem ${i}`);
+        }
+        break;
+    }
+
+    const actualSeries = data.map(item => item.temperature);
+
+    this.chartOptions.series = [
+      { name: 'Límite Máximo', data: Array(actualSeries.length).fill(this.averageHigh) },
+      { name: 'Temperatura Actual', data: actualSeries },
+      { name: 'Límite Mínimo', data: Array(actualSeries.length).fill(this.averageLow) }
+    ];
+
+    this.chartOptions.xaxis.categories = categories;
+
+    if (this.chart) {
+      this.chart.updateOptions({
+        series: this.chartOptions.series,
+        xaxis: { categories }
+      });
+    }
   }
 
-  /** Escucha stream real-time y añade al gráfico */
-  private subscribeToRealtimeData(): void {
-    this.dataSubscription = this.webSocketService.getTemperatureStream().subscribe({
-      next: (data: TemperatureData) => {
-        this.currentTemperature = data.value;
-        this.appendRealtimeData(data);
-        this.cdr.markForCheck();
-      },
-      error: err => console.error('Error on realtime', err)
-    });
+  /** Simula datos en tiempo real */
+  private simulateRealtimeData(): void {
+    this.dataSubscription = new Subscription();
+    
+    // Simular actualización cada 3 segundos
+    const intervalId = setInterval(() => {
+      const newTemp = 20 + Math.random() * 5; // Temperatura entre 20-25°C
+      this.currentTemperature = parseFloat(newTemp.toFixed(1));
+      this.appendRealtimeData({
+        value: this.currentTemperature,
+        timestamp: new Date().toISOString()
+      });
+      this.cdr.markForCheck();
+    }, 3000);
+
+    this.dataSubscription.add({ unsubscribe: () => clearInterval(intervalId) });
   }
 
   /** Añade punto nuevo al final */
-  private appendRealtimeData(data: TemperatureData): void {
+  private appendRealtimeData(data: { value: number; timestamp: string }): void {
     const series = [...this.chartOptions.series];
     const actual = series[1].data as number[];
     const categories = [...this.chartOptions.xaxis.categories as string[]];
