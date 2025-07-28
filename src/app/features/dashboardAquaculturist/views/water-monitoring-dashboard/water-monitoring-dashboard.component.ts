@@ -43,7 +43,8 @@ export type BarChartOptions = {
 
 @Component({
   selector: 'app-water-monitoring-dashboard',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, NgApexchartsModule],
   templateUrl: './water-monitoring-dashboard.component.html',
   styleUrls: ['./water-monitoring-dashboard.component.scss'],
 })
