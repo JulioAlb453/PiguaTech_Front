@@ -11,8 +11,8 @@ import { CredentialModel } from '../domain/models/credential.model';
 })
 export class AuthAPIService implements IAuthRepository {
 
-  private readonly API_URL = 'http://localhost:8000/auth';
-
+  private readonly API_URL = 'http://127.0.0.1:8000/auth';
+  
   //  emitir el usuario actual
   private currentUserSubject = new BehaviorSubject<UserModel | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();

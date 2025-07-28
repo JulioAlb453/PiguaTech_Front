@@ -13,6 +13,8 @@ type ChartOption = {
   title: ApexTitleSubtitle;
   theme: ApexTheme;
   colors: string[];
+  plotOption: any;
+  grid?: any; // Add grid property to support chartOptions.grid
 };
 
 interface GrowthMetric {
@@ -22,8 +24,7 @@ interface GrowthMetric {
 
 @Component({
   selector: 'app-weight-dashboard',
-  standalone: true, // <-- Asegúrate de que es standalone
-  imports: [CommonModule, NgApexchartsModule], // <-- Agrega estos imports
+  standalone: false,
   templateUrl: './weight-dashboard.component.html',
   styleUrls: ['./weight-dashboard.component.scss']
 })
@@ -62,35 +63,58 @@ export class WeightDashboardComponent implements OnInit {
     // lógica para manejar el inicio/detención de medición
   }
 
-  initializeChart(): void {
-    this.chartOptions = {
-      series: [{ name: 'Peso Promedio', data: [] }],
-      chart: {
-        type: 'line',
-        height: 300,
-        toolbar: { show: false }
-      },
-      xaxis: {
-        categories: []
-      },
-      yaxis: {
-        title: {
-          text: 'Peso Promedio (kg)'
+initializeChart(): void {
+  this.chartOptions = {
+    series: [{ name: 'Peso Promedio', data: [] }],
+    chart: {
+      type: 'line',
+      height: '100%', 
+      toolbar: { show: false },
+      background: 'transparent',
+      foreColor: '#e0e0e0' 
+    },
+    xaxis: {
+      categories: [],
+      labels: {
+        style: {
+          colors: '#e0e0e0' 
+        }
+      }
+    },
+    yaxis: {
+      title: {
+        text: 'Peso Promedio (kg)',
+        style: {
+          color: '#e0e0e0'
         }
       },
-      dataLabels: {
-        enabled: true
-      },
-      title: {
-        text: 'Peso Promedio a lo Largo del Tiempo'
-      },
-      theme: {
-        mode: 'light'
-      },
-      colors: ['#008FFB']
-    };
-  }
-
+      labels: {
+        style: {
+          colors: '#e0e0e0' 
+        }
+      }
+    },
+    dataLabels: {
+      enabled: true,
+      style: {
+        colors: ['#fff'] 
+      }
+    },
+    title: {
+      text: 'Peso Promedio a lo Largo del Tiempo',
+      style: {
+        color: '#e0e0e0' 
+      }
+    },
+    theme: {
+      mode: 'dark' 
+    },
+    colors: ['#f39c12'],
+    grid: {
+      borderColor: '#444' 
+    }
+  };
+}
   loadWeightTrend(): void {
     this.weightRepo.getWeightTrend().subscribe(data => {
       const seriesData = data.map((item: any) => item.avg_weight);

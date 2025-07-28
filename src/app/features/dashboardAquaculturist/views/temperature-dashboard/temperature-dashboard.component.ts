@@ -4,7 +4,8 @@ import {
   OnDestroy,
   ViewChild,
   ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  NgZone,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -19,7 +20,7 @@ import {
   ApexLegend,
   ApexTooltip,
   ChartComponent,
-  NgApexchartsModule
+  NgApexchartsModule,
 } from 'ng-apexcharts';
 
 import { TimeRange } from '../../temperature/domain/input/i-monitoring.service';
@@ -39,11 +40,10 @@ export type ChartOptions = {
 
 @Component({
   selector: 'app-temperature-dashboard',
-  standalone: true,
-  imports: [NgApexchartsModule],
+  standalone: false,
   templateUrl: './temperature-dashboard.component.html',
   styleUrls: ['./temperature-dashboard.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.Default, // ✅ CAMBIADO: Default en lugar de OnPush
 })
 export class TemperatureDashboardComponent implements OnInit, OnDestroy {
   public TimeRange = TimeRange;
@@ -53,39 +53,59 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
 
   private dataSubscription!: Subscription;
   private readonly MAX_DATA_POINTS = 20;
+  private readonly UPDATE_INTERVAL = 3000; // 3 segundos
 
-  public currentTemperature: number = 24.5; 
-  public averageHigh: number = 29.8;
-  public averageLow: number = 7.3;
+  // Valores de referencia
+  public averageHigh: number = 32;
+  public averageLow: number = 24;
+  public currentDisplayValue: number = 24; // Valor inicial
 
-  // Estado del rango de tiempo seleccionado
-  public selectedRange: TimeRange = TimeRange.Weekly;
+  // Datos actuales
+  public currentData: { temperature: number; date: string }[] = [];
+  public selectedRange: TimeRange = TimeRange.Daily;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef, private ngZone: NgZone) {}
 
   ngOnInit(): void {
     this.initializeChartWithDefaults();
+    // ✅ Asegurar que Daily sea el default
+    this.selectedRange = TimeRange.Daily;
     this.loadHardcodedData(this.selectedRange);
     this.simulateRealtimeData();
   }
 
   ngOnDestroy(): void {
-    this.dataSubscription?.unsubscribe();
+    if (this.dataSubscription && !this.dataSubscription.closed) {
+      this.dataSubscription.unsubscribe();
+    }
   }
 
-  // Cambiar rango y recargar datos
-  onRangeChange(range: TimeRange) {
+  // ✅ NUEVA SOLUCIÓN: Getter que siempre devuelve el valor actual
+  get displayValue(): number {
+    console.log('🎯 Template solicitando displayValue:', this.currentDisplayValue); // Debug
+    return this.currentDisplayValue;
+  }
+
+  onRangeChange(range: TimeRange): void {
+    console.log('🔄 Cambiando rango a:', range); // Debug
     this.selectedRange = range;
+    // ✅ CORRECCIÓN: Limpiamos la suscripción anterior para evitar conflictos
+    if (this.dataSubscription) {
+      this.dataSubscription.unsubscribe();
+    }
     this.loadHardcodedData(range);
+    // ✅ CORRECCIÓN: Reiniciamos la simulación solo para Daily
+    if (range === TimeRange.Daily) {
+      this.simulateRealtimeData();
+    }
   }
 
-  /** Inicializa con data mínima para que el gráfico no esté vacío */
   private initializeChartWithDefaults(): void {
     this.chartOptions = {
       series: [
         { name: 'Límite Máximo', data: [this.averageHigh] },
         { name: 'Temperatura Actual', data: [] },
-        { name: 'Límite Mínimo', data: [this.averageLow] }
+        { name: 'Límite Mínimo', data: [this.averageLow] },
       ],
       chart: {
         height: 320,
@@ -93,34 +113,34 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
         background: '#1a1a1a',
         foreColor: '#ffffff',
         toolbar: { show: false },
-        zoom: { enabled: false }
+        zoom: { enabled: false },
       },
       colors: ['#FF4560', '#00E396', '#775DD0'],
       stroke: {
         curve: 'smooth',
         width: [2.5, 4, 2.5],
-        dashArray: [5, 0, 5]
+        dashArray: [5, 0, 5],
       },
       dataLabels: { enabled: false },
       grid: {
         borderColor: '#333333',
         strokeDashArray: 3,
         yaxis: { lines: { show: true } },
-        xaxis: { lines: { show: false } }
+        xaxis: { lines: { show: false } },
       },
       xaxis: {
         categories: [],
         labels: {
-          style: { colors: '#ffffff', fontSize: '14px' }
+          style: { colors: '#ffffff', fontSize: '14px' },
         },
         axisBorder: { show: false },
-        axisTicks: { show: false }
+        axisTicks: { show: false },
       },
       yaxis: {
         labels: {
           style: { colors: '#ffffff', fontSize: '14px' },
-          formatter: val => `${val.toFixed(1)}°C`
-        }
+          formatter: (val) => `${val.toFixed(1)}°C`,
+        },
       },
       legend: {
         show: true,
@@ -128,59 +148,96 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
         horizontalAlign: 'right',
         fontSize: '14px',
         labels: { colors: '#ffffff' },
-        markers: { strokeWidth: 4 }
+        markers: { strokeWidth: 4 },
       },
       tooltip: {
         enabled: true,
         shared: true,
         theme: 'dark',
-        style: { fontSize: '14px' }
-      }
+        style: { fontSize: '14px' },
+      },
     };
   }
 
-  /** Carga datos hardcodeados según el rango seleccionado */
   private loadHardcodedData(range: TimeRange): void {
     let data: { temperature: number; date: string }[] = [];
     let categories: string[] = [];
 
+    console.log('🔄 Cargando datos para rango:', range); // Debug
+
     switch (range) {
       case TimeRange.Daily:
-        // Datos para 24 horas (cada hora)
+        // Datos para 24 horas (cada hora) con variación normal
         for (let i = 0; i < 24; i++) {
           const hour = i < 10 ? `0${i}:00` : `${i}:00`;
-          const temp = 15 + Math.sin(i / 4) * 10 + (Math.random() * 2 - 1);
-          data.push({ temperature: parseFloat(temp.toFixed(1)), date: hour });
+          // Variación más suave durante el día
+          const baseTemp = 24 + Math.sin(i / 6) * 4; // Oscilación entre 20-28°C
+          const temp = baseTemp + (Math.random() * 1 - 0.5); // Pequeña variación aleatoria
+          data.push({
+            temperature: parseFloat(temp.toFixed(1)),
+            date: hour,
+          });
           categories.push(hour);
         }
         break;
-      
+
       case TimeRange.Weekly:
-        // Datos para 7 días
+        // Datos para 7 días con poca variación
         const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-        days.forEach(day => {
-          const temp = 15 + Math.random() * 10;
-          data.push({ temperature: parseFloat(temp.toFixed(1)), date: day });
+        const weeklyBase = 24 + Math.random() * 2; // Temperatura base para la semana
+
+        days.forEach((day) => {
+          // Pequeña variación diaria (±1°C)
+          const temp = weeklyBase + (Math.random() * 2 - 1);
+          data.push({
+            temperature: parseFloat(temp.toFixed(1)),
+            date: day,
+          });
           categories.push(day);
         });
         break;
-      
+
       case TimeRange.Monthly:
-        // Datos para 4 semanas
+        const monthlyBase = 24 + (Math.random() * 3 - 1.5); // Temperatura base para el mes
+
         for (let i = 1; i <= 4; i++) {
-          const temp = 15 + Math.sin(i) * 5 + (Math.random() * 3 - 1.5);
-          data.push({ temperature: parseFloat(temp.toFixed(1)), date: `Sem ${i}` });
+          // Mínima variación semanal (±0.5°C)
+          const temp = monthlyBase + (Math.random() * 1 - 0.5);
+          data.push({
+            temperature: parseFloat(temp.toFixed(1)),
+            date: `Sem ${i}`,
+          });
           categories.push(`Sem ${i}`);
         }
         break;
     }
 
-    const actualSeries = data.map(item => item.temperature);
+    this.currentData = data;
+    const newValue = data[data.length - 1].temperature;
+    this.currentDisplayValue = newValue;
+    
+    this.updateChartData(data, categories);
+    
+  }
+
+  private updateChartData(
+    data: { temperature: number; date: string }[],
+    categories: string[]
+  ): void {
+    const actualSeries = data.map((item) => item.temperature);
+    
+    this.currentDisplayValue = actualSeries[actualSeries.length - 1];
 
     this.chartOptions.series = [
-      { name: 'Límite Máximo', data: Array(actualSeries.length).fill(this.averageHigh) },
+      {
+        name: 'Límite Máximo',
+        data: Array(actualSeries.length).fill(this.averageHigh),
+      },
       { name: 'Temperatura Actual', data: actualSeries },
-      { name: 'Límite Mínimo', data: Array(actualSeries.length).fill(this.averageLow) }
+      {
+        name: 'Límite Mínimo',
+        data: Array(actualSeries.length).fill(this.averageLow),
+      },
     ];
 
     this.chartOptions.xaxis.categories = categories;
@@ -188,50 +245,82 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
     if (this.chart) {
       this.chart.updateOptions({
         series: this.chartOptions.series,
-        xaxis: { categories }
+        xaxis: { categories },
       });
     }
   }
 
-  /** Simula datos en tiempo real */
   private simulateRealtimeData(): void {
+    if (this.dataSubscription && !this.dataSubscription.closed) {
+      this.dataSubscription.unsubscribe();
+    }
+    
     this.dataSubscription = new Subscription();
     
-    // Simular actualización cada 3 segundos
     const intervalId = setInterval(() => {
-      const newTemp = 20 + Math.random() * 5; // Temperatura entre 20-25°C
-      this.currentTemperature = parseFloat(newTemp.toFixed(1));
-      this.appendRealtimeData({
-        value: this.currentTemperature,
-        timestamp: new Date().toISOString()
-      });
-      this.cdr.markForCheck();
-    }, 3000);
+      if (this.selectedRange === TimeRange.Daily) {
+        const newTemp = 24 + (3 * Math.random()); // Entre 24-27°C
+        const newData = {
+          value: parseFloat(newTemp.toFixed(1)),
+          timestamp: new Date().toISOString()
+        };
+        this.appendRealtimeData(newData);
+      }
+    }, this.UPDATE_INTERVAL);
 
     this.dataSubscription.add({ unsubscribe: () => clearInterval(intervalId) });
   }
 
-  /** Añade punto nuevo al final */
   private appendRealtimeData(data: { value: number; timestamp: string }): void {
-    const series = [...this.chartOptions.series];
-    const actual = series[1].data as number[];
-    const categories = [...this.chartOptions.xaxis.categories as string[]];
+ 
+    this.ngZone.run(() => {
+      const hour = new Date(data.timestamp).getHours();
+      const hourLabel = hour < 10 ? `0${hour}:00` : `${hour}:00`;
 
-    actual.push(data.value);
-    categories.push(new Date(data.timestamp).toLocaleTimeString());
+      const existingIndex = this.currentData.findIndex(
+        (d) => d.date === hourLabel
+      );
 
-    if (actual.length > this.MAX_DATA_POINTS) {
-      actual.shift();
-      categories.shift();
-    }
+      if (existingIndex >= 0) {
+        this.currentData[existingIndex].temperature = data.value;
+      } else {
+        this.currentData.push({
+          temperature: data.value,
+          date: hourLabel,
+        });
+      }
 
-    // Mantiene líneas de límite con misma longitud
-    series[0].data = Array(actual.length).fill(this.averageHigh);
-    series[2].data = Array(actual.length).fill(this.averageLow);
+      if (this.currentData.length > this.MAX_DATA_POINTS) {
+        this.currentData.shift();
+      }
 
-    this.chart.updateOptions({
-      series: series,
-      xaxis: { categories }
+      console.log('📊 Valor RT anterior:', this.currentDisplayValue, '➡️ Valor RT nuevo:', data.value); // Debug
+      this.currentDisplayValue = data.value;
+
+      const categories = this.currentData.map((d) => d.date);
+      const actualSeries = this.currentData.map((d) => d.temperature);
+
+      this.chartOptions.series = [
+        {
+          name: 'Límite Máximo',
+          data: Array(actualSeries.length).fill(this.averageHigh),
+        },
+        { name: 'Temperatura Actual', data: actualSeries },
+        {
+          name: 'Límite Mínimo',
+          data: Array(actualSeries.length).fill(this.averageLow),
+        },
+      ];
+
+      if (this.chart) {
+        this.chart.updateOptions({
+          series: this.chartOptions.series,
+          xaxis: { categories },
+        });
+      }
+
+      this.cdr.detectChanges();
+      console.log('✅ currentDisplayValue RT actualizado a:', this.currentDisplayValue); // Debug
     });
   }
 }
