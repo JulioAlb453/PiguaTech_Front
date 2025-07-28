@@ -1,5 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Legend } from 'chart.js';
+import { Component, OnInit, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { NgApexchartsModule } from 'ng-apexcharts';
+
 import {
   ChartComponent,
   ApexChart,
@@ -11,17 +13,22 @@ import {
   ApexDataLabels,
   ApexYAxis,
   ApexLegend,
+  ApexPlotOptions,
+  ApexGrid 
+
 } from 'ng-apexcharts';
 
 export type AreaChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   xaxis: ApexXAxis;
+  yaxis: ApexYAxis;
   stroke: ApexStroke;
   fill: ApexFill;
-  plotOptions: ApexPlotOptions;
   tooltip: ApexTooltip;
+  grid: ApexGrid; 
 };
+
 
 export type BarChartOptions = {
   series: ApexAxisChartSeries;
@@ -30,6 +37,8 @@ export type BarChartOptions = {
   plotOptions: ApexPlotOptions;
   dataLabels: ApexDataLabels;
   tooltip: ApexTooltip;
+  grid: ApexGrid;
+
 };
 
 @Component({
@@ -41,8 +50,9 @@ export type BarChartOptions = {
 export class WaterMonitoringDashboardComponent implements OnInit {
   @ViewChild('chart') chart!: ChartComponent;
 
-  public turbidityChartOptions!: any;
-  public volumeChartOptions!: any;
+  public turbidityChartOptions!: Partial<AreaChartOptions>;
+  public volumeChartOptions!: Partial<BarChartOptions>;
+  public isLoading = true;
 
   public turbidityMetric = {
     title: 'Turbidez',
@@ -50,112 +60,136 @@ export class WaterMonitoringDashboardComponent implements OnInit {
     unit: 'Gramos/Litros',
     trend: 10,
   };
-  public volumeMetric = { title: 'Volumen', value: 5000, unit: 'L', trend: -5 };
 
-  constructor() {}
+  public volumeMetric = {
+    title: 'Volumen',
+    value: 5000,
+    unit: 'L',
+    trend: -5,
+  };
 
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit(): void {
-    this.initializeTurbidityChart();
-    this.initializeVolumeChart();
+    if (isPlatformBrowser(this.platformId)) {
+      this.inicializarGraficoTurbidez();
+      this.initializeVolumeChart();
+      this.loadTurbidityData();
+    }
   }
 
-  initializeTurbidityChart(): void {
+  inicializarGraficoTurbidez(): void {
     this.turbidityChartOptions = {
-      series: [
-        {
-          name: 'Turbidez (Gramos/Litros)',
-          data: [110, 115, 120, 118, 122, 130, 125],
-        },
-      ],
+      series: [{
+        name: 'Turbidez (Gramos/Litros)',
+        data: [100, 105, 110, 120, 115, 118, 122]
+      }],
       chart: {
-        height: 340,
-        type: 'area',
-        foreColor: '#f39c12',
-
+        type: 'line',
+        height: 350,
         toolbar: { show: false },
-        zoom: { enabled: false },
-        background: 'transparent',
-        sparkline: { enabled: false },
+        foreColor: '#ffffff'
       },
-      stroke: { curve: 'smooth', width: 4, colors: ['#f39c12'] },
+      stroke: {
+        curve: 'smooth',
+        width: 3,
+        colors: ['#00E396']
+      },
       fill: {
         type: 'gradient',
-        colors: ['#919191ff'],
         gradient: {
           shade: 'dark',
-          type: 'vertical',
           shadeIntensity: 0.5,
-          opacityFrom: 0.3,
-          opacityTo: 0.05,
+          opacityFrom: 0.7,
+          opacityTo: 0.3,
           stops: [0, 90, 100],
-        },
-      },
-      dataLabels: {
-        enabled: true,
-        style: {
-          fontSize: '30px',
-          colors: ['#333'],
-        },
-        background: {
-          enabled: true,
-          foreColor: '#333333',
-          padding: 2,
-          borderRadius: 4,
-          borderWidth: 1,
-          borderColor: '#f0f0f0',
-          opacity: 0.9,
-        },
+          colorStops: [
+            {
+              offset: 0,
+              color: '#00E396',
+              opacity: 0.8
+            },
+            {
+              offset: 100,
+              color: '#008FFB',
+              opacity: 0.2
+            }
+          ]
+        }
       },
       xaxis: {
         categories: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-        labels: { show: false },
-        axisBordeer: { color: '#a0a0a0' },
-        axisTicks: { show: false },
+        axisBorder: {
+          show: true,
+          color: '#FFFFFF',
+        },
+        axisTicks: {
+          show: true,
+          color: '#FFFFFF',
+        },
+        labels: {
+          style: {
+            colors: '#FFFFFF',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            fontFamily: 'Arial, sans-serif'
+          }
+        }
       },
       yaxis: {
-        title: {
-          text: 'Turbidez (Gramos/Litros)',
-          style: {
-            color: '#f39c12',
-            fontSize: '40px',
-            fontWeight: 400,
-          },
+        min: 90,
+        max: 130,
+        tickAmount: 5,
+        axisBorder: {
+          show: true,
+          color: '#FFFFFF',
+          width: 2
         },
+        labels: {
+          style: {
+            colors: ['#FFFFFF'], 
+            fontSize: '14px',
+            fontWeight: 'bold',
+            fontFamily: 'Arial, sans-serif'
+          },
+          formatter: (val: number) => `${val} g/L`
+        }
       },
-
+      grid: {
+        borderColor: '#555555',
+        strokeDashArray: 3,
+        position: 'back',
+        yaxis: {
+          lines: {
+            show: true
+          }
+        },
+        xaxis: {
+          lines: {
+            show: false
+          }
+        }
+      },
       tooltip: {
         theme: 'dark',
-        x: { format: 'ddd' },
-      },
-      legend: {
-        show: true,
-        position: 'top',
-        horizontalAlign: 'left',
-        fontZise: '40px',
-        labels: {
-          colors: '#a0a0a0',
+        style: {
+          fontSize: '14px'
         },
-        markers: {
-          width: 10,
-          height: 10,
-          radius: 12,
-        },
-        itemMargin: {
-          horizontal: 5,
-        },
-      },
+        y: {
+          formatter: (val: number) => `${val} g/L`
+        }
+      }
     };
   }
 
   initializeVolumeChart(): void {
     const rawData = [4950, 4980, 5010, 5000, 4990, 4970, 5020];
-    const categories = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
     const tresholdLow = 4980;
 
     const lowLevelsSeries = rawData.map(value => (value <= tresholdLow ? value : null));
-    const optimalLevelsSeries = rawData.map(value => (value > tresholdLow ? value: null));
-
+    const optimalLevelsSeries = rawData.map(value => (value > tresholdLow ? value : null));
 
     this.volumeChartOptions = {
       series: [
@@ -178,27 +212,59 @@ export class WaterMonitoringDashboardComponent implements OnInit {
       },
       plotOptions: {
         bar: {
-          columnWidth: '60%',
+          columnWidth: '80%',
           borderRadius: 4,
           colors: {
             ranges: [
               {
                 from: 0,
                 to: 4980,
-                color: '#e74c3c', // Color para nivel bajo
+                color: '#e74c3c',
               },
               {
                 from: 4981,
                 to: 5020,
-                color: '#3498db', // Color para nivel óptimo
+                color: '#3498db',
               },
             ],
           },
         },
       },
       dataLabels: { enabled: false },
-      xaxis: { categories: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'] },
+      xaxis: {
+        categories: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
+      },
       tooltip: { theme: 'dark' },
     };
+  }
+
+  loadTurbidityData(): void {
+    this.isLoading = true;
+
+    const dummySeries = [98, 102, 108, 120, 117, 115, 119];
+    const dummyCategories = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+    this.turbidityMetric = {
+      title: 'Turbidez',
+      value: dummySeries[dummySeries.length - 1],
+      unit: 'Gramos/Litros',
+      trend: 7
+    };
+
+
+    this.turbidityChartOptions = {
+      ...this.turbidityChartOptions,
+      series: [{
+        name: 'Turbidez (Gramos/Litros)',
+        data: dummySeries
+      }],
+      xaxis: {
+        ...this.turbidityChartOptions.xaxis,
+        categories: dummyCategories
+      },
+      yaxis: this.turbidityChartOptions.yaxis 
+    };
+
+    this.isLoading = false;
   }
 }

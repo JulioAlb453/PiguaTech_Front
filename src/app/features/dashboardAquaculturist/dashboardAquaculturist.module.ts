@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 import { DashboardAquaculturistRoutingModule } from './dashboardAquaculturist-routing.module';
 import { TemperatureDashboardComponent } from './views/temperature-dashboard/temperature-dashboard.component';
@@ -10,18 +11,20 @@ import { GrowthMonitoringDashboardComponent } from './views/growth-monitoring-da
 import { AlertsDashboardComponent } from './views/alerts-dashboard/alerts-dashboard.component';
 
 
+
 @NgModule({
   declarations: [
-    WeightDashboardComponent,
+  WeightDashboardComponent,
     WaterMonitoringDashboardComponent,
     GrowthMonitoringDashboardComponent,
+    AlertsDashboardComponent, 
+    TemperatureDashboardComponent 
   ],
   imports: [
     CommonModule,
     DashboardAquaculturistRoutingModule,
-    NgApexchartsModule,  
-    TemperatureDashboardComponent  ,
-    AlertsDashboardComponent
-  ]
+    NgApexchartsModule,
+  ],
+ 
 })
-export class DashboardAquaculturistModule { }
+export class DashboardAquaculturistModule {}

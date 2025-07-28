@@ -10,6 +10,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SummaryReportsDashboardComponent } from './views/summary-reports-dashboard/summary-reports-dashboard.component';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 
 
@@ -24,7 +25,8 @@ import { SummaryReportsDashboardComponent } from './views/summary-reports-dashbo
     DashboardSupervisorRoutingModule,
     MatIconModule,
     ReactiveFormsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    NgApexchartsModule
   ]
 })
 export class DashboardSupervisorModule { }

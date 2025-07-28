@@ -8,3 +8,17 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.alertSweetAlert{
+  font-weight: 300;
+   z-index: 99999 !important;
+}
+
+.apexcharts-text.apexcharts-xaxis-label {
+  fill: #fff !important;
+}
+
+/* Fuerza las etiquetas del eje Y a blanco */
+.apexcharts-text.apexcharts-yaxis-label {
+  fill: #fff !important;
+}

@@ -3,6 +3,7 @@ import {
   Component,
   ChangeDetectorRef,
   ViewChild,
+  OnInit,
 } from '@angular/core';
 import {
   ChartComponent,
@@ -47,15 +48,9 @@ export type ChartOptions = {
   templateUrl: './growth-monitoring-dashboard.component.html',
   styleUrl: './growth-monitoring-dashboard.component.scss',
 })
-export class GrowthMonitoringDashboardComponent implements AfterViewInit {
+export class GrowthMonitoringDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('chart') chart!: ChartComponent;
-  public chartOptions: Partial<ChartOptions> = {
-    series: [],
-    chart: {
-      height: 380,
-      type: 'area',
-    },
-  };
+  public chartOptions: Partial<ChartOptions> = {};
 
   public timeRangeOptions: TimeRangeOption[] = [
     { id: '7d', label: 'Últimos 7 Días' },
@@ -76,10 +71,16 @@ export class GrowthMonitoringDashboardComponent implements AfterViewInit {
 
   constructor(private crd: ChangeDetectorRef) {}
 
+  ngOnInit(): void {
+    // Inicializar el gráfico en OnInit
+    this.initializeChart();
+  }
+
   ngAfterViewInit(): void {
+    // Esperar a que la vista esté completamente inicializada
     setTimeout(() => {
       this.updateViewForTimeRange(this.activeTimeRange.id);
-    });
+    }, 100);
   }
 
   selectTimeRange(option: TimeRangeOption): void {
@@ -89,17 +90,25 @@ export class GrowthMonitoringDashboardComponent implements AfterViewInit {
 
   initializeChart(): void {
     this.chartOptions = {
-      series: [],
+      series: [{ name: 'Peso Promedio', data: [] }],
       chart: {
         type: 'area',
+        height: 300,
         toolbar: { show: false },
         zoom: { enabled: false },
-        background: '#F0F0F0',
+        background: 'transparent',
         sparkline: { enabled: true },
       },
-      stroke: { curve: 'smooth', width: 3, colors: ['#FFFFFF'] },
+      stroke: { 
+        curve: 'smooth', 
+        width: 9, 
+        colors: ['#FFFFFF'] 
+      },
       xaxis: {
         categories: [],
+        labels: {
+          show: false
+        }
       },
       fill: {
         type: 'gradient',
@@ -114,12 +123,18 @@ export class GrowthMonitoringDashboardComponent implements AfterViewInit {
         },
       },
       dataLabels: { enabled: false },
-      tooltip: { theme: 'light' },
+      tooltip: { 
+        enabled: true,
+        theme: 'dark',
+        shared: true,
+        fillSeriesColor: false,
+       
+      },
     };
   }
 
   updateViewForTimeRange(rangeId: '7d' | '30d' | '90d'): void {
-    let seriesData: any[] = [];
+    let seriesData: number[] = [];
     let categories: string[] = [];
 
     if (rangeId === '30d') {
@@ -129,7 +144,7 @@ export class GrowthMonitoringDashboardComponent implements AfterViewInit {
         trend: 2.5,
         period: 'Últimos 30 Días',
       };
-      seriesData = [3.2, 3.5, 3.4, 3.6, 3.9, 3.7, 3.8];
+      seriesData = [2.3, 3.5, 3.4, 3.6, 3.9, 3.7, 3.8];
       categories = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'];
     } else if (rangeId === '7d') {
       this.kpiData = {
@@ -138,7 +153,7 @@ export class GrowthMonitoringDashboardComponent implements AfterViewInit {
         trend: 0.5,
         period: 'Últimos 7 Días',
       };
-      seriesData = [3.7, 3.75, 3.72, 3.81, 3.78, 3.8, 3.82];
+      seriesData = [2.8, 3.75, 3.72, 3.81, 3.78, 3.8, 3.82];
       categories = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
     } else {
       // 90d
@@ -152,13 +167,17 @@ export class GrowthMonitoringDashboardComponent implements AfterViewInit {
       categories = ['Oct', 'Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May'];
     }
 
-    if (this.chart) {
-      this.chart.updateSeries([{ data: seriesData }]);
-      this.chart.updateOptions({ xaxis: { categories: categories } });
-    } else {
-      this.chartOptions.series = [{ data: seriesData }];
-      this.chartOptions.xaxis = { categories: categories };
-    }
+    this.chartOptions = {
+      ...this.chartOptions,
+      series: [{ name: 'Peso Promedio', data: seriesData }],
+      xaxis: { 
+        ...this.chartOptions.xaxis, 
+        categories: categories,
+        labels: {
+          show: false
+        }
+      }
+    };
 
     this.crd.detectChanges();
   }

@@ -10,10 +10,9 @@ export interface Alert {
 
 @Component({
   selector: 'app-alerts-dashboard',
-  standalone: true,
-  imports: [CommonModule],
+  standalone: false,
   templateUrl: './alerts-dashboard.component.html',
-  styleUrl: './alerts-dashboard.component.css'
+  styleUrl: './alerts-dashboard.component.scss'
 })
 export class   AlertsDashboardComponent {
 

@@ -7,72 +7,83 @@
     <h2>Peso Promedio a lo Largo del Tiempo</h2>
 
     <div class="growth-page__time-selector">
-      <button
-        *ngFor="let option of timeRangeOptions"
-        class="growth-page__time-selector-button"
+      @for (option of timeRangeOptions; track option) {
+        <button
+          class="growth-page__time-selector-button"
         [class.growth-page__time-selector-button--active]="
           option.id === activeTimeRange.id
         "
-        (click)="selectTimeRange(option)"
-      >
-        {{ option.label }}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="m6 9 6 6 6-6" />
-        </svg>
-      </button>
+          (click)="selectTimeRange(option)"
+          >
+          {{ option.label }}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+      }
     </div>
 
-    <div class="growth-page__kpi-card" *ngIf="kpiData">
-      <label>Peso Promedio ({{ kpiData.unit }})</label>
-      <span class="growth-page__kpi-value">{{ kpiData.value }}</span>
-      <p
-        class="growth-page__kpi-trend"
+    @if (kpiData) {
+      <div class="growth-page__kpi-card">
+        <label>Peso Promedio {{ kpiData.unit }}</label>
+        <span class="growth-page__kpi-value">{{ kpiData.value }}</span>
+        <p
+          class="growth-page__kpi-trend"
         [ngClass]="{
           'growth-page__kpi-trend--positive': kpiData.trend > 0,
           'growth-page__kpi-trend--negative': kpiData.trend < 0
         }"
-      >
-        {{ kpiData.period }} {{ kpiData.trend > 0 ? "+" : ""
-        }}{{ kpiData.trend }}%
-      </p>
-    </div>
+          >
+          {{ kpiData.period }} {{ kpiData.trend > 0 ? "+" : ""
+          }}{{ kpiData.trend }}%
+        </p>
+      </div>
+    }
 
     <div class="growth-page__chart-container">
-      <apx-chart
-        #chart
-        [series]="chartOptions.series!"
-        [chart]="chartOptions.chart!"
-        [stroke]="chartOptions.stroke!"
-        [fill]="chartOptions.fill!"
-        [tooltip]="chartOptions.tooltip!"
-        [xaxis]="chartOptions.xaxis!"
-        [dataLabels]="chartOptions.dataLabels!"
-      ></apx-chart>
+      @if (chartOptions) {
+        <apx-chart
+          #chart
+          [tooltip]="chartOptions.tooltip!"
+          [series]="chartOptions.series!"
+          [chart]="chartOptions.chart!"
+          [stroke]="chartOptions.stroke!"
+          [fill]="chartOptions.fill!"
+          [xaxis]="chartOptions.xaxis!"
+          [dataLabels]="chartOptions.dataLabels!"
+        ></apx-chart>
+      }
       <div class="growth-page__chart-xaxis">
-        <span *ngFor="let label of chartOptions.xaxis?.categories">{{
-          label
-        }}</span>
+        @for (label of chartOptions.xaxis?.categories; track label) {
+          <span>{{
+            label
+          }}</span>
+        }
       </div>
     </div>
   </section>
 
-  <footer class="growth-page__footer">
-    <h3>Métricas Clave de Crecimiento</h3>
-    <div class="growth-page__key-metrics">
-      <div *ngFor="let metric of keyMetrics" class="growth-page__metric-card">
-        <label>{{ metric.label }}</label>
-        <span>{{ metric.value }}</span>
+  <div class="growth-page__footer-container">
+    <footer class="growth-page__footer">
+      <h3>Métricas Clave de Crecimiento</h3>
+      <div class="growth-page__key-metrics">
+        @for (metric of keyMetrics; track metric) {
+          <div class="growth-page__metric-card">
+            <label>{{ metric.label }}</label>
+            <span>{{ metric.value }}</span>
+          </div>
+        }
       </div>
-    </div>
-  </footer>
+    </footer>
+  </div>
 </main>

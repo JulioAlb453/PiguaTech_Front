@@ -1,18 +1,59 @@
-import { Observable } from 'rxjs';
-import { TimeRange } from '../models/time-range.enum';
-import { TemperatureData } from '../models/temperature-data.model'; // Asegúrate de que este modelo exista
+// src/app/core/services/monitoring.service.ts
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { WebSocketService } from './websocket.service';
 
-// Suponiendo que tu modelo de datos históricos se ve así:
-export interface HistoricalTemperatureData {
-  series: any[]; // O un tipo más específico
-  categories: string[];
+export interface TemperatureData {
+  value: number;
+  timestamp: string;
 }
 
-export abstract class IMonitoringService {
-  // Este método ya lo tienes para datos históricos
-  abstract getData(range: TimeRange): Observable<HistoricalTemperatureData>;
+export enum TimeRange {
+  Daily = 'daily',
+  Weekly = 'weekly',
+  Monthly = 'monthly'
+}
 
-  // AÑADIMOS ESTE MÉTODO PARA TIEMPO REAL
-  // Devuelve un flujo continuo de puntos de datos de temperatura.
-  abstract getRealTimeData(): Observable<TemperatureData>; 
+@Injectable({
+  providedIn: 'root'
+})
+export class MonitoringService {
+  private API_URL = 'http://localhost:8000/readings';
+
+  constructor(
+    private http: HttpClient,
+    private webSocketService: WebSocketService
+  ) {}
+
+  // HISTÓRICO de temperatura
+  getTemperatureData(range: TimeRange): Observable<any> {
+    const params = new HttpParams().set('period', range);
+    return this.http.get(`${this.API_URL}/temperature-trend`, { params }).pipe(
+      catchError(err => {
+        console.error('Error fetching historical temperature data:', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  // HISTÓRICO de peso semanal
+  getWeeklyWeightTrend(pondId: number, weeks: number): Observable<any> {
+    let params = new HttpParams()
+      .set('pond_id', pondId)
+      .set('weeks', weeks);
+
+    return this.http.get(`${this.API_URL}/weight-trend`, { params }).pipe(
+      catchError(err => {
+        console.error('Error fetching weekly weight trend:', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  // TEMPERATURA en tiempo real (websocket)
+  getRealTimeData(): Observable<TemperatureData> {
+    return this.webSocketService.getTemperatureStream();
+  }
 }
