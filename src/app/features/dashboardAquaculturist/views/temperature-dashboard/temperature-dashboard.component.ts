@@ -198,7 +198,6 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
         break;
 
       case TimeRange.Monthly:
-        // Datos para 4 semanas con muy poca variación
         const monthlyBase = 24 + (Math.random() * 3 - 1.5); // Temperatura base para el mes
 
         for (let i = 1; i <= 4; i++) {
@@ -213,17 +212,12 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
         break;
     }
 
-    // ✅ CORRECCIÓN: Actualizamos currentData ANTES de updateChartData
     this.currentData = data;
-    
-    // ✅ CORRECCIÓN: Actualizamos currentDisplayValue INMEDIATAMENTE
     const newValue = data[data.length - 1].temperature;
-    console.log('📊 Valor anterior:', this.currentDisplayValue, '➡️ Valor nuevo:', newValue); // Debug
     this.currentDisplayValue = newValue;
     
     this.updateChartData(data, categories);
     
-    console.log('✅ currentDisplayValue actualizado a:', this.currentDisplayValue); // Debug
   }
 
   private updateChartData(
@@ -232,7 +226,6 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
   ): void {
     const actualSeries = data.map((item) => item.temperature);
     
-    // ✅ CORRECCIÓN: Actualizamos currentDisplayValue AQUÍ también
     this.currentDisplayValue = actualSeries[actualSeries.length - 1];
 
     this.chartOptions.series = [
@@ -258,7 +251,6 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
   }
 
   private simulateRealtimeData(): void {
-    // ✅ CORRECCIÓN: Verificamos si ya existe una suscripción activa
     if (this.dataSubscription && !this.dataSubscription.closed) {
       this.dataSubscription.unsubscribe();
     }
@@ -280,15 +272,11 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
   }
 
   private appendRealtimeData(data: { value: number; timestamp: string }): void {
-    console.log('⏰ Datos en tiempo real:', data.value); // Debug
-    
-    // ✅ CORRECCIÓN: Ejecutamos dentro de NgZone para asegurar detección de cambios
+ 
     this.ngZone.run(() => {
-      // Actualizamos los datos actuales
       const hour = new Date(data.timestamp).getHours();
       const hourLabel = hour < 10 ? `0${hour}:00` : `${hour}:00`;
 
-      // Encontramos o creamos el punto de datos
       const existingIndex = this.currentData.findIndex(
         (d) => d.date === hourLabel
       );
@@ -302,16 +290,13 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
         });
       }
 
-      // Mantenemos un máximo de datos
       if (this.currentData.length > this.MAX_DATA_POINTS) {
         this.currentData.shift();
       }
 
-      // ✅ CORRECCIÓN: Actualizamos currentDisplayValue con el nuevo valor
       console.log('📊 Valor RT anterior:', this.currentDisplayValue, '➡️ Valor RT nuevo:', data.value); // Debug
       this.currentDisplayValue = data.value;
 
-      // Actualizamos el gráfico
       const categories = this.currentData.map((d) => d.date);
       const actualSeries = this.currentData.map((d) => d.temperature);
 
@@ -334,7 +319,6 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
         });
       }
 
-      // ✅ CORRECCIÓN: Forzamos explícitamente la detección de cambios
       this.cdr.detectChanges();
       console.log('✅ currentDisplayValue RT actualizado a:', this.currentDisplayValue); // Debug
     });

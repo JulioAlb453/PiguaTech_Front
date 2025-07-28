@@ -3,62 +3,23 @@
     <div class="dashboard__main">
       <header class="dashboard__header">
         <h1 class="dashboard__title">Temperatura del Agua</h1>
-
-        <div
-          style="
-            color: white;
-            background-color: red;
-            padding: 1rem;
-            margin-top: 1rem;
-            border-radius: 0.5rem;
-            font-weight: bold;
-          "
-        >
-          ⚠️ ¡Temperatura fuera de rango seguro! Actual:
-          {{ displayValue  }} °C
-        </div>
-
         <button
           class="dashboard__notification-bell"
           aria-label="Ver notificaciones"
-          >
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
             height="24"
             fill="currentColor"
             viewBox="0 0 256 256"
-            >
+          >
             <path
               d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"
             ></path>
           </svg>
         </button>
       </header>
-
-    <nav class="dashboard__time-selector">
-      <button
-        class="dashboard__time-selector-button"
-        [class.dashboard__time-selector-button--active]="selectedRange === TimeRange.Daily"
-        (click)="onRangeChange(TimeRange.Daily)"
-      >
-        Diario
-      </button>
-      <button
-        class="dashboard__time-selector-button"
-        [class.dashboard__time-selector-button--active]="selectedRange === TimeRange.Weekly"
-        (click)="onRangeChange(TimeRange.Weekly)"
-      >
-        Semanal
-      </button>
-      <button
-        class="dashboard__time-selector-button"
-        [class.dashboard__time-selector-button--active]="selectedRange === TimeRange.Monthly"
-        (click)="onRangeChange(TimeRange.Monthly)"
-      >
-        Mensual
-      </button>
-    </nav>
 
       <nav class="dashboard__time-selector">
         <button
@@ -93,11 +54,10 @@
       <section class="dashboard__trend">
         <h2 class="dashboard__trend-title">Monitoreo de Temperatura</h2>
         <div class="dashboard__trend-main">
-          <p class="dashboard__trend-value">{{ displayValue  }}°C</p>
+          <p class="dashboard__trend-value">{{ displayValue }}°C</p>
 
           <div class="dashboard__trend-summary">
             <div class="dashboard__summary-item">
-              <span class="dashboard__summary-label dashboard__summary-label--limit-high">Límite Máx:</span>
               <span
                 class="dashboard__summary-label dashboard__summary-label--limit-high"
                 >Límite Máx:</span
@@ -105,7 +65,6 @@
               <span class="dashboard__summary-value">{{ averageHigh }}°C</span>
             </div>
             <div class="dashboard__summary-item">
-              <span class="dashboard__summary-label dashboard__summary-label--limit-low">Límite Mín:</span>
               <span
                 class="dashboard__summary-label dashboard__summary-label--limit-low"
                 >Límite Mín:</span
@@ -115,22 +74,6 @@
           </div>
         </div>
       </section>
-
-    <apx-chart
-      #chart
-      *ngIf="chartOptions"
-      [series]="chartOptions.series"
-      [chart]="chartOptions.chart"
-      [xaxis]="chartOptions.xaxis"
-      [yaxis]="chartOptions.yaxis"
-      [tooltip]="chartOptions.tooltip"
-      [stroke]="chartOptions.stroke"
-      [grid]="chartOptions.grid"
-      [dataLabels]="chartOptions.dataLabels"
-      [legend]="chartOptions.legend"
-      [colors]="chartOptions.colors">
-    </apx-chart>
-
 
       <apx-chart
         #chart
@@ -152,7 +95,9 @@
     <section class="dashboard__alerts">
       <h2 class="dashboard__alerts-title">Alertas</h2>
       <div class="dashboard__alert-control">
-        <label class="dashboard__alert-label" for="temp-range">Rango de Temperatura</label>
+        <label class="dashboard__alert-label" for="temp-range"
+          >Rango de Temperatura</label
+        >
         <div class="dashboard__slider"></div>
         <button class="dashboard__action-button">Establecer Alerta</button>
       </div>
