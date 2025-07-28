@@ -20,24 +20,39 @@ export enum TimeRange {
   providedIn: 'root'
 })
 export class MonitoringService {
-  private API_URL = 'http://localhost:8000/readings'; 
+  private API_URL = 'http://localhost:8000/readings';
 
   constructor(
     private http: HttpClient,
     private webSocketService: WebSocketService
   ) {}
 
-  // HISTÓRICO
-  getData(range: TimeRange): Observable<any> {
+  // HISTÓRICO de temperatura
+  getTemperatureData(range: TimeRange): Observable<any> {
     const params = new HttpParams().set('period', range);
     return this.http.get(`${this.API_URL}/temperature-trend`, { params }).pipe(
       catchError(err => {
-        console.error('Error fetching historical data:', err);
+        console.error('Error fetching historical temperature data:', err);
         return throwError(() => err);
       })
     );
   }
 
+  // HISTÓRICO de peso semanal
+  getWeeklyWeightTrend(pondId: number, weeks: number): Observable<any> {
+    let params = new HttpParams()
+      .set('pond_id', pondId)
+      .set('weeks', weeks);
+
+    return this.http.get(`${this.API_URL}/weight-trend`, { params }).pipe(
+      catchError(err => {
+        console.error('Error fetching weekly weight trend:', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  // TEMPERATURA en tiempo real (websocket)
   getRealTimeData(): Observable<TemperatureData> {
     return this.webSocketService.getTemperatureStream();
   }

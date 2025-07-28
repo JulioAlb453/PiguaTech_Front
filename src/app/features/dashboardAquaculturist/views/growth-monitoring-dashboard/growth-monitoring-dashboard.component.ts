@@ -41,7 +41,6 @@ export type ChartOptions = {
   tooltip: ApexTooltip;
   dataLabels: ApexDataLabels;
 };
-import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-growth-monitoring-dashboard',
@@ -49,9 +48,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
   templateUrl: './growth-monitoring-dashboard.component.html',
   styleUrl: './growth-monitoring-dashboard.component.scss',
 })
-export class GrowthMonitoringDashboardComponent
-  implements OnInit, AfterViewInit
-{
+export class GrowthMonitoringDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('chart') chart!: ChartComponent;
   public chartOptions: Partial<ChartOptions> = {};
 
@@ -72,10 +69,7 @@ export class GrowthMonitoringDashboardComponent
     },
   ];
 
-  constructor(
-    private crd: ChangeDetectorRef,
-    private notificationService: NotificationService
-  ) {}
+  constructor(private crd: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     // Inicializar el gráfico en OnInit
@@ -105,16 +99,16 @@ export class GrowthMonitoringDashboardComponent
         background: 'transparent',
         sparkline: { enabled: true },
       },
-      stroke: {
-        curve: 'smooth',
-        width: 9,
-        colors: ['#FFFFFF'],
+      stroke: { 
+        curve: 'smooth', 
+        width: 9, 
+        colors: ['#FFFFFF'] 
       },
       xaxis: {
         categories: [],
         labels: {
-          show: false,
-        },
+          show: false
+        }
       },
       fill: {
         type: 'gradient',
@@ -129,30 +123,14 @@ export class GrowthMonitoringDashboardComponent
         },
       },
       dataLabels: { enabled: false },
-      tooltip: {
+      tooltip: { 
         enabled: true,
         theme: 'dark',
         shared: true,
         fillSeriesColor: false,
+       
       },
     };
-  }
-
-  private checkForAnomalies(): void {
-    // Si kpiData no está definido, no hacemos nada.
-    if (!this.kpiData) {
-      return;
-    }
-
-    // REGLA DE NEGOCIO: Si la tendencia de crecimiento es negativa, es una anomalía.
-    if (this.kpiData.trend < 0) {
-      const message = `Alerta de crecimiento: La tendencia en los ${this.kpiData.period.toLowerCase()} es negativa (${
-        this.kpiData.trend
-      }%).`;
-
-      // Llamamos a nuestro servicio para mostrar el toast.
-      this.notificationService.showSensorAnomaly('warning', message);
-    }
   }
 
   updateViewForTimeRange(rangeId: '7d' | '30d' | '90d'): void {
@@ -172,10 +150,10 @@ export class GrowthMonitoringDashboardComponent
       this.kpiData = {
         value: 3.8,
         unit: 'kg',
-        trend: -0.5,
+        trend: 0.5,
         period: 'Últimos 7 Días',
-      }; 
-      seriesData = [3.8, 3.75, 3.72, 3.81, 3.78, 3.8, 3.72];
+      };
+      seriesData = [2.8, 3.75, 3.72, 3.81, 3.78, 3.8, 3.82];
       categories = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
     } else {
       // 90d
@@ -188,22 +166,18 @@ export class GrowthMonitoringDashboardComponent
       seriesData = [2.9, 3.1, 3.0, 3.2, 3.5, 3.3, 3.6, 3.8];
       categories = ['Oct', 'Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May'];
     }
+
     this.chartOptions = {
       ...this.chartOptions,
       series: [{ name: 'Peso Promedio', data: seriesData }],
-      xaxis: {
-        ...this.chartOptions.xaxis,
+      xaxis: { 
+        ...this.chartOptions.xaxis, 
         categories: categories,
         labels: {
-          show: false,
-        },
-      },
+          show: false
+        }
+      }
     };
-    if (this.chart) {
-      this.chart.updateSeries([{ data: seriesData }]);
-      this.chart.updateOptions({ xaxis: { categories: categories } });
-    }
-    this.checkForAnomalies();
 
     this.crd.detectChanges();
   }

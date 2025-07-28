@@ -3,22 +3,6 @@
     <div class="dashboard__main">
       <header class="dashboard__header">
         <h1 class="dashboard__title">Temperatura del Agua</h1>
-
-        <div
-          *ngIf="alertaTemperatura"
-          style="
-            color: white;
-            background-color: red;
-            padding: 1rem;
-            margin-top: 1rem;
-            border-radius: 0.5rem;
-            font-weight: bold;
-          "
-        >
-          ⚠️ ¡Temperatura fuera de rango seguro! Actual:
-          {{ currentTemperature }} °C
-        </div>
-
         <button
           class="dashboard__notification-bell"
           aria-label="Ver notificaciones"
@@ -38,23 +22,42 @@
       </header>
 
       <nav class="dashboard__time-selector">
-        <button class="dashboard__time-selector-button">Diario</button>
         <button
-          class="dashboard__time-selector-button dashboard__time-selector-button--active"
+          class="dashboard__time-selector-button"
+          [class.dashboard__time-selector-button--active]="
+            selectedRange === TimeRange.Daily
+          "
+          (click)="onRangeChange(TimeRange.Daily)"
+        >
+          Diario
+        </button>
+        <button
+          class="dashboard__time-selector-button"
+          [class.dashboard__time-selector-button--active]="
+            selectedRange === TimeRange.Weekly
+          "
+          (click)="onRangeChange(TimeRange.Weekly)"
         >
           Semanal
         </button>
-        <button class="dashboard__time-selector-button">Mensual</button>
+        <button
+          class="dashboard__time-selector-button"
+          [class.dashboard__time-selector-button--active]="
+            selectedRange === TimeRange.Monthly
+          "
+          (click)="onRangeChange(TimeRange.Monthly)"
+        >
+          Mensual
+        </button>
       </nav>
 
       <section class="dashboard__trend">
         <h2 class="dashboard__trend-title">Monitoreo de Temperatura</h2>
         <div class="dashboard__trend-main">
-          <p class="dashboard__trend-value">{{ currentTemperature }}°C</p>
+          <p class="dashboard__trend-value">{{ displayValue }}°C</p>
 
           <div class="dashboard__trend-summary">
             <div class="dashboard__summary-item">
-              <!-- Cambiado de "Promedio Máx" a "Límite Máx" -->
               <span
                 class="dashboard__summary-label dashboard__summary-label--limit-high"
                 >Límite Máx:</span
@@ -62,7 +65,6 @@
               <span class="dashboard__summary-value">{{ averageHigh }}°C</span>
             </div>
             <div class="dashboard__summary-item">
-              <!-- Cambiado de "Promedio Mín" a "Límite Mín" -->
               <span
                 class="dashboard__summary-label dashboard__summary-label--limit-low"
                 >Límite Mín:</span
@@ -72,23 +74,22 @@
           </div>
         </div>
       </section>
-      <div class="dashboard__chart">
-        @if (chartOptions) {
-        <apx-chart
-          [series]="chartOptions.series"
-          [chart]="chartOptions.chart"
-          [xaxis]="chartOptions.xaxis"
-          [yaxis]="chartOptions.yaxis"
-          [tooltip]="chartOptions.tooltip"
-          [stroke]="chartOptions.stroke"
-          [grid]="chartOptions.grid"
-          [dataLabels]="chartOptions.dataLabels"
-          [legend]="chartOptions.legend"
-          [colors]="chartOptions.colors"
-        >
-        </apx-chart>
-        }
-      </div>
+
+      <apx-chart
+        #chart
+        *ngIf="chartOptions"
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [xaxis]="chartOptions.xaxis"
+        [yaxis]="chartOptions.yaxis"
+        [tooltip]="chartOptions.tooltip"
+        [stroke]="chartOptions.stroke"
+        [grid]="chartOptions.grid"
+        [dataLabels]="chartOptions.dataLabels"
+        [legend]="chartOptions.legend"
+        [colors]="chartOptions.colors"
+      >
+      </apx-chart>
     </div>
 
     <section class="dashboard__alerts">

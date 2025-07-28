@@ -1,14 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
-
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { NavbarService } from './navbar.service';
-
-type UserRole = 'supervisor' | 'acuitultor';
+import { AuthAPIService } from '../../../features/auth/infraestructure/authAPI.service';
+import { UserRole } from '../../../features/auth/domain/models/user-role.enum';
+import { Subscription } from 'rxjs';
 
 interface NavLink {
   label: string;
@@ -18,28 +18,57 @@ interface NavLink {
 
 @Component({
   selector: 'app-navbar',
+  standalone: true,
   imports: [
     RouterLink,
     RouterLinkActive,
     MatButtonModule,
     MatIconModule,
-    MatMenuModule
-],
-  standalone: true,
+    MatMenuModule,
+  ],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss',
+  styleUrls: ['./navbar.component.scss'],
 })
-export class NavbarComponent implements OnInit {
-  @Input() userRole: UserRole = 'supervisor';
-
+export class NavbarComponent implements OnInit, OnDestroy {
+  userRole: UserRole = UserRole.Acuicultor; // Fallback por defecto
   showNavbar = true;
   public isMobileMenuOpen = false;
-  constructor(private navbarService: NavbarService) {}
+
+  private subscriptions = new Subscription();
+
+  constructor(
+    private navbarService: NavbarService,
+    private authService: AuthAPIService
+  ) {}
 
   ngOnInit(): void {
-    this.navbarService.showNavbar$.subscribe((show) => {
-      this.showNavbar = show;
-    });
+    this.subscriptions.add(
+      this.navbarService.showNavbar$.subscribe((show) => {
+        this.showNavbar = show;
+      })
+    );
+
+    // Suscribirse al observable que emite el usuario actual
+    this.subscriptions.add(
+      this.authService.currentUser$.subscribe((user) => {
+        if (user?.role) {
+          const normalizedRole = user.role.trim().toLowerCase();
+          if (normalizedRole === 'supervisor') {
+            this.userRole = UserRole.Supervisor;
+          } else {
+            this.userRole = UserRole.Acuicultor;
+          }
+        } else {
+          this.userRole = UserRole.Acuicultor; 
+        }
+        console.log('Rol actualizado en navbar:', this.userRole);
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+
+    this.subscriptions.unsubscribe();
   }
 
   private supervisorLinks: NavLink[] = [
@@ -47,28 +76,28 @@ export class NavbarComponent implements OnInit {
       label: 'Resumen',
       path: '#',
       children: [
-        { label: 'Estado del habitat', path: '/dashboardSupervisor/summary' },
-        { label: 'Vista principal', path: '/dashboardSupervisor/home' },
+        { label: 'Estado del hábitat', path: '/supervisor/summary' },
+        { label: 'Vista principal', path: '/supervisor/home' },
       ],
     },
-    { label: 'Reportes', path: '/dashboardSupervisor/reports' },
+    { label: 'Reportes', path: '/supervisor/reports' },
   ];
 
   private acuicultorLinks: NavLink[] = [
     {
-      label: 'Graficas',
+      label: 'Gráficas',
       path: '#',
       children: [
-        { label: 'Temperatura', path: '/dashboardAquaculturist/temperature' },
-        { label: 'crecimiento', path: '/dashboardAquaculturist/growth' },
-        { label: 'Habitat (Turbidez/volumen)', path: '/dashboardAquaculturist/waterMonitoring' },
+        { label: 'Temperatura', path: '/acuicultor/temperature' },
+        { label: 'crecimiento', path: '/acuicultor/growth' },
+        { label: 'Turbidez', path: '/acuicultor/waterMonitoring' },
       ],
     },
-    { label: 'Alert', path: '/dashboardAquaculturist/alertsDashboard' },
+    { label: 'Alertas', path: '/acuicultor/alertsDashboard' },
   ];
 
   get navLinks(): NavLink[] {
-    return this.userRole === 'supervisor'
+    return this.userRole === UserRole.Supervisor
       ? this.supervisorLinks
       : this.acuicultorLinks;
   }
@@ -76,7 +105,8 @@ export class NavbarComponent implements OnInit {
   toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
-  isMobile(): boolean{
-    return window.innerHeight < 992
+
+  isMobile(): boolean {
+    return window.innerHeight < 992;
   }
 }

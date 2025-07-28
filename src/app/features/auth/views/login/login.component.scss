@@ -6,48 +6,67 @@
   --primary-light: #c9852c;
   --accent-color: #f59e0b;
   --accent-secondary: #10b981;
-  
+
   --background-color: #0a0a0a;
   --surface-color: #111111;
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
-  
+
   --text-color: #ffffff;
   --text-secondary-color: #a1a1aa;
   --text-muted: #71717a;
-  
+
   --input-bg-color: rgba(255, 255, 255, 0.08);
   --input-border: rgba(255, 255, 255, 0.2);
   --input-focus: var(--primary-color);
-  
-  --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --shadow-glow: 0 0 30px rgba(246, 187, 59, 0.3);
-  
+
   --gradient-primary: linear-gradient(135deg, #b98800 0%, #bb7851 100%);
   --gradient-accent: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-surface: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  --gradient-surface: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
 }
-  
+
 .loginPage {
   background: var(--background-color);
-  background-image: 
-    radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 60%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+  background-image: radial-gradient(
+      circle at 20% 20%,
+      rgba(59, 130, 246, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(245, 158, 11, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 60%,
+      rgba(16, 185, 129, 0.05) 0%,
+      transparent 50%
+    );
   color: var(--text-color);
   min-height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
   position: relative;
   overflow-x: hidden;
 }
 
 .loginPage::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -110,7 +129,7 @@
 }
 
 .loginPage__formContainer::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -202,7 +221,11 @@
 
 .loginPage__submitButton {
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-dark) 100%
+  );
   color: var(--text-color);
   border: none;
   border-radius: 16px;
@@ -217,13 +240,17 @@
 }
 
 .loginPage__submitButton::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -231,7 +258,11 @@
 .loginPage__submitButton:hover:not(:disabled) {
   transform: translateY(-3px);
   box-shadow: var(--shadow-glow);
-  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-dark) 0%,
+    var(--primary-color) 100%
+  );
 }
 
 .loginPage__submitButton:hover:not(:disabled)::before {
@@ -289,7 +320,7 @@
   box-shadow: 0 0 20px rgba(68, 68, 68, 0.2);
 }
 
-.login-page__register-button{
+.login-page__register-button {
   color: var(--accent-color);
 }
 
@@ -313,7 +344,7 @@
 }
 
 .loginPage__imageContainer::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -20px;
   left: -20px;
@@ -326,7 +357,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 0.1;
   }
@@ -366,7 +398,7 @@
   .loginPage__main {
     gap: 4rem;
   }
-  
+
   .loginPage__formContainer {
     max-width: 400px;
   }
@@ -379,22 +411,22 @@
     gap: 2rem;
     padding: 2rem 1rem;
   }
-  
+
   .loginPage__imageContainer {
     display: none;
   }
-  
+
   .loginPage__header {
     padding: 1rem 1.5rem;
   }
-  
+
   .loginPage__formContainer {
     max-width: 100%;
     width: 100%;
     padding: 2rem;
     margin: 0 1rem;
   }
-  
+
   .loginPage__title {
     font-size: 2.5rem;
   }
@@ -405,15 +437,15 @@
     padding: 1.5rem;
     border-radius: 20px;
   }
-  
+
   .loginPage__title {
     font-size: 2rem;
   }
-  
+
   .loginPage__input {
     padding: 0.875rem 1rem;
   }
-  
+
   .loginPage__submitButton {
     padding: 0.875rem 1.5rem;
   }

@@ -67,4 +67,19 @@ export class RegisterComponent implements OnInit {
       }
     });
   }
+
+  getFormProgress(): number {
+  const controls = this.registerForm.controls;
+  const totalFields = Object.keys(controls).length;
+  let validFields = 0;
+
+  Object.keys(controls).forEach(key => {
+    const control = controls[key];
+    if (control.valid && control.value && control.value.toString().trim() !== '') {
+      validFields++;
+    }
+  });
+
+  return Math.round((validFields / totalFields) * 100);
+}
 }

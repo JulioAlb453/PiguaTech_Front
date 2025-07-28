@@ -1,129 +1,168 @@
-<section class="register">
-  <header class="register__header">
-    <h1 class="register__title">Registro de Usuario</h1>
-    <p class="register__subtitle">Monitoreo de Piguas (Camarones)</p>
-  </header>
+<section class="loginPage">
+  <div class="loginPage__header">
+    <div class="loginPage__logo">
+      <span>PiguaTech</span>
+    </div>
+    <a routerLink="/auth/login" class="loginPage__navLink">Iniciar Sesión</a>
+  </div>
 
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register__form form">
-    <div class="form__field">
-      <label for="names" class="form__label">Nombre Completo</label>
-      <input
-        type="text"
-        id="names"
-        formControlName="names"
-        class="form__input"
-        placeholder="Ingrese su nombre completo"
-        [ngClass]="{ 'form__input--error': registerForm.get('names')?.invalid && registerForm.get('names')?.touched }"
-        >
-        @if (registerForm.get('names')?.invalid && registerForm.get('names')?.touched) {
-          <div class="form__error">
+  <div class="loginPage__main">
+    <div class="loginPage__formContainer loginPage__formContainer--compact">
+      <h1 class="loginPage__title">Crear Cuenta</h1>
+      <p class="loginPage__subtitle">Monitoreo de Piguas (Camarones)</p>
+
+      <form
+        [formGroup]="registerForm"
+        (ngSubmit)="onSubmit()"
+        class="loginPage__form"
+      >
+        <!-- Nombre Completo -->
+        <div class="loginPage__formGroup">
+          <label for="names" class="loginPage__label">Nombre Completo</label>
+          <input
+            type="text"
+            id="names"
+            formControlName="names"
+            class="loginPage__input"
+            placeholder="Ingrese su nombre completo"
+            [ngClass]="{
+              'input-error':
+                registerForm.get('names')?.invalid &&
+                registerForm.get('names')?.touched
+            }"
+          />
+          @if (registerForm.get('names')?.invalid &&
+          registerForm.get('names')?.touched) {
+          <div class="error-message">
             @if (registerForm.get('names')?.errors?.['required']) {
-              <span>El nombre es requerido</span>
-            }
-            @if (registerForm.get('names')?.errors?.['minlength']) {
-              <span>Mínimo 3 caracteres</span>
+            <span>El nombre es requerido</span>
+            } @if (registerForm.get('names')?.errors?.['minlength']) {
+            <span>Mínimo 3 caracteres</span>
             }
           </div>
-        }
-      </div>
-
-      <div class="form__field">
-        <label for="email" class="form__label">Correo Electrónico</label>
-        <input
-          type="email"
-          id="email"
-          formControlName="email"
-          class="form__input"
-          placeholder="Ingrese su correo electrónico"
-          [ngClass]="{ 'form__input--error': registerForm.get('email')?.invalid && registerForm.get('email')?.touched }"
-          >
-          @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
-            <div class="form__error">
-              @if (registerForm.get('email')?.errors?.['required']) {
-                <span>El email es requerido</span>
-              }
-              @if (registerForm.get('email')?.errors?.['email']) {
-                <span>Ingrese un email válido</span>
-              }
-            </div>
           }
         </div>
 
-        <div class="form__field">
-          <label for="password" class="form__label">Contraseña</label>
+        <!-- Email -->
+        <div class="loginPage__formGroup">
+          <label for="email" class="loginPage__label">Correo Electrónico</label>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            class="loginPage__input"
+            placeholder="Ingrese su correo electrónico"
+            [ngClass]="{
+              'input-error':
+                registerForm.get('email')?.invalid &&
+                registerForm.get('email')?.touched
+            }"
+          />
+          @if (registerForm.get('email')?.invalid &&
+          registerForm.get('email')?.touched) {
+          <div class="error-message">
+            @if (registerForm.get('email')?.errors?.['required']) {
+            <span>El email es requerido</span>
+            } @if (registerForm.get('email')?.errors?.['email']) {
+            <span>Ingrese un email válido</span>
+            }
+          </div>
+          }
+        </div>
+
+        <div class="loginPage__formGroup">
+          <label for="password" class="loginPage__label">Contraseña</label>
           <input
             type="password"
             id="password"
             formControlName="password"
-            class="form__input"
+            class="loginPage__input"
             placeholder="Ingrese su contraseña"
-            [ngClass]="{ 'form__input--error': registerForm.get('password')?.invalid && registerForm.get('password')?.touched }"
-            >
-            @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
-              <div class="form__error">
-                @if (registerForm.get('password')?.errors?.['required']) {
-                  <span>La contraseña es requerida</span>
-                }
-                @if (registerForm.get('password')?.errors?.['minlength']) {
-                  <span>Mínimo 8 caracteres</span>
-                }
-              </div>
+            [ngClass]="{
+              'input-error':
+                registerForm.get('password')?.invalid &&
+                registerForm.get('password')?.touched
+            }"
+          />
+          @if (registerForm.get('password')?.invalid &&
+          registerForm.get('password')?.touched) {
+          <div class="error-message">
+            @if (registerForm.get('password')?.errors?.['required']) {
+            <span>La contraseña es requerida</span>
+            } @if (registerForm.get('password')?.errors?.['minlength']) {
+            <span>Mínimo 8 caracteres</span>
             }
           </div>
+          }
+        </div>
 
-          <div class="form__field">
-            <label for="confirmPassword" class="form__label">Confirmar Contraseña</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              formControlName="confirmPassword"
-              class="form__input"
-              placeholder="Confirme su contraseña"
-              [ngClass]="{ 'form__input--error': registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched }"
-              >
-              @if (registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched) {
-                <div class="form__error">
-                  @if (registerForm.get('confirmPassword')?.errors?.['required']) {
-                    <span>Confirme su contraseña</span>
-                  }
-                </div>
-              }
-              @if (registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched) {
-                <div class="form__error">
-                  Las contraseñas no coinciden
-                </div>
-              }
-            </div>
-
-            <div class="form__field">
-              <label for="rol" class="form__label">Rol de Usuario</label>
-              <select
-                id="rol"
-                formControlName="rol"
-                class="form__select"
-                >
-                <option [value]="UserRole.Acuicultor">Acuicultor</option>
-                <option [value]="UserRole.Supervisor">Supervisor</option>
-              </select>
-            </div>
-
-            @if (errorMessage) {
-              <div class="form__serverError">
-                {{ errorMessage }}
-              </div>
+        <div class="loginPage__formGroup">
+          <label for="confirmPassword" class="loginPage__label"
+            >Confirmar Contraseña</label
+          >
+          <input
+            type="password"
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            class="loginPage__input"
+            placeholder="Confirme su contraseña"
+            [ngClass]="{
+              'input-error':
+                registerForm.get('confirmPassword')?.invalid &&
+                registerForm.get('confirmPassword')?.touched
+            }"
+          />
+          @if (registerForm.get('confirmPassword')?.invalid &&
+          registerForm.get('confirmPassword')?.touched) {
+          <div class="error-message">
+            @if (registerForm.get('confirmPassword')?.errors?.['required']) {
+            <span>Confirme su contraseña</span>
             }
+          </div>
+          } @if (registerForm.errors?.['passwordMismatch'] &&
+          registerForm.get('confirmPassword')?.touched) {
+          <div class="error-message">Las contraseñas no coinciden</div>
+          }
+        </div>
 
-            <button type="submit" class="form__submit" [disabled]="isLoading">
-              @if (!isLoading) {
-                <span>Registrarse</span>
-              }
-              @if (isLoading) {
-                <span>Procesando...</span>
-              }
-            </button>
+        <div class="loginPage__formGroup">
+          <label for="rol" class="loginPage__label">Rol de Usuario</label>
+          <select id="rol" formControlName="rol" class="loginPage__input">
+            <option [value]="UserRole.Acuicultor">Acuicultor</option>
+            <option [value]="UserRole.Supervisor">Supervisor</option>
+          </select>
+        </div>
 
-            <div class="form__footer">
-              <p>¿Ya tienes una cuenta? <a routerLink="/auth/login" class="form__link">Inicia sesión</a></p>
-            </div>
-          </form>
-        </section>
+        @if (errorMessage) {
+        <div class="server-error">
+          {{ errorMessage }}
+        </div>
+        }
+
+        <button
+          type="submit"
+          class="loginPage__submitButton"
+          [disabled]="isLoading"
+        >
+          @if (!isLoading) {
+          <span>Registrarse</span>
+          } @if (isLoading) {
+          <span>Procesando...</span>
+          }
+        </button>
+        <div class="loginPage__links">
+          <p>
+            ¿Ya tienes una cuenta?
+            <a href="/login" class="loginPage__link loginPage__link--highlight"
+              >Inicia sesión</a
+            >
+          </p>
+        </div>
+      </form>
+    </div>
+
+    <div class="loginPage__imageContainer">
+      <img src="piguaaa.jpg" alt="Registro" class="loginPage__image" />
+    </div>
+  </div>
+</section>
