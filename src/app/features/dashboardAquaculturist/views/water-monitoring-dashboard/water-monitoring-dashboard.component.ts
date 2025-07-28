@@ -1,7 +1,12 @@
-import { Component, OnInit, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  Inject,
+  PLATFORM_ID,
+} from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
-import { NgApexchartsModule } from 'ng-apexcharts';
-
+import { NotificationService } from '../../../../core/services/notification.service';
 import {
   ChartComponent,
   ApexChart,
@@ -14,8 +19,7 @@ import {
   ApexYAxis,
   ApexLegend,
   ApexPlotOptions,
-  ApexGrid 
-
+  ApexGrid,
 } from 'ng-apexcharts';
 
 export type AreaChartOptions = {
@@ -26,9 +30,8 @@ export type AreaChartOptions = {
   stroke: ApexStroke;
   fill: ApexFill;
   tooltip: ApexTooltip;
-  grid: ApexGrid; 
+  grid: ApexGrid;
 };
-
 
 export type BarChartOptions = {
   series: ApexAxisChartSeries;
@@ -38,7 +41,6 @@ export type BarChartOptions = {
   dataLabels: ApexDataLabels;
   tooltip: ApexTooltip;
   grid: ApexGrid;
-
 };
 
 @Component({
@@ -52,6 +54,20 @@ export class WaterMonitoringDashboardComponent implements OnInit {
 
   public turbidityChartOptions!: Partial<AreaChartOptions>;
   public volumeChartOptions!: Partial<BarChartOptions>;
+  public turbidityAlert = {
+    high: 125, // Límite alto de turbidez
+    low: 95, // Límite bajo de turbidez
+    enabled: true, // Si las alertas están activadas
+  };
+
+  public volumeAlert = {
+    low: 4980, // Límite bajo de volumen
+    enabled: true, // Si las alertas están activadas
+  };
+
+  public tempTurbidityHigh = this.turbidityAlert.high;
+  public tempTurbidityLow = this.turbidityAlert.low;
+  public tempVolumeLow = this.volumeAlert.low;
   public isLoading = true;
 
   public turbidityMetric = {
@@ -68,8 +84,11 @@ export class WaterMonitoringDashboardComponent implements OnInit {
     trend: -5,
   };
 
+  public showAlertModal = false;
+
   constructor(
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -82,20 +101,22 @@ export class WaterMonitoringDashboardComponent implements OnInit {
 
   inicializarGraficoTurbidez(): void {
     this.turbidityChartOptions = {
-      series: [{
-        name: 'Turbidez (Gramos/Litros)',
-        data: [100, 105, 110, 120, 115, 118, 122]
-      }],
+      series: [
+        {
+          name: 'Turbidez (Gramos/Litros)',
+          data: [100, 105, 110, 120, 115, 118, 122],
+        },
+      ],
       chart: {
         type: 'line',
         height: 350,
         toolbar: { show: false },
-        foreColor: '#ffffff'
+        foreColor: '#ffffff',
       },
       stroke: {
         curve: 'smooth',
         width: 3,
-        colors: ['#00E396']
+        colors: ['#00E396'],
       },
       fill: {
         type: 'gradient',
@@ -109,15 +130,15 @@ export class WaterMonitoringDashboardComponent implements OnInit {
             {
               offset: 0,
               color: '#00E396',
-              opacity: 0.8
+              opacity: 0.8,
             },
             {
               offset: 100,
               color: '#008FFB',
-              opacity: 0.2
-            }
-          ]
-        }
+              opacity: 0.2,
+            },
+          ],
+        },
       },
       xaxis: {
         categories: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
@@ -134,9 +155,9 @@ export class WaterMonitoringDashboardComponent implements OnInit {
             colors: '#FFFFFF',
             fontSize: '14px',
             fontWeight: 'bold',
-            fontFamily: 'Arial, sans-serif'
-          }
-        }
+            fontFamily: 'Arial, sans-serif',
+          },
+        },
       },
       yaxis: {
         min: 90,
@@ -145,17 +166,17 @@ export class WaterMonitoringDashboardComponent implements OnInit {
         axisBorder: {
           show: true,
           color: '#FFFFFF',
-          width: 2
+          width: 2,
         },
         labels: {
           style: {
-            colors: ['#FFFFFF'], 
+            colors: ['#FFFFFF'],
             fontSize: '14px',
             fontWeight: 'bold',
-            fontFamily: 'Arial, sans-serif'
+            fontFamily: 'Arial, sans-serif',
           },
-          formatter: (val: number) => `${val} g/L`
-        }
+          formatter: (val: number) => `${val} g/L`,
+        },
       },
       grid: {
         borderColor: '#555555',
@@ -163,24 +184,24 @@ export class WaterMonitoringDashboardComponent implements OnInit {
         position: 'back',
         yaxis: {
           lines: {
-            show: true
-          }
+            show: true,
+          },
         },
         xaxis: {
           lines: {
-            show: false
-          }
-        }
+            show: false,
+          },
+        },
       },
       tooltip: {
         theme: 'dark',
         style: {
-          fontSize: '14px'
+          fontSize: '14px',
         },
         y: {
-          formatter: (val: number) => `${val} g/L`
-        }
-      }
+          formatter: (val: number) => `${val} g/L`,
+        },
+      },
     };
   }
 
@@ -188,8 +209,12 @@ export class WaterMonitoringDashboardComponent implements OnInit {
     const rawData = [4950, 4980, 5010, 5000, 4990, 4970, 5020];
     const tresholdLow = 4980;
 
-    const lowLevelsSeries = rawData.map(value => (value <= tresholdLow ? value : null));
-    const optimalLevelsSeries = rawData.map(value => (value > tresholdLow ? value : null));
+    const lowLevelsSeries = rawData.map((value) =>
+      value <= tresholdLow ? value : null
+    );
+    const optimalLevelsSeries = rawData.map((value) =>
+      value > tresholdLow ? value : null
+    );
 
     this.volumeChartOptions = {
       series: [
@@ -200,7 +225,7 @@ export class WaterMonitoringDashboardComponent implements OnInit {
         {
           name: 'Nivel bajo del agua',
           data: lowLevelsSeries,
-        }
+        },
       ],
       chart: {
         height: 340,
@@ -232,12 +257,65 @@ export class WaterMonitoringDashboardComponent implements OnInit {
       },
       dataLabels: { enabled: false },
       xaxis: {
-        categories: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
+        categories: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
       },
       tooltip: { theme: 'dark' },
     };
   }
 
+saveAlertSettings(): void {
+  // Asignar los valores temporales a los definitivos
+  this.turbidityAlert.high = this.tempTurbidityHigh;
+  this.turbidityAlert.low = this.tempTurbidityLow;
+  this.volumeAlert.low = this.tempVolumeLow;
+  
+  // Cerrar el modal (sin necesidad de función separada)
+  this.showAlertModal = false;
+  
+  // Mostrar notificación de éxito
+  this.notificationService.showSuccess(
+    'Configuración guardada',
+    'Los valores de alerta se han actualizado correctamente'
+  );
+  
+  // Opcional: Verificar alertas con los nuevos valores
+  this.checkForAlerts();
+}
+
+// Función para validar los límites
+validateLimits(): boolean {
+  if (this.tempTurbidityHigh <= this.tempTurbidityLow) {
+    this.notificationService.showError(
+      'Valores inválidos',
+      'El límite alto debe ser mayor que el límite bajo'
+    );
+    return false;
+  }
+  return true;
+}
+
+  checkForAlerts(): void {
+    // Ejemplo: Verificar turbidez
+    if (this.turbidityMetric.value > this.turbidityAlert.high) {
+      this.notificationService.showSensorAnomaly(
+        'warning',
+        `Turbidez alta: ${this.turbidityMetric.value} g/L (Límite: ${this.turbidityAlert.high} g/L)`
+      );
+    } else if (this.turbidityMetric.value < this.turbidityAlert.low) {
+      this.notificationService.showSensorAnomaly(
+        'warning',
+        `Turbidez baja: ${this.turbidityMetric.value} g/L (Límite: ${this.turbidityAlert.low} g/L)`
+      );
+    }
+
+    // Ejemplo: Verificar volumen
+    if (this.volumeMetric.value < this.volumeAlert.low) {
+      this.notificationService.showSensorAnomaly(
+        'error',
+        `Volumen bajo: ${this.volumeMetric.value} L (Límite: ${this.volumeAlert.low} L)`
+      );
+    }
+  }
   loadTurbidityData(): void {
     this.isLoading = true;
 
@@ -248,21 +326,22 @@ export class WaterMonitoringDashboardComponent implements OnInit {
       title: 'Turbidez',
       value: dummySeries[dummySeries.length - 1],
       unit: 'Gramos/Litros',
-      trend: 7
+      trend: 7,
     };
-
 
     this.turbidityChartOptions = {
       ...this.turbidityChartOptions,
-      series: [{
-        name: 'Turbidez (Gramos/Litros)',
-        data: dummySeries
-      }],
+      series: [
+        {
+          name: 'Turbidez (Gramos/Litros)',
+          data: dummySeries,
+        },
+      ],
       xaxis: {
         ...this.turbidityChartOptions.xaxis,
-        categories: dummyCategories
+        categories: dummyCategories,
       },
-      yaxis: this.turbidityChartOptions.yaxis 
+      yaxis: this.turbidityChartOptions.yaxis,
     };
 
     this.isLoading = false;

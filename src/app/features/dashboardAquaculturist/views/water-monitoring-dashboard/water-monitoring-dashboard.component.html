@@ -18,6 +18,9 @@
         <p class="habitat-page__metric-trend habitat-page__metric-trend--positive">
           Últimos 7 días +{{ turbidityMetric.trend }}%
         </p>
+        
+        <!-- Estado de alertas de turbidez -->
+       
       </div>
       <div class="habitat-page__chart-container">
         <apx-chart
@@ -42,6 +45,9 @@
         <p class="habitat-page__metric-trend habitat-page__metric-trend--negative">
           Últimos 7 días {{ volumeMetric.trend }}%
         </p>
+        
+        <!-- Estado de alertas de volumen -->
+        
       </div>
       <div class="habitat-page__chart-container">
         <apx-chart
@@ -52,15 +58,83 @@
           [tooltip]="volumeChartOptions.tooltip!"
           [xaxis]="volumeChartOptions.xaxis!"
         ></apx-chart>
-       
       </div>
     </section>
-
   </div>
 
-
   <footer class="habitat-page__actions">
-    <button class="habitat-page__button habitat-page__button--secondary">Ver Historial</button>
-    <button class="habitat-page__button habitat-page__button--primary">Establecer Alertas</button>
+    <button 
+      class="habitat-page__button habitat-page__button--primary"
+      (click)="showAlertModal = true"
+    >
+      Configurar Alertas
+    </button>
   </footer>
+
+  <!-- Modal de configuración de alertas -->
+  <div class="habitat-modal-overlay" *ngIf="showAlertModal" (click)="showAlertModal = false">
+    <div class="habitat-modal" (click)="$event.stopPropagation()">
+      
+      
+      <div class="habitat-modal__body">
+        <!-- Sección de Turbidez -->
+        <div class="habitat-form-group">
+          <h4>Turbidez</h4>
+          
+          <div class="habitat-form-row">
+            <div class="habitat-form-control">
+              <label>Límite Alto (g/L)</label>
+              <input 
+                type="number" 
+                [(ngModel)]="tempTurbidityHigh"
+                min="0"
+                step="1"
+              >
+            </div>
+            
+            <div class="habitat-form-control">
+              <label>Límite Bajo (g/L)</label>
+              <input 
+                type="number" 
+                [(ngModel)]="tempTurbidityLow"
+                min="0"
+                step="1"
+              >
+            </div>
+          </div>
+        </div>
+        
+        <!-- Sección de Volumen -->
+        <div class="habitat-form-group">
+          <h4>Volumen</h4>
+          
+          <div class="habitat-form-control">
+            <label>Límite Bajo (L)</label>
+            <input 
+              type="number" 
+              [(ngModel)]="tempVolumeLow"
+              min="0"
+              step="10"
+            >
+          </div>
+        </div>
+      </div>
+      
+      <div class="habitat-modal__footer">
+        <button 
+          class="habitat-button habitat-button--secondary"
+          (click)="showAlertModal = false"
+        >
+          Cancelar
+        </button>
+        <button 
+          class="habitat-button habitat-button--primary"
+          (click)="saveAlertSettings()"
+          [disabled]="tempTurbidityHigh <= tempTurbidityLow"
+        >
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
 </main>
