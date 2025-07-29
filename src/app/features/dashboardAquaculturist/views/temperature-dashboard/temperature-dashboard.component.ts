@@ -264,7 +264,6 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
   }
 
   onRangeChange(range: TimeRange): void {
-    console.log('🔄 Cambiando rango a:', range); // Debug
     this.selectedRange = range;
     if (this.dataSubscription) {
       this.dataSubscription.unsubscribe();
@@ -336,14 +335,13 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
 
   public goToAlertsHistory(): void {
     this.showNotificationModal = false; // Cierra el modal antes de navegar
-    this.router.navigate(['/alerts-history']); // Navega a la vista de historial
+    this.router.navigate(['acuicultor/alertsDashboard']); // Navega a la vista de historial
   }
 
   private loadHardcodedData(range: TimeRange): void {
     let data: { temperature: number; date: string }[] = [];
     let categories: string[] = [];
 
-    console.log('🔄 Cargando datos para rango:', range); // Debug
 
     switch (range) {
       case TimeRange.Daily:
@@ -447,7 +445,6 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
         const noise = Math.random() * 1.0 - 0.5;
         const newTemp = baseTemp + noise;
 
-        console.log(`⏰ [SIMULACIÓN] Valor generado: ${newTemp.toFixed(2)}`);
 
         const newData = {
           value: parseFloat(newTemp.toFixed(1)),

@@ -22,10 +22,6 @@ export class AlertsService {
 
   constructor() {
     this.instanceId = Math.random();
-    // ✅ IMPRIME LA HUELLA DIGITAL AL NACER
-    console.log(
-      `🔵 [ALERTS SERVICE] ¡Nueva instancia CREADA! ID: ${this.instanceId}`
-    );
   }
 
   public addAlert(newAlert: Omit<Alert, 'id'>): void {

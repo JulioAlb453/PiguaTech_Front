@@ -1,12 +1,17 @@
 import {
   Component,
   OnInit,
+  OnDestroy,
   ViewChild,
   Inject,
   PLATFORM_ID,
+  NgZone,
 } from '@angular/core';
-import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
+import { Observable, Subscription } from 'rxjs';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { AlertsService, Alert } from '../../../../core/services/alerts.service';
 import {
   ChartComponent,
   ApexChart,
@@ -33,14 +38,16 @@ export type AreaChartOptions = {
   grid: ApexGrid;
 };
 
-export type BarChartOptions = {
+export type StateBarChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   xaxis: ApexXAxis;
+  yaxis: ApexYAxis;
   plotOptions: ApexPlotOptions;
   dataLabels: ApexDataLabels;
   tooltip: ApexTooltip;
   grid: ApexGrid;
+  legend: ApexLegend;
 };
 
 @Component({
@@ -49,75 +56,175 @@ export type BarChartOptions = {
   templateUrl: './water-monitoring-dashboard.component.html',
   styleUrls: ['./water-monitoring-dashboard.component.scss'],
 })
-export class WaterMonitoringDashboardComponent implements OnInit {
-  @ViewChild('chart') chart!: ChartComponent;
+export class WaterMonitoringDashboardComponent implements OnInit, OnDestroy {
+  @ViewChild('turbidityChart') turbidityChart!: ChartComponent;
+  @ViewChild('levelChart') levelChart!: ChartComponent;
 
   public turbidityChartOptions!: Partial<AreaChartOptions>;
-  public volumeChartOptions!: Partial<BarChartOptions>;
-  public turbidityAlert = {
-    high: 125, // Límite alto de turbidez
-    low: 95, // Límite bajo de turbidez
-    enabled: true, // Si las alertas están activadas
-  };
+  public levelBarChartOptions!: Partial<StateBarChartOptions>;
 
-  public volumeAlert = {
-    low: 4980, // Límite bajo de volumen
-    enabled: true, // Si las alertas están activadas
-  };
+  public showAlertModal = false;
+  public showNotificationModal = false;
+  public hasNewNotifications = false;
+  public modalAlerts$: Observable<Alert[]>;
+
+  public turbidityAlert = { high: 125, low: 95, enabled: true };
+  public volumeAlert = { enabled: true };
 
   public tempTurbidityHigh = this.turbidityAlert.high;
   public tempTurbidityLow = this.turbidityAlert.low;
-  public tempVolumeLow = this.volumeAlert.low;
-  public isLoading = true;
 
+  private isTurbidityHighAlertActive = false;
+  private isTurbidityLowAlertActive = false;
+  private isVolumeLowAlertActive = false;
+  private waterLevelWasLow = false;
+
+  public isLoading = true;
   public turbidityMetric = {
     title: 'Turbidez',
-    value: 120,
+    value: 0,
     unit: 'Gramos/Litros',
-    trend: 10,
+    trend: 0,
   };
-
   public volumeMetric = {
-    title: 'Volumen',
-    value: 5000,
-    unit: 'L',
-    trend: -5,
+    title: 'Nivel del Agua',
+    isLow: false,
+    statusText: 'Cargando...',
   };
 
-  public showAlertModal = false;
+  private simulationSubscription!: Subscription;
+  private readonly UPDATE_INTERVAL = 3000;
+  private readonly MAX_DATA_POINTS = 3;
+
+  private realtimeCategories: string[] = [];
+  private realtimeTurbidityData: number[] = [];
+  private realtimeLevelData: number[] = [];
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private notificationService: NotificationService
-  ) {}
+    private notificationService: NotificationService,
+    private alertsService: AlertsService,
+    public router: Router,
+    private ngZone: NgZone
+  ) {
+    this.modalAlerts$ = this.alertsService.getRecentAlerts(5);
+  }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.inicializarGraficoTurbidez();
-      this.initializeVolumeChart();
-      this.loadTurbidityData();
+      this.initializeTurbidityChart();
+      this.initializeLevelBarChart();
+      this.startRealtimeSimulation();
     }
   }
 
-  inicializarGraficoTurbidez(): void {
+  ngOnDestroy(): void {
+    if (this.simulationSubscription) {
+      this.simulationSubscription.unsubscribe();
+    }
+  }
+
+  startRealtimeSimulation(): void {
+    let time = 0;
+    let iterationCount = 0;
+
+    const intervalId = setInterval(() => {
+      this.ngZone.run(() => {
+        const baseTurbidity = 110 + Math.sin(time) * 15;
+        const turbidityNoise = Math.random() * 4 - 2;
+        const newTurbidityValue = parseFloat(
+          (baseTurbidity + turbidityNoise).toFixed(1)
+        );
+
+        let newLevelIsNormal: boolean;
+        if (iterationCount < 3) {
+          newLevelIsNormal = true;
+        } else {
+          newLevelIsNormal = Math.random() > 0.3;
+        }
+
+        if (!newLevelIsNormal) {
+          this.waterLevelWasLow = true;
+        }
+
+        const newTimeLabel = new Date().toLocaleTimeString('es-ES', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        });
+
+        this.appendRealtimeData(
+          newTurbidityValue,
+          newLevelIsNormal,
+          newTimeLabel
+        );
+        time += 0.2;
+        iterationCount++;
+      });
+    }, this.UPDATE_INTERVAL);
+
+    this.simulationSubscription = new Subscription(() =>
+      clearInterval(intervalId)
+    );
+  }
+
+  appendRealtimeData(
+    turbidityValue: number,
+    levelIsNormal: boolean,
+    timeLabel: string
+  ): void {
+    this.realtimeCategories.push(timeLabel);
+    this.realtimeTurbidityData.push(turbidityValue);
+    this.realtimeLevelData.push(levelIsNormal ? 1 : 0);
+
+    if (this.realtimeCategories.length > this.MAX_DATA_POINTS) {
+      this.realtimeCategories.shift();
+      this.realtimeTurbidityData.shift();
+      this.realtimeLevelData.shift();
+    }
+
+    let displayLevelData = [...this.realtimeLevelData];
+
+    if (this.waterLevelWasLow) {
+      if (!displayLevelData.includes(0)) {
+        this.waterLevelWasLow = false;
+      }
+    }
+
+    this.turbidityMetric.value = turbidityValue;
+    this.volumeMetric.isLow = !levelIsNormal;
+    this.volumeMetric.statusText = levelIsNormal ? 'Normal' : 'Bajo';
+
+    this.checkForAlerts();
+
+    if (this.turbidityChart && this.levelChart) {
+      this.turbidityChart.updateOptions({
+        series: [
+          {
+            name: 'Turbidez (Gramos/Litros)',
+            data: this.realtimeTurbidityData,
+          },
+        ],
+        xaxis: { categories: this.realtimeCategories },
+      });
+
+      this.levelChart.updateOptions({
+        series: [{ name: 'Estado del Nivel', data: displayLevelData }],
+        xaxis: { categories: this.realtimeCategories },
+      });
+    }
+  }
+
+  initializeTurbidityChart(): void {
     this.turbidityChartOptions = {
-      series: [
-        {
-          name: 'Turbidez (Gramos/Litros)',
-          data: [100, 105, 110, 120, 115, 118, 122],
-        },
-      ],
+      series: [{ name: 'Turbidez (Gramos/Litros)', data: [] }],
       chart: {
         type: 'line',
         height: 350,
         toolbar: { show: false },
         foreColor: '#ffffff',
       },
-      stroke: {
-        curve: 'smooth',
-        width: 3,
-        colors: ['#00E396'],
-      },
+      stroke: { curve: 'smooth', width: 3, colors: ['#00E396'] },
       fill: {
         type: 'gradient',
         gradient: {
@@ -127,29 +234,15 @@ export class WaterMonitoringDashboardComponent implements OnInit {
           opacityTo: 0.3,
           stops: [0, 90, 100],
           colorStops: [
-            {
-              offset: 0,
-              color: '#00E396',
-              opacity: 0.8,
-            },
-            {
-              offset: 100,
-              color: '#008FFB',
-              opacity: 0.2,
-            },
+            { offset: 0, color: '#00E396', opacity: 0.8 },
+            { offset: 100, color: '#008FFB', opacity: 0.2 },
           ],
         },
       },
       xaxis: {
-        categories: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-        axisBorder: {
-          show: true,
-          color: '#FFFFFF',
-        },
-        axisTicks: {
-          show: true,
-          color: '#FFFFFF',
-        },
+        categories: [],
+        axisBorder: { show: true, color: '#FFFFFF' },
+        axisTicks: { show: true, color: '#FFFFFF' },
         labels: {
           style: {
             colors: '#FFFFFF',
@@ -163,11 +256,7 @@ export class WaterMonitoringDashboardComponent implements OnInit {
         min: 90,
         max: 130,
         tickAmount: 5,
-        axisBorder: {
-          show: true,
-          color: '#FFFFFF',
-          width: 2,
-        },
+        axisBorder: { show: true, color: '#FFFFFF', width: 2 },
         labels: {
           style: {
             colors: ['#FFFFFF'],
@@ -182,168 +271,141 @@ export class WaterMonitoringDashboardComponent implements OnInit {
         borderColor: '#555555',
         strokeDashArray: 3,
         position: 'back',
-        yaxis: {
-          lines: {
-            show: true,
-          },
-        },
-        xaxis: {
-          lines: {
-            show: false,
-          },
-        },
+        yaxis: { lines: { show: true } },
+        xaxis: { lines: { show: false } },
       },
       tooltip: {
         theme: 'dark',
-        style: {
-          fontSize: '14px',
-        },
-        y: {
-          formatter: (val: number) => `${val} g/L`,
-        },
+        style: { fontSize: '14px' },
+        y: { formatter: (val: number) => `${val} g/L` },
       },
     };
   }
 
-  initializeVolumeChart(): void {
-    const rawData = [4950, 4980, 5010, 5000, 4990, 4970, 5020];
-    const tresholdLow = 4980;
-
-    const lowLevelsSeries = rawData.map((value) =>
-      value <= tresholdLow ? value : null
-    );
-    const optimalLevelsSeries = rawData.map((value) =>
-      value > tresholdLow ? value : null
-    );
-
-    this.volumeChartOptions = {
-      series: [
-        {
-          name: 'Nivel normal del agua',
-          data: optimalLevelsSeries,
-        },
-        {
-          name: 'Nivel bajo del agua',
-          data: lowLevelsSeries,
-        },
-      ],
+  initializeLevelBarChart(): void {
+    this.levelBarChartOptions = {
+      series: [{ name: 'Estado del Nivel', data: [] }],
       chart: {
-        height: 340,
         type: 'bar',
+        height: 350,
         toolbar: { show: false },
-        zoom: { enabled: false },
-        background: 'transparent',
-        sparkline: { enabled: true },
+        foreColor: '#ffffff',
       },
       plotOptions: {
         bar: {
-          columnWidth: '80%',
           borderRadius: 4,
           colors: {
             ranges: [
-              {
-                from: 0,
-                to: 4980,
-                color: '#e74c3c',
-              },
-              {
-                from: 4981,
-                to: 5020,
-                color: '#3498db',
-              },
+              { from: 0, to: 0, color: '#ef4444' },
+              { from: 1, to: 1, color: '#3498db' },
             ],
           },
+          columnWidth: '80%',
         },
       },
-      dataLabels: { enabled: false },
-      xaxis: {
-        categories: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+      dataLabels: {
+        enabled: true,
+        formatter: (val: number) => (val === 1 ? 'NORMAL' : 'BAJO'),
+        style: { colors: ['#fff'], fontSize: '12px', fontWeight: 'bold' },
       },
-      tooltip: { theme: 'dark' },
+      xaxis: {
+        categories: [],
+        labels: { show: true, style: { colors: '#94a3b8' } },
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+      },
+      yaxis: { show: false },
+      tooltip: { enabled: false },
+      grid: { show: false },
+      legend: { show: false },
     };
   }
 
-saveAlertSettings(): void {
-  // Asignar los valores temporales a los definitivos
-  this.turbidityAlert.high = this.tempTurbidityHigh;
-  this.turbidityAlert.low = this.tempTurbidityLow;
-  this.volumeAlert.low = this.tempVolumeLow;
-  
-  // Cerrar el modal (sin necesidad de función separada)
-  this.showAlertModal = false;
-  
-  // Mostrar notificación de éxito
-  this.notificationService.showSuccess(
-    'Configuración guardada',
-    'Los valores de alerta se han actualizado correctamente'
-  );
-  
-  // Opcional: Verificar alertas con los nuevos valores
-  this.checkForAlerts();
-}
+  saveAlertSettings(): void {
+    if (!this.validateLimits()) return;
 
-// Función para validar los límites
-validateLimits(): boolean {
-  if (this.tempTurbidityHigh <= this.tempTurbidityLow) {
-    this.notificationService.showError(
-      'Valores inválidos',
-      'El límite alto debe ser mayor que el límite bajo'
+    this.turbidityAlert.high = this.tempTurbidityHigh;
+    this.turbidityAlert.low = this.tempTurbidityLow;
+
+    this.showAlertModal = false;
+    this.notificationService.showSuccess(
+      'Configuración guardada',
+      'Los valores de alerta se han actualizado.'
     );
-    return false;
+    this.checkForAlerts();
   }
-  return true;
-}
+
+  validateLimits(): boolean {
+    if (this.tempTurbidityHigh <= this.tempTurbidityLow) {
+      this.notificationService.showError(
+        'Valores inválidos',
+        'El límite alto debe ser mayor que el límite bajo'
+      );
+      return false;
+    }
+    return true;
+  }
 
   checkForAlerts(): void {
-    // Ejemplo: Verificar turbidez
-    if (this.turbidityMetric.value > this.turbidityAlert.high) {
-      this.notificationService.showSensorAnomaly(
-        'warning',
-        `Turbidez alta: ${this.turbidityMetric.value} g/L (Límite: ${this.turbidityAlert.high} g/L)`
-      );
-    } else if (this.turbidityMetric.value < this.turbidityAlert.low) {
-      this.notificationService.showSensorAnomaly(
-        'warning',
-        `Turbidez baja: ${this.turbidityMetric.value} g/L (Límite: ${this.turbidityAlert.low} g/L)`
-      );
+    if (this.turbidityAlert.enabled) {
+      if (this.turbidityMetric.value > this.turbidityAlert.high) {
+        if (!this.isTurbidityHighAlertActive) {
+          this.isTurbidityHighAlertActive = true;
+          this.isTurbidityLowAlertActive = false;
+          this.hasNewNotifications = true;
+          const message = `Turbidez alta: ${this.turbidityMetric.value} g/L (Límite: ${this.turbidityAlert.high} g/L)`;
+          this.notificationService.showSensorAnomaly(
+            'warning',
+            `⚠️ ${message}`
+          );
+          this.alertsService.addAlert({
+            type: 'warning',
+            title: 'Alta Turbidez',
+            priority: 'Media',
+            description: message,
+            timestamp: new Date(),
+          });
+        }
+      } else if (this.turbidityMetric.value < this.turbidityAlert.low) {
+        if (!this.isTurbidityLowAlertActive) {
+          this.isTurbidityLowAlertActive = true;
+          this.isTurbidityHighAlertActive = false;
+          this.hasNewNotifications = true;
+          const message = `Turbidez baja: ${this.turbidityMetric.value} g/L (Límite: ${this.turbidityAlert.low} g/L)`;
+          this.notificationService.showSensorAnomaly(
+            'warning',
+            `⚠️ ${message}`
+          );
+          this.alertsService.addAlert({
+            type: 'warning',
+            title: 'Baja Turbidez',
+            priority: 'Baja',
+            description: message,
+            timestamp: new Date(),
+          });
+        }
+      } else {
+        this.isTurbidityHighAlertActive = false;
+        this.isTurbidityLowAlertActive = false;
+      }
     }
 
-    // Ejemplo: Verificar volumen
-    if (this.volumeMetric.value < this.volumeAlert.low) {
-      this.notificationService.showSensorAnomaly(
-        'error',
-        `Volumen bajo: ${this.volumeMetric.value} L (Límite: ${this.volumeAlert.low} L)`
-      );
+    if (this.volumeAlert.enabled && this.volumeMetric.isLow) {
+      if (!this.isVolumeLowAlertActive) {
+        this.isVolumeLowAlertActive = true;
+        this.hasNewNotifications = true;
+        const message = `El nivel del agua es bajo. Se requiere atención.`;
+        this.notificationService.showSensorAnomaly('error', `💧 ${message}`);
+        this.alertsService.addAlert({
+          type: 'error',
+          title: 'Bajo Nivel de Agua',
+          priority: 'Alta',
+          description: message,
+          timestamp: new Date(),
+        });
+      }
+    } else {
+      this.isVolumeLowAlertActive = false;
     }
-  }
-  loadTurbidityData(): void {
-    this.isLoading = true;
-
-    const dummySeries = [98, 102, 108, 120, 117, 115, 119];
-    const dummyCategories = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-
-    this.turbidityMetric = {
-      title: 'Turbidez',
-      value: dummySeries[dummySeries.length - 1],
-      unit: 'Gramos/Litros',
-      trend: 7,
-    };
-
-    this.turbidityChartOptions = {
-      ...this.turbidityChartOptions,
-      series: [
-        {
-          name: 'Turbidez (Gramos/Litros)',
-          data: dummySeries,
-        },
-      ],
-      xaxis: {
-        ...this.turbidityChartOptions.xaxis,
-        categories: dummyCategories,
-      },
-      yaxis: this.turbidityChartOptions.yaxis,
-    };
-
-    this.isLoading = false;
   }
 }

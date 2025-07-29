@@ -2,68 +2,96 @@
   <header class="habitat-page__header">
     <h1>Monitoreo del Hábitat</h1>
     <h2>Calidad del Agua</h2>
+    <button
+      class="habitat-page__notification-bell"
+      [class.habitat-page__notification-bell--active]="hasNewNotifications"
+      (click)="showNotificationModal = true; hasNewNotifications = false"
+      aria-label="Ver notificaciones"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        fill="currentColor"
+        viewBox="0 0 256 256"
+      >
+        <path
+          d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"
+        ></path>
+      </svg>
+    </button>
   </header>
 
-  <!-- Contenedor principal con dos columnas -->
   <div class="habitat-page__content-grid">
-
-    <!-- Columna 1: Turbidez -->
     <section class="habitat-page__metric-section">
       <div class="habitat-page__metric-card">
-        <label class="habitat-page__metric-title">{{ turbidityMetric.title }}</label>
+        <label class="habitat-page__metric-title">{{
+          turbidityMetric.title
+        }}</label>
         <div class="habitat-page__metric-value">
           <span>{{ turbidityMetric.value }}</span>
-          <span class="habitat-page__metric-unit">{{ turbidityMetric.unit }}</span>
+          <span class="habitat-page__metric-unit">{{
+            turbidityMetric.unit
+          }}</span>
         </div>
-        <p class="habitat-page__metric-trend habitat-page__metric-trend--positive">
+        <p
+          class="habitat-page__metric-trend habitat-page__metric-trend--positive"
+        >
           Últimos 7 días +{{ turbidityMetric.trend }}%
         </p>
-        
-        <!-- Estado de alertas de turbidez -->
-       
       </div>
       <div class="habitat-page__chart-container">
         <apx-chart
+          #turbidityChart
           [series]="turbidityChartOptions.series!"
           [chart]="turbidityChartOptions.chart!"
           [stroke]="turbidityChartOptions.stroke!"
           [fill]="turbidityChartOptions.fill!"
           [tooltip]="turbidityChartOptions.tooltip!"
           [xaxis]="turbidityChartOptions.xaxis!"
+          [yaxis]="turbidityChartOptions.yaxis!"
+          [grid]="turbidityChartOptions.grid!"
         ></apx-chart>
       </div>
     </section>
 
-    <!-- Columna 2: Volumen -->
     <section class="habitat-page__metric-section">
       <div class="habitat-page__metric-card">
-        <label class="habitat-page__metric-title">{{ volumeMetric.title }}</label>
+        <label class="habitat-page__metric-title">{{
+          volumeMetric.title
+        }}</label>
         <div class="habitat-page__metric-value">
-          <span>{{ volumeMetric.value }}</span>
-          <span class="habitat-page__metric-unit">{{ volumeMetric.unit }}</span>
+          <span>{{ volumeMetric.statusText }}</span>
         </div>
-        <p class="habitat-page__metric-trend habitat-page__metric-trend--negative">
-          Últimos 7 días {{ volumeMetric.trend }}%
+        <p
+          class="habitat-page__metric-trend"
+          [ngClass]="{
+            'habitat-page__metric-trend--positive': !volumeMetric.isLow,
+            'habitat-page__metric-trend--negative': volumeMetric.isLow
+          }"
+        >
+          {{ volumeMetric.isLow ? "Acción Requerida" : "Óptimo" }}
         </p>
-        
-        <!-- Estado de alertas de volumen -->
-        
       </div>
       <div class="habitat-page__chart-container">
         <apx-chart
-          [series]="volumeChartOptions.series!"
-          [chart]="volumeChartOptions.chart!"
-          [plotOptions]="volumeChartOptions.plotOptions!"
-          [dataLabels]="volumeChartOptions.dataLabels!"
-          [tooltip]="volumeChartOptions.tooltip!"
-          [xaxis]="volumeChartOptions.xaxis!"
+          #levelChart
+          [series]="levelBarChartOptions.series!"
+          [chart]="levelBarChartOptions.chart!"
+          [plotOptions]="levelBarChartOptions.plotOptions!"
+          [dataLabels]="levelBarChartOptions.dataLabels!"
+          [xaxis]="levelBarChartOptions.xaxis!"
+          [yaxis]="levelBarChartOptions.yaxis!"
+          [tooltip]="levelBarChartOptions.tooltip!"
+          [grid]="levelBarChartOptions.grid!"
+          [legend]="levelBarChartOptions.legend!"
         ></apx-chart>
       </div>
     </section>
   </div>
 
   <footer class="habitat-page__actions">
-    <button 
+    <button
       class="habitat-page__button habitat-page__button--primary"
       (click)="showAlertModal = true"
     >
@@ -71,69 +99,151 @@
     </button>
   </footer>
 
-  <!-- Modal de configuración de alertas -->
-  <div class="habitat-modal-overlay" *ngIf="showAlertModal" (click)="showAlertModal = false">
+  <div
+    class="habitat-modal-overlay"
+    *ngIf="showAlertModal"
+    (click)="showAlertModal = false"
+  >
     <div class="habitat-modal" (click)="$event.stopPropagation()">
-      
-      
+      <div class="habitat-modal__header">
+        <h3 class="habitat-modal__title">Configurar Límites de Alerta</h3>
+        <button
+          class="habitat-modal__close"
+          (click)="showAlertModal = false"
+          aria-label="Cerrar modal"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="currentColor"
+            viewBox="0 0 256 256"
+          >
+            <path
+              d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"
+            ></path>
+          </svg>
+        </button>
+      </div>
       <div class="habitat-modal__body">
-        <!-- Sección de Turbidez -->
         <div class="habitat-form-group">
           <h4>Turbidez</h4>
-          
           <div class="habitat-form-row">
             <div class="habitat-form-control">
               <label>Límite Alto (g/L)</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 [(ngModel)]="tempTurbidityHigh"
                 min="0"
                 step="1"
-              >
+              />
             </div>
-            
             <div class="habitat-form-control">
               <label>Límite Bajo (g/L)</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 [(ngModel)]="tempTurbidityLow"
                 min="0"
                 step="1"
-              >
+              />
             </div>
           </div>
         </div>
-        
-        <!-- Sección de Volumen -->
         <div class="habitat-form-group">
-          <h4>Volumen</h4>
-          
+          <h4>Nivel del Agua</h4>
           <div class="habitat-form-control">
-            <label>Límite Bajo (L)</label>
-            <input 
-              type="number" 
-              [(ngModel)]="tempVolumeLow"
-              min="0"
-              step="10"
-            >
+            <label for="volumeAlertToggle">Activar alerta por nivel bajo</label>
+            <input
+              id="volumeAlertToggle"
+              type="checkbox"
+              [(ngModel)]="volumeAlert.enabled"
+            />
           </div>
         </div>
       </div>
-      
       <div class="habitat-modal__footer">
-        <button 
+        <button
           class="habitat-button habitat-button--secondary"
           (click)="showAlertModal = false"
         >
           Cancelar
         </button>
-        <button 
+        <button
           class="habitat-button habitat-button--primary"
           (click)="saveAlertSettings()"
           [disabled]="tempTurbidityHigh <= tempTurbidityLow"
         >
           Guardar
         </button>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="habitat-modal-overlay"
+    *ngIf="showNotificationModal"
+    (click)="showNotificationModal = false"
+  >
+    <div class="habitat-modal" (click)="$event.stopPropagation()">
+      <div class="habitat-modal__header">
+        <h3 class="habitat-modal__title">Notificaciones Recientes</h3>
+        <button
+          class="habitat-modal__close"
+          (click)="showNotificationModal = false"
+          aria-label="Cerrar modal"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="currentColor"
+            viewBox="0 0 256 256"
+          >
+            <path
+              d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <div class="habitat-modal__body">
+        <ul
+          class="notification-list"
+          *ngIf="modalAlerts$ | async as alerts; else noNotifications"
+        >
+          <ng-container *ngIf="alerts.length > 0; else noNotifications">
+            <li
+              class="notification-item"
+              *ngFor="let alert of alerts"
+              [ngClass]="'notification-item--' + alert.type"
+            >
+              <span class="notification-item__icon">
+                <ng-container *ngIf="alert.type === 'error'">💧</ng-container>
+                <ng-container *ngIf="alert.type === 'warning'">⚠️</ng-container>
+              </span>
+              <div class="notification-item__content">
+                <p class="notification-item__message">{{ alert.title }}</p>
+                <small class="notification-item__timestamp">{{
+                  alert.timestamp | date : "medium"
+                }}</small>
+              </div>
+            </li>
+          </ng-container>
+        </ul>
+        <ng-template #noNotifications>
+          <div class="notification-empty">
+            <p>No hay notificaciones recientes.</p>
+          </div>
+        </ng-template>
+      </div>
+      <div class="habitat-modal__footer">
+        <a
+          class="habitat-modal__link"
+          (click)="
+            router.navigate(['acuicultor/alertsDashboard']); showNotificationModal = false
+          "
+          href="javascript:void(0)"
+          >Ver Historial Completo</a
+        >
       </div>
     </div>
   </div>

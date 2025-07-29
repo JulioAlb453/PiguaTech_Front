@@ -57,7 +57,6 @@ export class RegisterComponent implements OnInit {
     this.registerUseCase.execute(registerData).subscribe({
       next: (user) => {
         this.isLoading = false;
-        console.log('Registro exitoso:', user);
         this.router.navigate(['/login']);
       },
       error: (err) => {

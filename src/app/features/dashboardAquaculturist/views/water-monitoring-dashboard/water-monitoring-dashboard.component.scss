@@ -5,23 +5,23 @@
   color: var(--text-color, #e0e0e0);
   font-family: "Inter", "Montserrat", sans-serif;
   min-height: 100vh;
-  
+
   --primary-color: #f59e0b;
   --primary-gradient: linear-gradient(135deg, #f59e0b 0%, #8d0b0b 100%);
   --secondary-color: #8b5cf6;
   --accent-color: #f59e0b;
   --success-color: #10b981;
   --danger-color: #ef4444;
-  
+
   --background-color: #0f0f23;
   --surface-color: rgba(255, 255, 255, 0.05);
   --surface-hover: rgba(255, 255, 255, 0.08);
   --surface-border: rgba(255, 255, 255, 0.1);
-  
+
   --text-color: #f8fafc;
   --text-secondary-color: #94a3b8;
   --text-muted: #64748b;
-  
+
   --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
@@ -33,9 +33,9 @@
     margin-bottom: 3rem;
     text-align: center;
     position: relative;
-    
+
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       bottom: -1rem;
       left: 50%;
@@ -45,8 +45,8 @@
       background: var(--primary-gradient);
       border-radius: 2px;
     }
-    
-    h1 { 
+
+    h1 {
       font-size: clamp(2rem, 4vw, 2.75rem);
       font-weight: 700;
       margin: 0;
@@ -56,7 +56,7 @@
       background-clip: text;
       letter-spacing: -0.025em;
     }
-    
+
     h2 {
       font-size: 1.125rem;
       font-weight: 400;
@@ -66,8 +66,6 @@
     }
   }
 
-  
-
   #{&}__content-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -76,158 +74,156 @@
   }
 
   /* Overlay */
-.habitat-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-/* Modal */
-.habitat-modal {
-  background: #2b2b2b;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  color: #f8f8f8;
-  font-family: "Inter", "Montserrat", sans-serif;
-}
-
-/* Header */
-.habitat-modal__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.habitat-modal__title {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.habitat-modal__close {
-  background: transparent;
-  border: none;
-  color: #a0a0a0;
-  cursor: pointer;
-  font-size: 1.5rem;
-  padding: 0.25rem;
-
-  &:hover {
-    color: #f8f8f8;
-  }
-}
-
-/* Body */
-.habitat-modal__body {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-/* Form groups */
-.habitat-form-group {
-  background: #242424;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding: 1rem;
-
-  h4 {
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    font-weight: 500;
-    color: #f8f8f8;
-  }
-}
-
-.habitat-form-row {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.habitat-form-control {
-  flex: 1;
-
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #a0a0a0;
-    font-size: 0.9rem;
+  .habitat-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
   }
 
-  input {
-    width: 90%;
-    padding: 0.75rem;
-    background: #3a3a3a;
+  /* Modal */
+  .habitat-modal {
+    background: #2b2b2b;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     color: #f8f8f8;
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-
-    &:focus {
-      border-color: #f59e0b;
-      box-shadow: 0 0 6px rgba(245, 158, 11, 0.3);
-    }
+    font-family: "Inter", "Montserrat", sans-serif;
   }
-}
 
-/* Footer */
-.habitat-modal__footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  /* Header */
+  .habitat-modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
 
-  .habitat-button {
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
+  .habitat-modal__title {
+    margin: 0;
+    font-size: 1.25rem;
     font-weight: 600;
-    cursor: pointer;
+  }
+
+  .habitat-modal__close {
+    background: transparent;
     border: none;
-    font-size: 0.95rem;
-    transition: background 0.2s ease;
+    color: #a0a0a0;
+    cursor: pointer;
+    font-size: 1.5rem;
+    padding: 0.25rem;
 
-    &--secondary {
-      background: #1f1f1f;
+    &:hover {
       color: #f8f8f8;
+    }
+  }
 
-      &:hover {
-        background: #2a2a2a;
-      }
+  /* Body */
+  .habitat-modal__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .habitat-form-group {
+    background: var(--surface-color);
+    border: 1px solid var(--surface-border);
+    border-radius: 8px;
+    padding: 1rem;
+
+    h4 {
+      margin: 0 0 1rem 0;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+  }
+
+  .habitat-form-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .habitat-form-control {
+    flex: 1;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary-color);
+      font-size: 0.9rem;
     }
 
-    &--primary {
-      background: #f59e0b;
-      color: #000;
+    input {
+      width: 90%;
+      padding: 0.75rem;
+      background: #3a3a3a;
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      color: var(--text-color);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
 
-      &:hover {
-        background: #d88b09;
-      }
-
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
+      &:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 6px rgba(245, 158, 11, 0.3);
       }
     }
   }
-}
 
+  /* Footer */
+  .habitat-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+
+    .habitat-button {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-size: 0.95rem;
+      transition: background 0.2s ease;
+
+      &--secondary {
+        background: #1f1f1f;
+        color: #f8f8f8;
+
+        &:hover {
+          background: #2a2a2a;
+        }
+      }
+
+      &--primary {
+        background: #f59e0b;
+        color: #000;
+
+        &:hover {
+          background: #d88b09;
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
 
   #{&}__metric-section {
     background: var(--surface-color);
@@ -238,9 +234,9 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
-    
+
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       top: 0;
       left: 0;
@@ -250,15 +246,140 @@
       opacity: 0;
       transition: opacity 0.3s ease;
     }
-    
+
     &:hover {
       transform: translateY(-4px);
       box-shadow: var(--shadow-lg), var(--shadow-glow);
       background: var(--surface-hover);
       border-color: rgba(175, 130, 7, 0.3);
-      
+
       &::before {
         opacity: 1;
+      }
+    }
+  }
+
+  .habitat-page__header {
+    position: relative; // Para posicionar la campana
+  }
+
+  .habitat-page__notification-bell {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    padding: 0.5rem;
+
+    &--active {
+      color: #f39c12; // Color de alerta
+      // Aquí puedes añadir la animación del punto rojo si quieres
+    }
+  }
+
+  // Reutiliza los estilos de la lista de notificaciones que ya creamos
+  .notification-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .notification-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: var(--surface-color);
+    border-left: 5px solid;
+
+    &--error {
+      border-left-color: var(--danger-color);
+    }
+    &--warning {
+      border-left-color: var(--primary-color);
+    }
+  }
+
+  .notification-item__icon {
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+  .notification-item__content {
+    flex: 1;
+  }
+  .notification-item__message {
+    margin: 0 0 0.25rem 0;
+    font-weight: 500;
+    color: var(--text-color);
+  }
+  .notification-item__timestamp {
+    color: var(--text-secondary-color);
+    font-size: 0.8rem;
+  }
+  .notification-empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-muted);
+  }
+
+  .habitat-modal__link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: white;
+      text-decoration: underline;
+    }
+  }
+
+  // --- ESTILOS PARA LOS BOTONES ---
+  .habitat-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+
+    &--secondary {
+      background: var(--surface-color);
+      color: var(--text-color);
+      border: 1px solid var(--surface-border);
+
+      &:hover {
+        background: var(--surface-hover);
+      }
+    }
+
+    &--primary {
+      background: var(--primary-color);
+      color: #1e1e2f;
+
+      &:hover {
+        background: #d88b09;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
       }
     }
   }
@@ -283,7 +404,7 @@
     margin-bottom: 0.5rem;
   }
 
-    &__alert-control {
+  &__alert-control {
     margin-top: 1rem;
     display: flex;
     align-items: center;
@@ -296,7 +417,7 @@
     font-size: 0.85rem;
     background: #e74c3c;
     color: white;
-    
+
     &.active {
       background: #2ecc71;
     }
@@ -311,7 +432,7 @@
     font-size: 0.85rem;
     cursor: pointer;
     transition: background 0.2s ease;
-    
+
     &:hover {
       background: #4c4c4c;
     }
@@ -322,7 +443,7 @@
     align-items: baseline;
     gap: 0.75rem;
     margin-bottom: 0.5rem;
-    
+
     span:first-child {
       font-size: clamp(2rem, 5vw, 3rem);
       font-weight: 800;
@@ -332,7 +453,7 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    
+
     span:last-child {
       font-size: 1rem;
       color: var(--text-secondary-color);
@@ -355,30 +476,30 @@
     display: inline-flex;
     align-items: center;
     width: fit-content;
-    
+
     &::before {
-      content: '';
+      content: "";
       width: 6px;
       height: 6px;
       border-radius: 50%;
       margin-right: 0.5rem;
     }
-    
-    &--positive { 
+
+    &--positive {
       background: rgba(16, 185, 129, 0.15);
       color: var(--success-color);
       border: 1px solid rgba(16, 185, 129, 0.2);
-      
+
       &::before {
         background: var(--success-color);
       }
     }
-    
-    &--negative { 
+
+    &--negative {
       background: rgba(239, 68, 68, 0.15);
       color: var(--danger-color);
       border: 1px solid rgba(239, 68, 68, 0.2);
-      
+
       &::before {
         background: var(--danger-color);
       }
@@ -391,7 +512,7 @@
     padding: 1rem;
     border: 1px solid rgba(255, 255, 255, 0.05);
     transition: all 0.3s ease;
-    
+
     &:hover {
       background: rgba(34, 34, 34, 0.04);
       border-color: rgba(255, 255, 255, 0.1);
@@ -413,12 +534,12 @@
     color: var(--text-color);
     padding: 0 2.5rem;
     font-weight: 500;
-    
+
     span {
       padding: 0.25rem;
       transition: all 0.2s ease;
       border-radius: 4px;
-      
+
       &:hover {
         background: rgba(255, 255, 255, 0.05);
         color: var(--text-secondary-color);
@@ -445,27 +566,32 @@
     position: relative;
     overflow: hidden;
     min-width: 140px;
-    
+
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       top: 0;
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+      );
       transition: left 0.5s ease;
     }
-    
+
     &:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
-      
+
       &::before {
         left: 100%;
       }
     }
-    
+
     &:active {
       transform: translateY(0);
     }
@@ -484,7 +610,7 @@
       color: var(--text-color);
       border: 1px solid var(--surface-border);
       backdrop-filter: blur(10px);
-      
+
       &:hover {
         background: var(--surface-hover);
         border-color: rgba(255, 255, 255, 0.2);
@@ -492,33 +618,32 @@
       }
     }
   }
-  
 }
 
 @media (max-width: 768px) {
   :host {
     padding: 1rem 2rem;
   }
-  
+
   .habitat-page {
     #{&}__content-grid {
       grid-template-columns: 1fr;
       gap: 1.5rem;
     }
-    
+
     #{&}__shared-xaxis {
       grid-template-columns: 1fr;
       gap: 1.5rem;
     }
-    
+
     #{&}__chart-xaxis {
       padding: 0 1rem;
     }
-    
+
     #{&}__actions {
       flex-direction: column;
       align-items: stretch;
-      
+
       button {
         min-width: unset;
       }
@@ -530,7 +655,7 @@
   :host {
     padding: 1rem;
   }
-  
+
   .habitat-page {
     #{&}__metric-section,
     #{&}__metric-card,
@@ -554,7 +679,7 @@
 .habitat-page {
   #{&}__metric-section {
     animation: fadeInUp 0.6s ease-out forwards;
-    
+
     &:nth-child(2) {
       animation-delay: 0.1s;
     }
@@ -562,18 +687,54 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(30px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @media (max-width: 480px) {
   .habitat-modal {
     padding: 1rem;
     max-width: 95%;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  70% {
+    opacity: 0;
+    transform: scale(2.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
   }
 }

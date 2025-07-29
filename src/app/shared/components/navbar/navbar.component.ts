@@ -61,7 +61,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
         } else {
           this.userRole = UserRole.Acuicultor; 
         }
-        console.log('Rol actualizado en navbar:', this.userRole);
       })
     );
   }
