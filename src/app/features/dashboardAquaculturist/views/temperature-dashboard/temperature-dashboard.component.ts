@@ -8,7 +8,7 @@ import {
   NgZone,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -24,6 +24,10 @@ import {
 } from 'ng-apexcharts';
 
 import { TimeRange } from '../../temperature/domain/input/i-monitoring.service';
+import { Router } from '@angular/router';
+import { takeUntil } from 'rxjs/operators';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { AlertsService, Alert } from '../../../../core/services/alerts.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -43,7 +47,7 @@ export type ChartOptions = {
   standalone: false,
   templateUrl: './temperature-dashboard.component.html',
   styleUrls: ['./temperature-dashboard.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Default, // ✅ CAMBIADO: Default en lugar de OnPush
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class TemperatureDashboardComponent implements OnInit, OnDestroy {
   public TimeRange = TimeRange;
@@ -53,48 +57,219 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
 
   private dataSubscription!: Subscription;
   private readonly MAX_DATA_POINTS = 20;
-  private readonly UPDATE_INTERVAL = 3000; // 3 segundos
+  private readonly UPDATE_INTERVAL = 3000;
 
   // Valores de referencia
   public averageHigh: number = 32;
   public averageLow: number = 24;
-  public currentDisplayValue: number = 24; // Valor inicial
+  public currentDisplayValue: number = 26;
 
-  // Datos actuales
+  public showAlertModal: boolean = false;
+  public tempAlertHigh: number = 32;
+  public tempAlertLow: number = 24.9;
+  public alertsEnabled: boolean = false;
+  public showNotificationModal: boolean = false;
+  public modalAlerts$!: Observable<Alert[]>;
+
+  private destroy$ = new Subject<void>();
+
+  private isHighAlertActive: boolean = false;
+  private isLowAlertActive: boolean = false;
+  public hasNewNotifications: boolean = false;
+
   public currentData: { temperature: number; date: string }[] = [];
   public selectedRange: TimeRange = TimeRange.Daily;
 
-  constructor(private cdr: ChangeDetectorRef, private ngZone: NgZone) {}
+  constructor(
+    private router: Router,
+    private ngZone: NgZone,
+    private notificationService: NotificationService,
+    private alertsService: AlertsService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
+    this.modalAlerts$ = this.alertsService.getRecentAlerts(5);
+    this.modalAlerts$.pipe(takeUntil(this.destroy$)).subscribe((alerts) => {
+      this.cdr.detectChanges();
+    });
+
     this.initializeChartWithDefaults();
-    // ✅ Asegurar que Daily sea el default
     this.selectedRange = TimeRange.Daily;
     this.loadHardcodedData(this.selectedRange);
     this.simulateRealtimeData();
   }
 
   ngOnDestroy(): void {
-    if (this.dataSubscription && !this.dataSubscription.closed) {
-      this.dataSubscription.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  get displayValue(): number {
+    return this.currentDisplayValue;
+  }
+
+  public openAlertModal(): void {
+    this.tempAlertHigh = this.averageHigh;
+    this.tempAlertLow = this.averageLow;
+    this.showAlertModal = true;
+  }
+
+  public closeAlertModal(): void {
+    this.showAlertModal = false;
+  }
+
+  public toggleAlerts(): void {
+    this.alertsEnabled = !this.alertsEnabled;
+
+    if (this.alertsEnabled) {
+      this.notificationService.showSuccess(
+        'Alertas Activadas',
+        'El sistema monitoreará las temperaturas según los límites configurados'
+      );
+    } else {
+      this.notificationService.showSuccess(
+        'Alertas Desactivadas',
+        'El monitoreo de alertas ha sido deshabilitado'
+      );
     }
   }
 
-  // ✅ NUEVA SOLUCIÓN: Getter que siempre devuelve el valor actual
-  get displayValue(): number {
-    console.log('🎯 Template solicitando displayValue:', this.currentDisplayValue); // Debug
-    return this.currentDisplayValue;
+  public saveAlertSettings(): void {
+    if (this.tempAlertHigh <= this.tempAlertLow) {
+      this.notificationService.showError(
+        'Error de Configuración',
+        'El límite máximo debe ser mayor que el límite mínimo'
+      );
+      return;
+    }
+
+    // Actualizar los valores
+    this.averageHigh = this.tempAlertHigh;
+    this.averageLow = this.tempAlertLow;
+    this.alertsEnabled = true;
+
+    // Actualizar el gráfico con los nuevos límites
+    this.updateChartLimits();
+
+    this.notificationService.showSuccess(
+      'Alertas Configuradas',
+      `Rango establecido: ${this.averageLow}°C - ${this.averageHigh}°C`
+    );
+
+    this.closeAlertModal();
+  }
+
+  public checkTemperatureAlert(temperature: number): void {
+    // Guarda de seguridad principal
+    if (!this.alertsEnabled) {
+      return;
+    }
+
+    // --- LÓGICA PARA ALERTA ALTA ---
+    if (temperature >= this.averageHigh) {
+      // La condición clave: solo entra si la alerta ALTA NO está ya activa
+      if (!this.isHighAlertActive) {
+        // 1. Marcar esta alerta como activa para no volver a entrar aquí
+        this.isHighAlertActive = true;
+        // 2. Desactivar la alerta baja por si acaso
+        this.isLowAlertActive = false;
+        // 3. Marcar que hay notificaciones nuevas sin leer
+        this.hasNewNotifications = true;
+
+        // 4. Preparar y enviar los datos
+        const alertTitle = 'Temperatura del Agua Alta';
+        const alertDescription = `La temperatura ha alcanzado ${temperature.toFixed(
+          1
+        )}°C, superando el límite de ${this.averageHigh}°C.`;
+
+        // 5. Llamar a los servicios
+        this.notificationService.showSensorAnomaly('error', `🚨 ${alertTitle}`);
+        this.alertsService.addAlert({
+          type: 'error',
+          title: alertTitle,
+          priority: 'Media',
+          description: alertDescription,
+          timestamp: new Date(),
+        });
+      }
+    }
+    // --- LÓGICA PARA ALERTA BAJA ---
+    else if (temperature <= this.averageLow) {
+      // La condición clave: solo entra si la alerta BAJA NO está ya activa
+      if (!this.isLowAlertActive) {
+        // 1. Marcar esta alerta como activa
+        this.isLowAlertActive = true;
+        // 2. Desactivar la alerta alta
+        this.isHighAlertActive = false;
+        // 3. Marcar que hay notificaciones nuevas
+        this.hasNewNotifications = true;
+
+        // 4. Preparar y enviar los datos
+        const alertTitle = 'Temperatura del Agua Baja';
+        const alertDescription = `La temperatura ha bajado a ${temperature.toFixed(
+          1
+        )}°C, por debajo del límite de ${this.averageLow}°C.`;
+
+        // 5. Llamar a los servicios
+        this.notificationService.showSensorAnomaly(
+          'warning',
+          `🧊 ${alertTitle}`
+        );
+        this.alertsService.addAlert({
+          type: 'warning',
+          title: alertTitle,
+          priority: 'Baja',
+          description: alertDescription,
+          timestamp: new Date(),
+        });
+      }
+    }
+    // --- LÓGICA PARA VOLVER A LA NORMALIDAD ---
+    else {
+      // Si la temperatura está en el rango seguro, reseteamos AMBAS banderas.
+      // Esto permite que futuras alertas puedan dispararse de nuevo.
+      if (this.isHighAlertActive || this.isLowAlertActive) {
+        this.notificationService.showSuccess(
+          'Temperatura Normalizada',
+          'El valor ha vuelto al rango seguro.'
+        );
+      }
+      this.isHighAlertActive = false;
+      this.isLowAlertActive = false;
+    }
+  }
+  public onBellClick(): void {
+    this.hasNewNotifications = false; // "Apaga" el punto rojo
+    this.showNotificationModal = true; // "Enciende" el modal de notificaciones
+  }
+
+  private updateChartLimits(): void {
+    if (this.chartOptions && this.chartOptions.series) {
+      const actualSeriesLength = this.chartOptions.series[1].data.length;
+
+      this.chartOptions.series[0].data = Array(actualSeriesLength).fill(
+        this.averageHigh
+      );
+      this.chartOptions.series[2].data = Array(actualSeriesLength).fill(
+        this.averageLow
+      );
+
+      if (this.chart) {
+        this.chart.updateOptions({
+          series: this.chartOptions.series,
+        });
+      }
+    }
   }
 
   onRangeChange(range: TimeRange): void {
     console.log('🔄 Cambiando rango a:', range); // Debug
     this.selectedRange = range;
-    // ✅ CORRECCIÓN: Limpiamos la suscripción anterior para evitar conflictos
     if (this.dataSubscription) {
       this.dataSubscription.unsubscribe();
     }
     this.loadHardcodedData(range);
-    // ✅ CORRECCIÓN: Reiniciamos la simulación solo para Daily
     if (range === TimeRange.Daily) {
       this.simulateRealtimeData();
     }
@@ -159,6 +334,11 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
     };
   }
 
+  public goToAlertsHistory(): void {
+    this.showNotificationModal = false; // Cierra el modal antes de navegar
+    this.router.navigate(['/alerts-history']); // Navega a la vista de historial
+  }
+
   private loadHardcodedData(range: TimeRange): void {
     let data: { temperature: number; date: string }[] = [];
     let categories: string[] = [];
@@ -213,17 +393,12 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
         break;
     }
 
-    // ✅ CORRECCIÓN: Actualizamos currentData ANTES de updateChartData
     this.currentData = data;
-    
-    // ✅ CORRECCIÓN: Actualizamos currentDisplayValue INMEDIATAMENTE
+
     const newValue = data[data.length - 1].temperature;
-    console.log('📊 Valor anterior:', this.currentDisplayValue, '➡️ Valor nuevo:', newValue); // Debug
     this.currentDisplayValue = newValue;
-    
+
     this.updateChartData(data, categories);
-    
-    console.log('✅ currentDisplayValue actualizado a:', this.currentDisplayValue); // Debug
   }
 
   private updateChartData(
@@ -231,8 +406,7 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
     categories: string[]
   ): void {
     const actualSeries = data.map((item) => item.temperature);
-    
-    // ✅ CORRECCIÓN: Actualizamos currentDisplayValue AQUÍ también
+
     this.currentDisplayValue = actualSeries[actualSeries.length - 1];
 
     this.chartOptions.series = [
@@ -258,21 +432,31 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
   }
 
   private simulateRealtimeData(): void {
-    // ✅ CORRECCIÓN: Verificamos si ya existe una suscripción activa
     if (this.dataSubscription && !this.dataSubscription.closed) {
       this.dataSubscription.unsubscribe();
     }
-    
+
     this.dataSubscription = new Subscription();
-    
+
+    // Usaremos una base de tiempo para la onda sinusoidal
+    let time = 0;
+
     const intervalId = setInterval(() => {
       if (this.selectedRange === TimeRange.Daily) {
-        const newTemp = 24 + (3 * Math.random()); // Entre 24-27°C
+        const baseTemp = 28 + 6 * Math.sin(time);
+        const noise = Math.random() * 1.0 - 0.5;
+        const newTemp = baseTemp + noise;
+
+        console.log(`⏰ [SIMULACIÓN] Valor generado: ${newTemp.toFixed(2)}`);
+
         const newData = {
           value: parseFloat(newTemp.toFixed(1)),
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
+
         this.appendRealtimeData(newData);
+
+        time += 0.1;
       }
     }, this.UPDATE_INTERVAL);
 
@@ -280,63 +464,51 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
   }
 
   private appendRealtimeData(data: { value: number; timestamp: string }): void {
-    console.log('⏰ Datos en tiempo real:', data.value); // Debug
-    
-    // ✅ CORRECCIÓN: Ejecutamos dentro de NgZone para asegurar detección de cambios
     this.ngZone.run(() => {
-      // Actualizamos los datos actuales
-      const hour = new Date(data.timestamp).getHours();
-      const hourLabel = hour < 10 ? `0${hour}:00` : `${hour}:00`;
-
-      // Encontramos o creamos el punto de datos
-      const existingIndex = this.currentData.findIndex(
-        (d) => d.date === hourLabel
-      );
-
-      if (existingIndex >= 0) {
-        this.currentData[existingIndex].temperature = data.value;
-      } else {
-        this.currentData.push({
-          temperature: data.value,
-          date: hourLabel,
-        });
-      }
-
-      // Mantenemos un máximo de datos
-      if (this.currentData.length > this.MAX_DATA_POINTS) {
-        this.currentData.shift();
-      }
-
-      // ✅ CORRECCIÓN: Actualizamos currentDisplayValue con el nuevo valor
-      console.log('📊 Valor RT anterior:', this.currentDisplayValue, '➡️ Valor RT nuevo:', data.value); // Debug
       this.currentDisplayValue = data.value;
 
-      // Actualizamos el gráfico
+      this.checkTemperatureAlert(data.value);
+
+      const newDate = new Date(data.timestamp);
+      const timeLabel = newDate.toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+
+      this.currentData.push({
+        temperature: data.value,
+        date: timeLabel,
+      });
+
+      if (this.currentData.length > this.MAX_DATA_POINTS) {
+        this.currentData.shift(); // Elimina el elemento más antiguo (el primero).
+      }
+
       const categories = this.currentData.map((d) => d.date);
       const actualSeries = this.currentData.map((d) => d.temperature);
 
-      this.chartOptions.series = [
-        {
-          name: 'Límite Máximo',
-          data: Array(actualSeries.length).fill(this.averageHigh),
-        },
-        { name: 'Temperatura Actual', data: actualSeries },
-        {
-          name: 'Límite Mínimo',
-          data: Array(actualSeries.length).fill(this.averageLow),
-        },
-      ];
-
       if (this.chart) {
         this.chart.updateOptions({
-          series: this.chartOptions.series,
-          xaxis: { categories },
+          series: [
+            {
+              name: 'Límite Máximo',
+              data: Array(actualSeries.length).fill(this.averageHigh),
+            },
+            {
+              name: 'Temperatura Actual',
+              data: actualSeries,
+            },
+            {
+              name: 'Límite Mínimo',
+              data: Array(actualSeries.length).fill(this.averageLow),
+            },
+          ],
+          xaxis: {
+            categories: categories,
+          },
         });
       }
-
-      // ✅ CORRECCIÓN: Forzamos explícitamente la detección de cambios
-      this.cdr.detectChanges();
-      console.log('✅ currentDisplayValue RT actualizado a:', this.currentDisplayValue); // Debug
     });
   }
 }

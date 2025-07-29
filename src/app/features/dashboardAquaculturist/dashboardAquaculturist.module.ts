@@ -9,6 +9,7 @@ import { WeightDashboardComponent } from './views/weight-dashboard/weight-dashbo
 import { WaterMonitoringDashboardComponent } from './views/water-monitoring-dashboard/water-monitoring-dashboard.component';
 import { GrowthMonitoringDashboardComponent } from './views/growth-monitoring-dashboard/growth-monitoring-dashboard.component';
 import { AlertsDashboardComponent } from './views/alerts-dashboard/alerts-dashboard.component';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -22,6 +23,7 @@ import { AlertsDashboardComponent } from './views/alerts-dashboard/alerts-dashbo
   ],
   imports: [
     CommonModule,
+    FormsModule,
     DashboardAquaculturistRoutingModule,
     NgApexchartsModule,
   ],
