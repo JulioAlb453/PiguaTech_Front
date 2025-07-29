@@ -11,7 +11,7 @@ import { CredentialModel } from '../domain/models/credential.model';
 })
 export class AuthAPIService implements IAuthRepository {
 
-  private readonly API_URL = 'http://piguatech-back.namixcode.cc/auth';
+  private readonly API_URL = 'https://piguatech-back.namixcode.cc/auth';
   
   //  emitir el usuario actual
   private currentUserSubject = new BehaviorSubject<UserModel | null>(null);
