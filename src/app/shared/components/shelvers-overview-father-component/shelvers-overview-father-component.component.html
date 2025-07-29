@@ -1,0 +1,15 @@
+<div class="supervisor-dashboard-container">
+  @if (isLoading) {
+    <div class="loading-indicator">
+      <p>Cargando datos de estantes...</p>
+    </div>
+  }
+
+  @if (!isLoading) {
+    <app-shelvers-overview
+      [title]="pageTitle"
+      [shelves]="dataShelves"
+      >
+    </app-shelvers-overview>
+  }
+</div>

@@ -1,0 +1,296 @@
+:host {
+  --primary-color: #dbb126;
+  --primary-dark: #d89d1d;
+  --primary-light: #c9852c;
+  --accent-color: #f59e0b;
+  --accent-secondary: #10b981;
+  --error-color: #e74c3c;
+  --success-color: #2ecc71;
+
+  --background-color: #0a0a0a;
+  --surface-color: #111111;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+
+  --text-color: #ffffff;
+  --text-secondary-color: #a1a1aa;
+  --text-muted: #71717a;
+
+  --input-bg-color: rgba(255, 255, 255, 0.08);
+  --input-border: rgba(255, 255, 255, 0.2);
+  --input-focus: var(--primary-color);
+
+  --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 30px rgba(246, 187, 59, 0.3);
+}
+
+.loginPage {
+  background: var(--background-color);
+  background-image: radial-gradient(
+      circle at 20% 20%,
+      rgba(59, 130, 246, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(245, 158, 11, 0.1) 0%,
+      transparent 50%
+    );
+  color: var(--text-color);
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative;
+}
+
+.loginPage__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+}
+
+.loginPage__logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.loginPage__navLink {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}
+
+.loginPage__main {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6rem;
+  padding: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.loginPage__formContainer {
+  width: 500px;
+  height: 550px;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: var(--shadow-large);
+  animation: slideInLeft 0.8s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.loginPage__title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  text-align: center;
+  background: linear-gradient(135deg, #b98800 0%, #bb7851 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.1;
+}
+
+.loginPage__subtitle {
+  text-align: center;
+  color: var(--text-secondary-color);
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.loginPage__form {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+  }
+}
+
+.loginPage__formGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem; // Espacio consistente entre inputs
+}
+
+.loginPage__label {
+  margin-bottom: 0.75rem;
+  color: var(--text-secondary-color);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.loginPage__input {
+  padding: 1rem 1.25rem;
+  border: 2px solid var(--input-border);
+  border-radius: 16px;
+  background: var(--input-bg-color);
+  color: var(--text-color);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+}
+
+.input-error {
+  border-color: var(--error-color) !important;
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.loginPage__submitButton {
+  padding: 1rem 2rem;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-dark) 100%
+  );
+  color: var(--text-color);
+  border: none;
+  border-radius: 16px;
+  width: 100%;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-medium);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.loginPage__links {
+  margin-top: 2.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-secondary-color);
+}
+
+.loginPage__link {
+  color: var(--accent-color);
+  text-decoration: none;
+  display: inline-block;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--text-color);
+  }
+}
+
+.loginPage__imageContainer {
+  max-width: 550px;
+  height: 650px;
+  border-radius: 2rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-large);
+  border: 2px solid var(--glass-border);
+  animation: slideInRight 0.8s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 1200px) {
+  .loginPage__main {
+    gap: 4rem;
+  }
+
+  .loginPage__formContainer {
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 900px) {
+  .loginPage__main {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem 1rem;
+  }
+
+  .loginPage__imageContainer {
+    display: none;
+  }
+
+  .loginPage__formContainer {
+    max-width: 100%;
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .loginPage__formContainer {
+    padding: 1.5rem;
+    border-radius: 20px;
+  }
+
+  .loginPage__title {
+    font-size: 2rem;
+  }
+}

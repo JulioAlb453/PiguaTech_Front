@@ -1,0 +1,17 @@
+{
+  "routes": {
+    "/": {},
+    "/acuicultor": {},
+    "/acuicultor/alertsDashboard": {},
+    "/acuicultor/growth": {},
+    "/acuicultor/temperature": {},
+    "/acuicultor/waterMonitoring": {},
+    "/acuicultor/weight": {},
+    "/login": {},
+    "/register": {},
+    "/supervisor": {},
+    "/supervisor/home": {},
+    "/supervisor/reports": {},
+    "/supervisor/summary": {}
+  }
+}

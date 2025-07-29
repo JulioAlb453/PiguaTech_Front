@@ -1,0 +1,89 @@
+<main class="growth-page">
+  <header class="growth-page__header">
+    <h1>Seguimiento del Crecimiento</h1>
+  </header>
+
+  <section class="growth-page__main-focus">
+    <h2>Peso Promedio a lo Largo del Tiempo</h2>
+
+    <div class="growth-page__time-selector">
+      @for (option of timeRangeOptions; track option) {
+        <button
+          class="growth-page__time-selector-button"
+        [class.growth-page__time-selector-button--active]="
+          option.id === activeTimeRange.id
+        "
+          (click)="selectTimeRange(option)"
+          >
+          {{ option.label }}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+      }
+    </div>
+
+    @if (kpiData) {
+      <div class="growth-page__kpi-card">
+        <label>Peso Promedio {{ kpiData.unit }}</label>
+        <span class="growth-page__kpi-value">{{ kpiData.value }}</span>
+        <p
+          class="growth-page__kpi-trend"
+        [ngClass]="{
+          'growth-page__kpi-trend--positive': kpiData.trend > 0,
+          'growth-page__kpi-trend--negative': kpiData.trend < 0
+        }"
+          >
+          {{ kpiData.period }} {{ kpiData.trend > 0 ? "+" : ""
+          }}{{ kpiData.trend }}%
+        </p>
+      </div>
+    }
+
+    <div class="growth-page__chart-container">
+      @if (chartOptions) {
+        <apx-chart
+          #chart
+          [tooltip]="chartOptions.tooltip!"
+          [series]="chartOptions.series!"
+          [chart]="chartOptions.chart!"
+          [stroke]="chartOptions.stroke!"
+          [fill]="chartOptions.fill!"
+          [xaxis]="chartOptions.xaxis!"
+          [dataLabels]="chartOptions.dataLabels!"
+        ></apx-chart>
+      }
+      <div class="growth-page__chart-xaxis">
+        @for (label of chartOptions.xaxis?.categories; track label) {
+          <span>{{
+            label
+          }}</span>
+        }
+      </div>
+    </div>
+  </section>
+
+  <div class="growth-page__footer-container">
+    <footer class="growth-page__footer">
+      <h3>Métricas Clave de Crecimiento</h3>
+      <div class="growth-page__key-metrics">
+        @for (metric of keyMetrics; track metric) {
+          <div class="growth-page__metric-card">
+            <label>{{ metric.label }}</label>
+            <span>{{ metric.value }}</span>
+          </div>
+        }
+      </div>
+    </footer>
+  </div>
+</main>

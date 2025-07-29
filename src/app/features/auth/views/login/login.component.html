@@ -1,0 +1,48 @@
+<div class="loginPage">
+  <header class="loginPage__header">
+    <div class="loginPage__logo">
+      <span>PiguaTech</span>
+    </div>
+    <nav class="loginPage__nav">
+      <a href="/register" class="loginPage__navLink"> Registrarse</a>
+    </nav>
+  </header>
+
+  <main class="loginPage__main">
+    <div class="loginPage__formContainer">
+        <h1 class="loginPage__title">Iniciar sesión</h1>
+
+<form class="loginPage__form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="loginPage__formGroup">
+            <label for="email" class="loginPage__label">Correo electrónico</label>
+            <input 
+            id="email" 
+            type="text" name="" 
+            class="loginPage__input"
+            placeholder="Ejemplo@gmail.com"
+            formControlName="email"
+            >
+          </div>
+          <div class="loginPage__formGroup">
+            <label for="password" class="loginPage__label">Contraseña</label>
+            <input 
+            id="password" 
+            type="password" name="" 
+            class="loginPage__input"
+            placeholder="Ingresa tu contraseña"
+            formControlName="password"
+            >
+          </div>
+          <button type="submit" class="loginPage__submitButton" [disabled]="loginForm.invalid">Iniciar sesión</button>
+        </form>
+
+        <div class="loginPage__links">
+          <p class="loginPage__link">¿No tienes una cuenta? <a href="/register" class="login-page__register-button">Regístrate</a></p>
+        </div>
+    </div>
+
+    <div class="loginPage__imageContainer">
+      <img src="pigua.jpg" alt="Login Image" class="loginPage__image">
+    </div>
+  </main>
+</div>

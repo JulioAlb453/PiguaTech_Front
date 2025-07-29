@@ -1,0 +1,183 @@
+<main class="summary-dashboard">
+  <header class="summary-dashboard__header">
+    <h1>Resumen de Informes</h1>
+    <button
+      class="summary-dashboard__notification-btn"
+      aria-label="Ver notificaciones"
+      >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        >
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      </svg>
+    </button>
+  </header>
+
+  <section class="summary-dashboard__section">
+    <header class="summary-dashboard__section-header">
+      <h2>Estado del Hábitat</h2>
+      <div class="summary-dashboard__chip-group">
+        <button class="summary-dashboard__chip" type="button">Semanal</button>
+        <button
+          class="summary-dashboard__chip summary-dashboard__chip--active"
+          type="button"
+          >
+          Mensual
+        </button>
+        <button class="summary-dashboard__chip" type="button">
+          Trimestral
+        </button>
+      </div>
+    </header>
+
+    <div class="summary-dashboard__grid summary-dashboard__grid--cols-3">
+      <article class="summary-dashboard__card">
+        <h3>Tendencias de Temperatura</h3>
+        <p class="summary-dashboard__card-metric">+2°C</p>
+        <p class="summary-dashboard__card-submetric">
+          Último Mes
+          <span class="summary-dashboard__card-trend--positive">+2%</span>
+        </p>
+        @if (tempChartOptions?.series) {
+          <div
+            class="summary-dashboard__chart-container"
+            >
+            <apx-chart
+              [series]="tempChartOptions.series!"
+              [chart]="tempChartOptions.chart!"
+              [stroke]="tempChartOptions.stroke!"
+              [fill]="tempChartOptions.fill!"
+              [tooltip]="tempChartOptions.tooltip!"
+              [xaxis]="tempChartOptions.xaxis!"
+            ></apx-chart>
+          </div>
+        }
+        <div class="summary-dashboard__card-footer">
+          <span>Semana 1</span><span>Semana 2</span><span>Semana 3</span
+          ><span>Semana 4</span>
+        </div>
+      </article>
+
+      <article class="summary-dashboard__card">
+        <h3>Niveles de Turbidez del Agua</h3>
+        <p class="summary-dashboard__card-metric">-5%</p>
+        <p class="summary-dashboard__card-submetric">
+          Último Mes
+          <span class="summary-dashboard__card-trend--negative">-5%</span>
+        </p>
+        @if (turbidityChartOptions?.series) {
+          <div
+            class="summary-dashboard__chart-container"
+            >
+            <apx-chart
+              [series]="turbidityChartOptions.series!"
+              [chart]="turbidityChartOptions.chart!"
+              [plotOptions]="turbidityChartOptions.plotOptions!"
+              [xaxis]="turbidityChartOptions.xaxis!"
+              [colors]="turbidityChartOptions.colors!"
+              [legend]="turbidityChartOptions.legend!"
+              [tooltip]="turbidityChartOptions.tooltip!"
+            ></apx-chart>
+          </div>
+        }
+        <div class="summary-dashboard__card-footer">
+          <span>Clara</span><span>Ligeramente Turbia</span><span>Turbia</span>
+        </div>
+      </article>
+
+      <article class="summary-dashboard__card">
+        <h3>Volumen del Hábitat</h3>
+        <p class="summary-dashboard__card-metric">+10%</p>
+        <p class="summary-dashboard__card-submetric">
+          Último Mes
+          <span class="summary-dashboard__card-trend--positive">+10%</span>
+        </p>
+        @if (volumeChartOptions?.series) {
+          <div
+            class="summary-dashboard__chart-container summary-dashboard__chart-container--horizontal-bar"
+            >
+            <apx-chart
+              [series]="volumeChartOptions.series!"
+              [chart]="volumeChartOptions.chart!"
+              [plotOptions]="volumeChartOptions.plotOptions!"
+              [xaxis]="volumeChartOptions.xaxis!"
+              [colors]="volumeChartOptions.colors!"
+              [tooltip]="volumeChartOptions.tooltip!"
+            ></apx-chart>
+          </div>
+        }
+      </article>
+    </div>
+  </section>
+
+  <section class="summary-dashboard__section">
+    <header class="summary-dashboard__section-header">
+      <h2>Crecimiento de Piguas</h2>
+    </header>
+
+    <div class="summary-dashboard__grid summary-dashboard__grid--cols-2">
+      <article class="summary-dashboard__card">
+        <h3>Aumento de Peso Promedio</h3>
+        <p class="summary-dashboard__card-metric">+150g</p>
+        <p class="summary-dashboard__card-submetric">
+          Último Mes
+          <span class="summary-dashboard__card-trend--positive">+15%</span>
+        </p>
+        @if (weightChartOptions?.series) {
+          <div
+            class="summary-dashboard__chart-container"
+            >
+            <apx-chart
+              [series]="weightChartOptions.series!"
+              [chart]="weightChartOptions.chart!"
+              [plotOptions]="weightChartOptions.plotOptions!"
+              [xaxis]="weightChartOptions.xaxis!"
+              [colors]="weightChartOptions.colors!"
+              [legend]="weightChartOptions.legend!"
+              [tooltip]="weightChartOptions.tooltip!"
+            ></apx-chart>
+          </div>
+        }
+        <div class="summary-dashboard__card-footer">
+          <span>Pigua 1</span><span>Pigua 2</span><span>Pigua 3</span>
+        </div>
+      </article>
+
+      <article class="summary-dashboard__card">
+        <h3>Crecimiento de la Población</h3>
+        <p class="summary-dashboard__card-metric">+5%</p>
+        <p class="summary-dashboard__card-submetric">
+          Último Mes
+          <span class="summary-dashboard__card-trend--positive">+5%</span>
+        </p>
+        @if (populationChartOptions?.series) {
+          <div
+            class="summary-dashboard__chart-container"
+            >
+            <apx-chart
+              [series]="populationChartOptions.series!"
+              [chart]="populationChartOptions.chart!"
+              [stroke]="populationChartOptions.stroke!"
+              [fill]="populationChartOptions.fill!"
+              [xaxis]="populationChartOptions.xaxis!"
+              [tooltip]="populationChartOptions.tooltip!"
+            ></apx-chart>
+          </div>
+        }
+        <div class="summary-dashboard__card-footer">
+          <span>Semana 1</span><span>Semana 2</span><span>Semana 3</span
+          ><span>Semana 4</span>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>

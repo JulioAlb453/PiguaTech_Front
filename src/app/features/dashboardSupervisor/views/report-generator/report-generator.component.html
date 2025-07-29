@@ -1,0 +1,154 @@
+<main class="report-generator">
+  <div class="report-generator__scrollable">
+    <header class="report-generator__header">
+      <h1>Generador de Informes</h1>
+      <p>
+        Selecciona los parámetros para crear un nuevo informe o descarga uno
+        existente.
+      </p>
+    </header>
+
+    <!-- FORMULARIO DE GENERACIÓN -->
+    <form [formGroup]="reportForm" (ngSubmit)="generateReport()">
+      <!-- SECCIÓN: TIPO DE INFORME -->
+      <section class="report-generator__section">
+        <h2 class="report-generator__section-title">1. Tipo de Informe</h2>
+        <div class="report-generator__chip-group">
+          @for (type of reportTypes; track type) {
+            <button
+              type="button"
+              class="report-generator__chip"
+            [class.report-generator__chip--active]="
+              reportForm.get('reportType')?.value === type
+            "
+            [class.report-generator__chip--current-state]="
+              type === ReportType.currentState
+            "
+            [class.report-generator__chip--historical-data]="
+              type === ReportType.historicalData
+            "
+            [class.report-generator__chip--growth-analysis]="
+              type === ReportType.growthAnalysis
+            "
+              (click)="selectReportType(type)"
+              >
+              <mat-icon class="report-generator__chip-icon">{{
+                getReportTypeIcon(type)
+              }}</mat-icon>
+              {{ type }}
+            </button>
+          }
+        </div>
+      </section>
+
+      <!-- SECCIÓN: RANGO DE FECHAS -->
+      <section class="report-generator__section">
+        <h2 class="report-generator__section-title">2. Rango de Fechas</h2>
+        <div class="report-generator__date-range">
+          <div class="report-generator__form-group">
+            <label for="startDate">Fecha de Inicio</label>
+            <input id="startDate" type="date" formControlName="startDate" />
+          </div>
+          <div class="report-generator__form-group">
+            <label for="endDate">Fecha de Fin</label>
+            <input id="endDate" type="date" formControlName="endDate" />
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: FORMATO DE DESCARGA -->
+      <section class="report-generator__section">
+        <h2 class="report-generator__section-title">3. Formato de Descarga</h2>
+        <div class="report-generator__chip-group">
+          @for (format of downloadFormats; track format) {
+            <button
+              type="button"
+              class="report-generator__chip"
+            [class.report-generator__chip--active]="
+              reportForm.get('downloadFormat')?.value === format
+            "
+              [class.report-generator__chip--pdf]="format === ReportFormat.PDF"
+              [class.report-generator__chip--csv]="format === ReportFormat.CSV"
+              (click)="selectDownloadFormat(format)"
+              >
+              <mat-icon class="report-generator__chip-icon">{{
+                getFormatIcon(format)
+              }}</mat-icon>
+              {{ format }}
+            </button>
+          }
+        </div>
+      </section>
+
+      <!-- MENSAJE DE ERROR -->
+      @if (reportForm.invalid && reportForm.touched) {
+        <div
+          class="report-generator__error-message"
+          >
+          <p>
+            Por favor, completa todos los campos requeridos para generar el
+            informe.
+          </p>
+        </div>
+      }
+    </form>
+
+    <!-- SECCIÓN: INFORMES ANTERIORES -->
+    <section class="report-generator__section">
+      <h2 class="report-generator__section-title">Informes Anteriores</h2>
+
+      <div class="report-generator__table">
+        <!-- Cabecera de la tabla (visible en escritorio) -->
+        <div class="report-generator__table-header">
+          <span>Tipo de Informe</span>
+          <span>Rango de Fechas</span>
+          <span>Formato</span>
+          <span>Acciones</span>
+        </div>
+
+        <!-- Filas de la tabla (generadas dinámicamente) -->
+        @for (report of previousReports; track report) {
+          <div
+            class="report-generator__table-row"
+            >
+            <div class="report-generator__table-cell" data-label="Tipo">
+              {{ report.type }}
+            </div>
+            <div class="report-generator__table-cell" data-label="Fechas">
+              {{ report.dateRange }}
+            </div>
+            <div class="report-generator__table-cell" data-label="Formato">
+              <span
+                class="report-generator__format-tag"
+                [ngClass]="'report-generator__format-tag--' + report.format"
+                >
+                {{ report.format }}
+              </span>
+            </div>
+            <div
+              class="report-generator__table-cell report-generator__table-actions"
+              data-label="Acciones"
+              >
+              <button
+                type="button"
+                class="report-generator__action-button"
+                (click)="downloadPrevious(report)"
+                matTooltip="Descargar informe"
+                >
+                <mat-icon>download</mat-icon>
+              </button>
+              <button
+                type="button"
+                class="report-generator__action-button"
+                (click)="deleteReport(report)"
+                matTooltip="Eliminar informe"
+                >
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+</main>
