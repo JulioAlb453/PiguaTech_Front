@@ -1,4 +1,4 @@
-name: Deploy to EC2 on push to main
+name: Deploy Angular 20 to EC2 on push to main
 
 on:
   push:
@@ -10,17 +10,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Deploy via SSH to EC2
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular app (production)
+        run: npm run build -- --configuration production
+
+      - name: Sync build to EC2
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          rsync -avz --delete -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" dist/pigua-tech/browser/ ubuntu@${{ secrets.EC2_HOST }}:/var/www/html/pigua-tech/browser/
+
+      - name: Reload nginx on EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
+          username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
-          script: |
-            cd /home/ubuntu/PiguaTech_Front
-            git pull origin main-
-           
+          script: sudo systemctl reload nginx
