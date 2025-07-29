@@ -1,9 +1,23 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { ChartComponent, ApexChart, ApexAxisChartSeries, ApexXAxis, ApexYAxis, ApexDataLabels, ApexTitleSubtitle, ApexTheme } from 'ng-apexcharts';
-import { WeightMonitoryRepositoryService } from '../../weight/infraestructure/weight-monitory.repository.service';
-import { CommonModule } from '@angular/common';
-import { NgApexchartsModule } from 'ng-apexcharts';
+import {
+  ChartComponent,
+  ApexChart,
+  ApexAxisChartSeries,
+  ApexXAxis,
+  ApexYAxis,
+  ApexDataLabels,
+  ApexTitleSubtitle,
+  ApexTheme,
+  ApexStroke,
+  ApexFill, 
+  ApexTooltip,
+  ApexGrid,
+  ApexPlotOptions,
+  ApexLegend
+} from 'ng-apexcharts';
+import { NotificationService } from '../../../../core/services/notification.service';
 
+// Definiendo el tipo aquí para mantenerlo autocontenido
 type ChartOption = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -13,142 +27,171 @@ type ChartOption = {
   title: ApexTitleSubtitle;
   theme: ApexTheme;
   colors: string[];
-  plotOption: any;
-  grid?: any; // Add grid property to support chartOptions.grid
+  plotOptions: ApexPlotOptions;
+  grid?: ApexGrid;
+  stroke: ApexStroke;
+  fill: ApexFill;
+  tooltip: ApexTooltip;
+  legend: ApexLegend;
 };
 
-interface GrowthMetric {
-  label: string;
-  value: string;
+interface DynamicMetrics {
+  averageWeight: number;
+  growthSinceLast: number;
+  sampleSize: number;
+  minWeight: number;
+  maxWeight: number;
+  variationCoefficient: number;
+  progressPercentage: number;
 }
 
 @Component({
   selector: 'app-weight-dashboard',
   standalone: false,
   templateUrl: './weight-dashboard.component.html',
-  styleUrls: ['./weight-dashboard.component.scss']
+  styleUrls: ['./weight-dashboard.component.scss'],
 })
-
 export class WeightDashboardComponent implements OnInit {
   @ViewChild('chart') chart!: ChartComponent;
+  
+  public chartOptions: Partial<ChartOption> = {};
+  
+  public isWeighing = false;
+  public lastWeighingResult: number | null = null;
+  
+  private weighingHistory: number[] = [];
+  private weighingCategories: string[] = [];
+  
+  public readonly GOAL_WEIGHT = 30;
 
-  public chartOptions!: Partial<ChartOption>;
-  public keyMetrics: GrowthMetric[] = [
-    { label: 'Total de Piguas', value: '1,250' },
-    { label: 'Tasa de Crecimiento Actual', value: '3.2%' },
-    { label: 'Tasa de Crecimiento vs. Periodo Anterior', value: '2.8% vs. 2.5%' }
-  ];
-
-  public kpiData = {
-    value: 0,
-    unit: 'kg',
-    trend: 0,
-    period: ''
-  };
-
-  public isMeasuring = false; 
-
+  public dynamicMetrics!: DynamicMetrics;
+  
   constructor(
     private crd: ChangeDetectorRef,
-    private weightRepo: WeightMonitoryRepositoryService
-  ) {}
+    private notificationService: NotificationService
+  ) {
+    this.initializeMetrics();
+  }
 
   ngOnInit(): void {
-    this.initializeChart();
-    this.loadWeightTrend();
+    this.initializeBarChart();
   }
 
-  toggleMeasurement(): void {
-    this.isMeasuring = !this.isMeasuring;
-    // lógica para manejar el inicio/detención de medición
+  initializeMetrics(): void {
+    this.dynamicMetrics = {
+      averageWeight: 0,
+      growthSinceLast: 0,
+      sampleSize: 0,
+      minWeight: 0,
+      maxWeight: 0,
+      variationCoefficient: 0,
+      progressPercentage: 0,
+    };
   }
 
-initializeChart(): void {
-  this.chartOptions = {
-    series: [{ name: 'Peso Promedio', data: [] }],
-    chart: {
-      type: 'line',
-      height: '100%', 
-      toolbar: { show: false },
-      background: 'transparent',
-      foreColor: '#e0e0e0' 
-    },
-    xaxis: {
-      categories: [],
-      labels: {
-        style: {
-          colors: '#e0e0e0' 
-        }
-      }
-    },
-    yaxis: {
-      title: {
-        text: 'Peso Promedio (kg)',
-        style: {
-          color: '#e0e0e0'
-        }
+  initializeBarChart(): void {
+    this.chartOptions = {
+      series: [{ name: 'Peso Registrado', data: [] }],
+      chart: {
+        type: 'bar',
+        height: 350,
+        toolbar: { show: false },
+        background: 'transparent',
+        foreColor: '#e0e0e0',
       },
-      labels: {
-        style: {
-          colors: '#e0e0e0' 
-        }
+      plotOptions: {
+        bar: {
+          borderRadius: 4,
+          horizontal: false,
+          distributed: true,
+        },
+      },
+      xaxis: {
+        categories: [],
+        labels: { style: { colors: '#e0e0e0' } },
+      },
+      yaxis: {
+        title: { text: 'Peso (g)', style: { color: '#e0e0e0' } },
+        labels: { style: { colors: '#e0e0e0' } },
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: (val: number) => val.toFixed(2) + 'g',
+        style: { colors: ['#fff'], fontSize: '12px' },
+      },
+      title: {
+        text: 'Historial de Pesajes Individuales',
+        align: 'left',
+        style: { color: '#e0e0e0', fontSize: '16px' },
+      },
+      grid: {
+        borderColor: '#444',
+      },
+      legend: {
+        show: false
       }
-    },
-    dataLabels: {
-      enabled: true,
-      style: {
-        colors: ['#fff'] 
-      }
-    },
-    title: {
-      text: 'Peso Promedio a lo Largo del Tiempo',
-      style: {
-        color: '#e0e0e0' 
-      }
-    },
-    theme: {
-      mode: 'dark' 
-    },
-    colors: ['#f39c12'],
-    grid: {
-      borderColor: '#444' 
+    };
+  }
+  
+  updateDynamicMetrics(): void {
+    const history = this.weighingHistory;
+    const sampleSize = history.length;
+
+    if (sampleSize === 0) {
+      this.initializeMetrics();
+      return;
     }
-  };
-}
-  loadWeightTrend(): void {
-    this.weightRepo.getWeightTrend().subscribe(data => {
-      const seriesData = data.map((item: any) => item.avg_weight);
-      const categories = data.map((item: any) => this.monthName(item.month));
 
-      this.chartOptions = {
-        ...this.chartOptions,
-        series: [{ name: 'Peso Promedio', data: seriesData }],
-        xaxis: {
-          ...this.chartOptions.xaxis,
-          categories: categories
-        }
-      };
+    const sum = history.reduce((a, b) => a + b, 0);
+    const average = sum / sampleSize;
+    
+    const squaredDiffs = history.map(value => Math.pow(value - average, 2));
+    const avgSquaredDiff = squaredDiffs.reduce((a, b) => a + b, 0) / sampleSize;
+    const stdDev = Math.sqrt(avgSquaredDiff);
 
-      this.kpiData = {
-        value: seriesData[seriesData.length - 1],
-        unit: 'kg',
-        trend: this.calculateTrend(seriesData),
-        period: 'Últimos Meses'
-      };
+    this.dynamicMetrics = {
+      sampleSize: sampleSize,
+      averageWeight: average,
+      minWeight: Math.min(...history),
+      maxWeight: Math.max(...history),
+      growthSinceLast: sampleSize > 1 ? ((history[sampleSize - 1] - history[sampleSize - 2]) / history[sampleSize - 2]) * 100 : 0,
+      variationCoefficient: average > 0 ? (stdDev / average) * 100 : 0,
+      progressPercentage: (average / this.GOAL_WEIGHT) * 100,
+    };
+  }
 
+  public performWeighing(): void {
+    if (this.isWeighing) return;
+
+    this.isWeighing = true;
+    this.lastWeighingResult = null;
+    
+    setTimeout(() => {
+      const result = 6 + Math.random() * 2;
+      const newWeight = parseFloat(result.toFixed(2));
+
+      this.lastWeighingResult = newWeight;
+      this.isWeighing = false;
+      
+      this.weighingHistory.push(newWeight);
+      this.weighingCategories.push(`Pesaje #${this.weighingHistory.length}`);
+      
+      this.updateDynamicMetrics();
+      
+      if (this.chart) {
+        this.chart.updateOptions({
+          series: [{ data: this.weighingHistory }],
+          xaxis: { categories: this.weighingCategories }
+        });
+      }
+      
+      this.notificationService.showSuccess('Pesaje Completado', `El peso registrado es de ${newWeight} gramos.`);
       this.crd.detectChanges();
-    });
-  }
 
-  monthName(monthNumber: number): string {
-    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    return months[monthNumber - 1];
-  }
-
-  calculateTrend(seriesData: number[]): number {
-    if (seriesData.length < 2) return 0;
-    const prev = seriesData[seriesData.length - 2];
-    const curr = seriesData[seriesData.length - 1];
-    return parseFloat((((curr - prev) / prev) * 100).toFixed(2));
+      setTimeout(() => {
+        this.lastWeighingResult = null;
+        this.crd.detectChanges();
+      }, 7000);
+    }, 5000);
   }
 }

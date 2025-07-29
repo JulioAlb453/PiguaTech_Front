@@ -51,6 +51,7 @@ export type ChartOptions = {
 export class GrowthMonitoringDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('chart') chart!: ChartComponent;
   public chartOptions: Partial<ChartOptions> = {};
+  
 
   public timeRangeOptions: TimeRangeOption[] = [
     { id: '7d', label: 'Últimos 7 Días' },
