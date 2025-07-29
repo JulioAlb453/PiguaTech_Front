@@ -98,6 +98,72 @@ $text-secondary: #a0a0a0;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   }
 
+  .modal-base-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; // Alto z-index para estar por encima de todo
+  animation: fadeIn 0.3s ease-out;
+}
+
+// Definimos un estilo base para todos los cuerpos de modales.
+.modal-base {
+  background: #2b2b2b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  z-index: 1001; // Ligeramente por encima de su propio overlay
+  animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+// Ahora, aplicamos estos estilos base a nuestras clases específicas.
+.dashboard__modal-overlay {
+  @extend .modal-base-overlay;
+}
+.dashboard__modal {
+  @extend .modal-base;
+  padding: 1.5rem; // Padding específico para este modal
+}
+
+.notification-modal__overlay {
+  @extend .modal-base-overlay;
+}
+.notification-modal {
+  @extend .modal-base;
+  max-width: 500px; // Tamaño específico para este modal
+}
+
+.notification-list {
+  list-style: none; // <-- Esto quita los "puntos" de la lista
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #333;
+  border-left: 5px solid; // Borde lateral para indicar el tipo
+  
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+}
   &__modal-header {
     display: flex;
     justify-content: space-between;
@@ -885,6 +951,116 @@ $text-secondary: #a0a0a0;
   }
 
   
+}
+
+:host ::ng-deep {
+  .notification-modal__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .notification-modal {
+    background: #2b2b2b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+    animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .notification-modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #333;
+    flex-shrink: 0;
+  }
+
+  .notification-modal__title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #f0f0f0;
+  }
+
+  .notification-modal__close {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    &:hover { color: #f0f0f0; }
+  }
+
+  .notification-modal__body {
+    padding: 1.5rem;
+    max-height: 60vh;
+    overflow-y: auto;
+    flex-grow: 1;
+  }
+
+  .notification-modal__footer {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #333;
+    flex-shrink: 0;
+  }
+  
+  .notification-modal__link {
+    color: #f39c12;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+    &:hover {
+      background-color: rgba(243, 156, 18, 0.1);
+      text-decoration: underline;
+    }
+  }
+
+  // Estilos para la lista de alertas DENTRO del modal
+  .notification-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: #333;
+    border-left: 5px solid;
+  }
+
+  .notification-item--error { border-left-color: #e74c3c; }
+  .notification-item--warning { border-left-color: #f39c12; }
+  .notification-item__icon { font-size: 1.5rem; line-height: 1.2; }
+  .notification-item__content { flex: 1; }
+  .notification-item__message { margin: 0 0 0.25rem 0; font-weight: 500; color: #f0f0f0; }
+  .notification-item__timestamp { color: #999; font-size: 0.8rem; }
+  .notification-empty { text-align: center; padding: 2rem 1rem; color: #aaa; }
 }
 
 // Responsive design mejorado
