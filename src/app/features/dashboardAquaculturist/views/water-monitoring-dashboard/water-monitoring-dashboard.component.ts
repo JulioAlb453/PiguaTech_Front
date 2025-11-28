@@ -11,7 +11,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { AlertsService, Alert } from '../../../../core/services/alerts.service';
+import { AlertsService, Alert } from '../../../../core/services/alerts/alerts.service';
 import {
   ChartComponent,
   ApexChart,

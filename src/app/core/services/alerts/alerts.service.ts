@@ -30,7 +30,7 @@ export class AlertsService {
     const newArray = [alertWithId, ...currentAlerts];
 
     console.log(
-      `✅ [ALERTS SERVICE - ID: ${this.instanceId}] Alerta añadida. Nuevo array:`,
+      ` [ALERTS SERVICE - ID: ${this.instanceId}] Alerta añadida. Nuevo array:`,
       newArray
     );
 

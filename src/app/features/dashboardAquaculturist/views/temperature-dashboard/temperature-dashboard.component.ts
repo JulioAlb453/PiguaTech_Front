@@ -7,7 +7,6 @@ import {
   ChangeDetectorRef,
   NgZone,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Observable, Subject, Subscription } from 'rxjs';
 import {
   ApexAxisChartSeries,
@@ -20,14 +19,13 @@ import {
   ApexLegend,
   ApexTooltip,
   ChartComponent,
-  NgApexchartsModule,
 } from 'ng-apexcharts';
 
 import { TimeRange } from '../../temperature/domain/input/i-monitoring.service';
 import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { AlertsService, Alert } from '../../../../core/services/alerts.service';
+import { AlertsService, Alert } from '../../../../core/services/alerts/alerts.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -45,7 +43,7 @@ export type ChartOptions = {
 @Component({
   selector: 'app-temperature-dashboard',
   standalone: false,
-  templateUrl: './temperature-dashboard.component.html',
+  templateUrl: './temperature-dashboard.component.html', 
   styleUrls: ['./temperature-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default,
 })
@@ -58,6 +56,14 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
   private dataSubscription!: Subscription;
   private readonly MAX_DATA_POINTS = 20;
   private readonly UPDATE_INTERVAL = 3000;
+   public currentTemperature: number = 26;
+  
+  public alertConfig = {
+    criticalHigh: 30.0,
+    warningHigh: 28.0,
+    warningLow: 22.0,
+    criticalLow: 20.0
+  };
 
   // Valores de referencia
   public averageHigh: number = 32;
@@ -107,6 +113,20 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
 
   get displayValue(): number {
     return this.currentDisplayValue;
+  }
+
+   getTemperatureStatusText(): string {
+    if (this.currentTemperature > this.alertConfig.criticalHigh) {
+      return 'Crítico - Muy Alto';
+    } else if (this.currentTemperature > this.alertConfig.warningHigh) {
+      return 'Advertencia - Alto';
+    } else if (this.currentTemperature < this.alertConfig.criticalLow) {
+      return 'Crítico - Muy Bajo';
+    } else if (this.currentTemperature < this.alertConfig.warningLow) {
+      return 'Advertencia - Bajo';
+    } else {
+      return 'Normal';
+    }
   }
 
   public openAlertModal(): void {
@@ -460,52 +480,53 @@ export class TemperatureDashboardComponent implements OnInit, OnDestroy {
     this.dataSubscription.add({ unsubscribe: () => clearInterval(intervalId) });
   }
 
-  private appendRealtimeData(data: { value: number; timestamp: string }): void {
-    this.ngZone.run(() => {
-      this.currentDisplayValue = data.value;
+ private appendRealtimeData(data: { value: number; timestamp: string }): void {
+  this.ngZone.run(() => {
+    this.currentDisplayValue = data.value;
+    this.currentTemperature = data.value; // AGREGA esta línea
 
-      this.checkTemperatureAlert(data.value);
+    this.checkTemperatureAlert(data.value);
 
-      const newDate = new Date(data.timestamp);
-      const timeLabel = newDate.toLocaleTimeString('es-ES', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      });
-
-      this.currentData.push({
-        temperature: data.value,
-        date: timeLabel,
-      });
-
-      if (this.currentData.length > this.MAX_DATA_POINTS) {
-        this.currentData.shift(); // Elimina el elemento más antiguo (el primero).
-      }
-
-      const categories = this.currentData.map((d) => d.date);
-      const actualSeries = this.currentData.map((d) => d.temperature);
-
-      if (this.chart) {
-        this.chart.updateOptions({
-          series: [
-            {
-              name: 'Límite Máximo',
-              data: Array(actualSeries.length).fill(this.averageHigh),
-            },
-            {
-              name: 'Temperatura Actual',
-              data: actualSeries,
-            },
-            {
-              name: 'Límite Mínimo',
-              data: Array(actualSeries.length).fill(this.averageLow),
-            },
-          ],
-          xaxis: {
-            categories: categories,
-          },
-        });
-      }
+    const newDate = new Date(data.timestamp);
+    const timeLabel = newDate.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
     });
-  }
+
+    this.currentData.push({
+      temperature: data.value,
+      date: timeLabel,
+    });
+
+    if (this.currentData.length > this.MAX_DATA_POINTS) {
+      this.currentData.shift();
+    }
+
+    const categories = this.currentData.map((d) => d.date);
+    const actualSeries = this.currentData.map((d) => d.temperature);
+
+    if (this.chart) {
+      this.chart.updateOptions({
+        series: [
+          {
+            name: 'Límite Máximo',
+            data: Array(actualSeries.length).fill(this.averageHigh),
+          },
+          {
+            name: 'Temperatura Actual',
+            data: actualSeries,
+          },
+          {
+            name: 'Límite Mínimo',
+            data: Array(actualSeries.length).fill(this.averageLow),
+          },
+        ],
+        xaxis: {
+          categories: categories,
+        },
+      });
+    }
+  });
+}
 }

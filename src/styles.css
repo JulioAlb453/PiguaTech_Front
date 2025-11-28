@@ -18,7 +18,29 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   fill: #fff !important;
 }
 
-/* Fuerza las etiquetas del eje Y a blanco */
 .apexcharts-text.apexcharts-yaxis-label {
   fill: #fff !important;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #1a1a1a; 
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #afafaf; 
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #525252; 
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #afafaf #1a1a1a;
 }

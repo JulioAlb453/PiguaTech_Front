@@ -1,3 +1,4 @@
+// Variables globales - Unificar todas las variables aquí
 $primary-color: #f39c12;
 $primary-dark: #e67e22;
 $status-optimo: #2ecc71;
@@ -6,9 +7,94 @@ $status-alerta: #e74c3c;
 $text-color: #f0f0f0;
 $text-secondary: #a0a0a0;
 
+// Colores de fondo unificados
+$bg-primary: #0f0f0f;
+$bg-secondary: #1a1a1a;
+$bg-card: #2b2b2b;
+$bg-card-hover: #232323;
+$bg-glass: rgba(255, 255, 255, 0.05);
+$bg-glass-hover: rgba(255, 255, 255, 0.08);
+
+// Bordes unificados
+$border-primary: rgba(255, 255, 255, 0.1);
+$border-secondary: rgba(255, 255, 255, 0.08);
+$border-accent: rgba(255, 255, 255, 0.2);
+
+// Sombras unificadas
+$shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.3);
+$shadow-large: 0 12px 30px rgba(0, 0, 0, 0.4);
+$shadow-glow: 0 0 12px rgba(243, 156, 18, 0.4);
+
+// Transiciones unificadas
+$transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+// Mixins reutilizables
+@mixin card-base {
+  background: linear-gradient(135deg, $bg-card 0%, $bg-card-hover 100%);
+  border: 1px solid $border-primary;
+  border-radius: 16px;
+  box-shadow: $shadow-medium;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  transition: $transition-base;
+}
+
+@mixin card-hover {
+  transform: translateY(-4px);
+  box-shadow: $shadow-large;
+  border-color: $border-accent;
+}
+
+@mixin gradient-shine {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    transition: left $transition-slow;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
+}
+
+@mixin title-accent {
+  position: relative;
+  padding-left: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(135deg, $primary-color, $primary-dark);
+    border-radius: 2px;
+    transform: translateY(-50%);
+  }
+}
+
+@mixin text-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// Estilos base
 :host {
   display: block;
-  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+  background: linear-gradient(135deg, $bg-primary 0%, $bg-secondary 100%);
   color: $text-color;
   font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   min-height: 100vh;
@@ -43,21 +129,10 @@ $text-secondary: #a0a0a0;
   padding: 1rem;
   box-sizing: border-box;
   
-  @media (min-width: 640px) {
-    padding: 1.5rem;
-  }
-  
-  @media (min-width: 768px) {
-    padding: 2rem;
-  }
-  
-  @media (min-width: 1024px) {
-    padding: 2.5rem;
-  }
-
-  @media (min-width: 1440px) {
-    padding: 3rem 4rem;
-  }
+  @media (min-width: 640px) { padding: 1.5rem; }
+  @media (min-width: 768px) { padding: 2rem; }
+  @media (min-width: 1024px) { padding: 2.5rem; }
+  @media (min-width: 1440px) { padding: 3rem 4rem; }
 
   &__content {
     display: flex;
@@ -66,213 +141,8 @@ $text-secondary: #a0a0a0;
     flex-grow: 1;
     width: 100%;
     
-    @media (min-width: 768px) {
-      gap: 2.5rem;
-    }
-    
-    @media (min-width: 1024px) {
-      gap: 3rem;
-    }
-  }
-
-   &__modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-
-  &__modal {
-    background: #2b2b2b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    width: 90%;
-    max-width: 500px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  }
-
-  .modal-base-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.75);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000; // Alto z-index para estar por encima de todo
-  animation: fadeIn 0.3s ease-out;
-}
-
-// Definimos un estilo base para todos los cuerpos de modales.
-.modal-base {
-  background: #2b2b2b;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-  z-index: 1001; // Ligeramente por encima de su propio overlay
-  animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-// Ahora, aplicamos estos estilos base a nuestras clases específicas.
-.dashboard__modal-overlay {
-  @extend .modal-base-overlay;
-}
-.dashboard__modal {
-  @extend .modal-base;
-  padding: 1.5rem;
-}
-
-.notification-modal__overlay {
-  @extend .modal-base-overlay;
-}
-.notification-modal {
-  @extend .modal-base;
-  max-width: 500px; 
-}
-
-.notification-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.notification-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 8px;
-  background-color: #333;
-  border-left: 5px solid; 
-  p {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-  }
-}
-  &__modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  &__modal-title {
-    margin: 0;
-    font-size: 1.25rem;
-    color: $text-color;
-  }
-
-  &__modal-close {
-    background: transparent;
-    border: none;
-    color: $text-secondary;
-    cursor: pointer;
-    padding: 0.25rem;
-    
-    &:hover {
-      color: $text-color;
-    }
-  }
-
-  &__form-group {
-    margin-bottom: 1.25rem;
-  }
-
-  &__form-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: $text-secondary;
-    font-size: 0.9rem;
-  }
-
-  &__form-input {
-    width: 94%;
-    padding: 0.75rem;
-    background: #3c3c3c;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: $text-color;
-    
-    &:focus {
-      outline: none;
-      border-color: $primary-color;
-    }
-  }
-
-  &__range-preview {
-    margin: 2rem 0;
-    padding: 1rem;
-    background: #3c3c3c;
-    border-radius: 8px;
-    text-align: center;
-  }
-
-  &__preview-range {
-    display: flex;
-    justify-content: space-between;
-    margin: 1rem 0;
-  }
-
-  &__preview-value {
-    font-weight: 600;
-    
-    &--low { color: #4ecdc4; }
-    &--high { color: $status-alerta; }
-  }
-
-  &__modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-
-  &__modal-button {
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s ease;
-    
-    &--secondary {
-      background: #3c3c3c;
-      color: $text-color;
-      
-      &:hover {
-        background: #4c4c4c;
-      }
-    }
-    
-    &--primary {
-      background: $primary-color;
-      color: #000;
-      
-      &:hover {
-        background: $primary-dark;
-      }
-      
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-    }
+    @media (min-width: 768px) { gap: 2.5rem; }
+    @media (min-width: 1024px) { gap: 3rem; }
   }
 
   &__main {
@@ -282,9 +152,7 @@ $text-secondary: #a0a0a0;
     gap: 1.5rem;
     animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     
-    @media (min-width: 768px) {
-      gap: 2rem;
-    }
+    @media (min-width: 768px) { gap: 2rem; }
   }
   
   &__header {
@@ -294,22 +162,16 @@ $text-secondary: #a0a0a0;
     width: 100%;
     margin-bottom: 0.5rem;
     padding: 1.5rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    position: relative;
+    border-bottom: 1px solid $border-primary;
     
-    @media (min-width: 768px) {
-      margin-bottom: 1rem;
-    }
+    @media (min-width: 768px) { margin-bottom: 1rem; }
   }
   
   &__title {
     font-size: clamp(1.5rem, 4vw, 2.75rem);
     font-weight: 600;
     margin: 0;
-    background: linear-gradient(135deg, $text-color 0%, $text-secondary 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    @include text-gradient;
     letter-spacing: -0.02em;
     position: relative;
 
@@ -333,24 +195,19 @@ $text-secondary: #a0a0a0;
     height: 44px;
     cursor: pointer;
     padding: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: $transition-base;
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
 
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
+    svg {
+      color: #ccc;
+      width: 20px;
+      height: 20px;
+      transition: $transition-base;
+      z-index: 2;
     }
 
     &:hover {
@@ -358,39 +215,20 @@ $text-secondary: #a0a0a0;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
       border-color: #777;
 
-      &::before {
-        width: 100px;
-        height: 100px;
-      }
-
       svg {
         transform: scale(1.1);
       }
-    }
-
-    svg {
-      color: #ccc;
-      width: 20px;
-      height: 20px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 2;
     }
   }
 
   &__time-selector {
     display: flex;
     width: 100%;
-    background: linear-gradient(135deg, #2b2b2b 0%, #232323 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
+    @include card-base;
     padding: 8px;
     gap: 6px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
 
-    @media (min-width: 640px) {
-      max-width: 480px;
-    }
+    @media (min-width: 640px) { max-width: 480px; }
   }
 
   &__time-selector-button {
@@ -404,120 +242,60 @@ $text-secondary: #a0a0a0;
     font-weight: 500;
     border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: $transition-base;
     white-space: nowrap;
-    position: relative;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 
-    @media (min-width: 640px) {
-      padding: 0.8rem 1rem;
-      font-size: 0.9rem;
+    @media (min-width: 640px) { 
+      padding: 0.8rem 1rem; 
+      font-size: 0.9rem; 
     }
-
-    @media (min-width: 768px) {
-      padding: 0.85rem 1.2rem;
-      font-size: 0.95rem;
-    }
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      // left: 50%
-      width: 100%;
-      height: 100%;
-      transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-      border-radius: inherit;
+    @media (min-width: 768px) { 
+      padding: 0.85rem 1.2rem; 
+      font-size: 0.95rem; 
     }
 
     &:hover:not(&--active) {
       color: #d0d0d0;
-      background: rgba(255, 255, 255, 0.05);
-
-      &::before {
-        left: 100%;
-      }
+      background: $bg-glass;
     }
 
     &--active {
       background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
       color: #000;
       font-weight: 700;
-      box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+      box-shadow: $shadow-glow;
       transform: translateY(-1px);
     }
   }
   
-  &__trend {
-    width: 100%;
-    background: linear-gradient(135deg, #2b2b2b 0%, #232323 100%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  // Componentes que usan card-base
+  &__trend, &__chart, &__alerts-config {
+    @include card-base;
     border-top: 3px solid $primary-color;
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    @include gradient-shine;
     
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-      transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+    padding: 1.5rem;
+    @media (min-width: 768px) { padding: 2rem; }
+    @media (min-width: 1024px) { padding: 2.5rem; }
 
     &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-      border-color: rgba(255, 255, 255, 0.2);
+      @include card-hover;
       border-top-color: $primary-color;
-
-      &::before {
-        left: 100%;
-      }
-    }
-    
-    @media (min-width: 768px) {
-      padding: 2rem;
-    }
-    
-    @media (min-width: 1024px) {
-      padding: 2.5rem;
     }
   }
 
-  &__trend-title {
+  &__trend-title, &__alerts-title {
     font-size: 1.1rem;
     font-weight: 500;
     color: $text-secondary;
     margin: 0 0 1.5rem 0;
-    position: relative;
-    padding-left: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      width: 4px;
-      height: 20px;
-      background: linear-gradient(135deg, $primary-color, $primary-dark);
-      border-radius: 2px;
-      transform: translateY(-50%);
-    }
+    @include title-accent;
     
-    @media (min-width: 768px) {
-      font-size: 1.25rem;
-      margin-bottom: 2rem;
+    @media (min-width: 768px) { 
+      font-size: 1.25rem; 
+      margin-bottom: 2rem; 
     }
   }
   
@@ -532,10 +310,6 @@ $text-secondary: #a0a0a0;
       align-items: baseline;
       gap: 2.5rem;
     }
-    
-    @media (min-width: 1024px) {
-      gap: 3rem;
-    }
   }
 
   &__trend-value {
@@ -543,10 +317,7 @@ $text-secondary: #a0a0a0;
     font-weight: 700;
     line-height: 0.9;
     margin: 0;
-    background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    @include text-gradient;
     letter-spacing: -0.03em;
   }
 
@@ -568,34 +339,16 @@ $text-secondary: #a0a0a0;
     padding: 1rem;
     background: linear-gradient(135deg, #3c3c3c 0%, #2f2f2f 100%);
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-      transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+    border: 1px solid $border-primary;
+    transition: $transition-base;
+    @include gradient-shine;
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-
-      &::before {
-        left: 100%;
-      }
+      box-shadow: $shadow-medium;
     }
     
-    @media (min-width: 768px) {
-      padding: 1.2rem;
-    }
+    @media (min-width: 768px) { padding: 1.2rem; }
   }
   
   &__summary-label {
@@ -606,153 +359,21 @@ $text-secondary: #a0a0a0;
     letter-spacing: 0.5px;
     opacity: 0.8;
     
-    @media (min-width: 768px) {
-      font-size: 0.85rem;
-    }
+    @media (min-width: 768px) { font-size: 0.85rem; }
+    @media (min-width: 1024px) { font-size: 0.9rem; }
     
-    @media (min-width: 1024px) {
-      font-size: 0.9rem;
-    }
-    
-    &--limit-high { 
-      color: $status-alerta; 
-    }
-    
-    &--limit-low { 
-      color: #4ecdc4; 
-    }
+    &--limit-high { color: $status-alerta; }
+    &--limit-low { color: #4ecdc4; }
   }
   
   &__summary-value {
     font-size: 1.1rem;
     font-weight: 700;
     color: $text-color;
-    background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    @include text-gradient;
 
-    @media (min-width: 768px) {
-      font-size: 1.2rem;
-    }
-    
-    @media (min-width: 1024px) {
-      font-size: 1.3rem;
-    }
-  }
-
-  &__chart {
-    width: 100%;
-    background: linear-gradient(135deg, #2b2b2b 0%, #232323 100%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-top: 3px solid $primary-color;
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-      transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-      border-color: rgba(255, 255, 255, 0.2);
-
-      &::before {
-        left: 100%;
-      }
-    }
-    
-    @media (min-width: 768px) {
-      padding: 2rem;
-    }
-  }
-
-  &__alerts {
-    width: 100%;
-    background: linear-gradient(135deg, #2b2b2b 0%, #232323 100%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-top: 3px solid $primary-color;
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-      transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-      border-color: rgba(255, 255, 255, 0.2);
-
-      &::before {
-        left: 100%;
-      }
-    }
-    
-    @media (min-width: 768px) {
-      padding: 2rem;
-    }
-    
-    @media (min-width: 1024px) {
-      padding: 2.5rem;
-    }
-  }
-  
-  &__alerts-title {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin: 0 0 1.5rem 0;
-    color: $text-secondary;
-    position: relative;
-    padding-left: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      width: 4px;
-      height: 20px;
-      background: linear-gradient(135deg, $primary-color, $primary-dark);
-      border-radius: 2px;
-      transform: translateY(-50%);
-    }
-
-    @media (min-width: 768px) {
-      font-size: 1.25rem;
-      margin-bottom: 2rem;
-    }
-    
-    @media (min-width: 1024px) {
-      font-size: 1.4rem;
-    }
+    @media (min-width: 768px) { font-size: 1.2rem; }
+    @media (min-width: 1024px) { font-size: 1.3rem; }
   }
 
   &__alert-control {
@@ -774,55 +395,30 @@ $text-secondary: #a0a0a0;
     white-space: nowrap;
     font-weight: 500;
     
-    @media (min-width: 768px) {
-      font-size: 1rem;
-    }
+    @media (min-width: 768px) { font-size: 1rem; }
   }
 
-  &__slider {
-    height: 12px;
-    background: linear-gradient(135deg, #3c3c3c 0%, #2f2f2f 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    width: 100%;
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  &__current-range {
+    display: flex;
+    gap: 1rem;
+  }
 
-    @media (min-width: 768px) {
-      flex-grow: 1;
-      max-width: 500px;
+  &__range-item {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    
+    &--high {
+      background: rgba(231, 76, 60, 0.1);
+      color: $status-alerta;
+      border: 1px solid rgba(231, 76, 60, 0.3);
     }
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 30%;
-      background: linear-gradient(90deg, $primary-color 0%, $primary-dark 100%);
-      border-radius: inherit;
-      transition: width 0.3s ease;
-      box-shadow: 0 0 12px rgba(243, 156, 18, 0.4);
-    }
-
-    &::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 30%;
-      width: 20px;
-      height: 20px;
-      background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 12px rgba(243, 156, 18, 0.6);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    &:hover::after {
-      transform: translate(-50%, -50%) scale(1.2);
+    
+    &--low {
+      background: rgba(78, 205, 196, 0.1);
+      color: #4ecdc4;
+      border: 1px solid rgba(78, 205, 196, 0.3);
     }
   }
 
@@ -835,26 +431,11 @@ $text-secondary: #a0a0a0;
     font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: $transition-base;
     width: 100%;
     box-shadow: 0 4px 20px rgba(243, 156, 18, 0.3);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    position: relative;
-    overflow: hidden;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-    }
     
     @media (min-width: 768px) {
       width: auto;
@@ -865,11 +446,6 @@ $text-secondary: #a0a0a0;
     &:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 30px rgba(243, 156, 18, 0.4);
-
-      &::before {
-        width: 300px;
-        height: 300px;
-      }
     }
 
     &:active {
@@ -878,6 +454,109 @@ $text-secondary: #a0a0a0;
   }
 }
 
+// Modales base - Estilos unificados
+.modal-base-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-base {
+  background: $bg-card;
+  border: 1px solid $border-primary;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: $shadow-large;
+  z-index: 1001;
+  animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.dashboard__modal-overlay {
+  @extend .modal-base-overlay;
+}
+
+.dashboard__modal {
+  @extend .modal-base;
+  padding: 1.5rem;
+}
+
+.notification-modal__overlay {
+  @extend .modal-base-overlay;
+}
+
+.notification-modal {
+  @extend .modal-base;
+  max-width: 500px;
+  
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid $border-primary;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: $text-color;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: $text-secondary;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: $transition-base;
+    
+    &:hover { 
+      color: $text-color; 
+    }
+  }
+
+  &__body {
+    padding: 1.5rem;
+    max-height: 60vh;
+    overflow-y: auto;
+    flex-grow: 1;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid $border-primary;
+    flex-shrink: 0;
+  }
+  
+  &__link {
+    color: $primary-color;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: $transition-base;
+    
+    &:hover {
+      background-color: rgba(243, 156, 18, 0.1);
+      text-decoration: underline;
+    }
+  }
+}
+
+// Animaciones
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -889,198 +568,31 @@ $text-secondary: #a0a0a0;
   }
 }
 
-@keyframes pulse {
-  0% {
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
     opacity: 1;
-    transform: scale(1);
-  }
-  70% {
-    opacity: 0;
-    transform: scale(2.5);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
   }
 }
 
-// Estilos para ApexCharts
-:host ::ng-deep {
-  .apexcharts-tooltip.apexcharts-theme-dark {
-    background: linear-gradient(135deg, #2b2b2b 0%, #232323 100%) !important;
-    backdrop-filter: blur(10px);
-    color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
-
-    .apexcharts-tooltip-title {
-      background: linear-gradient(135deg, #3c3c3c 0%, #2f2f2f 100%) !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-      border-radius: 12px 12px 0 0 !important;
-      color: $text-color !important;
-      font-weight: 600;
-    }
-    
-    .apexcharts-tooltip-series-group {
-      padding: 8px 12px !important;
-      
-      .apexcharts-tooltip-text-value {
-        font-weight: 700 !important;
-        color: $primary-color !important;
-      }
-    }
-  }
-  
-  .apexcharts-legend {
-    .apexcharts-legend-text {
-      color: $text-color !important;
-      font-weight: 500 !important;
-    }
-  }
-  
-  .apexcharts-xaxistooltip,
-  .apexcharts-yaxistooltip {
-    background: linear-gradient(135deg, #2b2b2b 0%, #232323 100%) !important;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 8px !important;
-    color: #ffffff !important;
-  }
-
-  
-}
-
-:host ::ng-deep {
-  .notification-modal__overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.75);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    animation: fadeIn 0.3s ease-out;
-  }
-
-  .notification-modal {
-    background: #2b2b2b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-    z-index: 1001;
-    animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .notification-modal__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #333;
-    flex-shrink: 0;
-  }
-
-  .notification-modal__title {
-    margin: 0;
-    font-size: 1.25rem;
-    color: #f0f0f0;
-  }
-
-  .notification-modal__close {
-    background: none;
-    border: none;
-    color: #888;
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;
-    &:hover { color: #f0f0f0; }
-  }
-
-  .notification-modal__body {
-    padding: 1.5rem;
-    max-height: 60vh;
-    overflow-y: auto;
-    flex-grow: 1;
-  }
-
-  .notification-modal__footer {
-    display: flex;
-    justify-content: center;
-    padding: 1rem 1.5rem;
-    border-top: 1px solid #333;
-    flex-shrink: 0;
-  }
-  
-  .notification-modal__link {
-    color: #f39c12;
-    text-decoration: none;
-    font-weight: 600;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    transition: background-color 0.2s ease;
-    &:hover {
-      background-color: rgba(243, 156, 18, 0.1);
-      text-decoration: underline;
-    }
-  }
-
-  // Estilos para la lista de alertas DENTRO del modal
-  .notification-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .notification-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1rem;
-    border-radius: 8px;
-    background-color: #333;
-    border-left: 5px solid;
-  }
-
-  .notification-item--error { border-left-color: #e74c3c; }
-  .notification-item--warning { border-left-color: #f39c12; }
-  .notification-item__icon { font-size: 1.5rem; line-height: 1.2; }
-  .notification-item__content { flex: 1; }
-  .notification-item__message { margin: 0 0 0.25rem 0; font-weight: 500; color: #f0f0f0; }
-  .notification-item__timestamp { color: #999; font-size: 0.8rem; }
-  .notification-empty { text-align: center; padding: 2rem 1rem; color: #aaa; }
-}
-
-// Responsive design mejorado
+// Responsive design
 @media (max-width: 768px) {
-  :host {
-    padding: 1rem;
-  }
-
   .dashboard {
     padding: 1rem;
 
-    &__content {
-      gap: 1.5rem;
-    }
+    &__content { gap: 1.5rem; }
+    &__main { gap: 1rem; }
 
-    &__main {
-      gap: 1rem;
-    }
-
-    &__trend,
-    &__chart,
-    &__alerts {
+    &__trend, &__chart, &__alerts-config {
       padding: 1rem;
     }
 
@@ -1105,9 +617,7 @@ $text-secondary: #a0a0a0;
 
 @media (max-width: 480px) {
   .dashboard {
-    &__header {
-      padding: 1rem 0;
-    }
+    &__header { padding: 1rem 0; }
 
     &__notification-bell {
       width: 40px;
@@ -1129,8 +639,7 @@ $text-secondary: #a0a0a0;
       font-size: 0.8rem;
     }
 
-    &__trend-title,
-    &__alerts-title {
+    &__trend-title, &__alerts-title {
       font-size: 1rem;
       margin-bottom: 1rem;
     }
