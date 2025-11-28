@@ -3,17 +3,14 @@
     <div class="dashboard__main">
       <header class="dashboard__header">
         <h1 class="dashboard__title">Temperatura del Agua</h1>
-        <button
-          class="dashboard__notification-bell"
-          [class.dashboard__notification-bell--active]="hasNewNotifications"
-          (click)="onBellClick()"
-          aria-label="Ver notificaciones"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256">
-            <path d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"></path>
-          </svg>
-          <span *ngIf="hasNewNotifications" class="notification-badge"></span>
-        </button>
+    <button
+  class="dashboard__notification-bell"
+  [class.dashboard__notification-bell--active]="hasNewNotifications"
+  aria-label="Ver notificaciones"
+>
+  <!-- tu SVG aquí -->
+  <span *ngIf="hasNewNotifications" class="notification-badge"></span>
+</button>
       </header>
 
       <nav class="dashboard__time-selector">
@@ -89,8 +86,6 @@
       </apx-chart>
     </div>
 
-    <!-- ELIMINAR la sección de alertas del dashboard principal -->
-    <!-- Solo mantener la configuración de alertas -->
     <section class="dashboard__alerts-config">
       <h2 class="dashboard__alerts-title">Configuración de Alertas</h2>
       <div class="dashboard__alert-control">
@@ -149,7 +144,7 @@
     </div>
   </div>
 
-  <!-- Modal de notificaciones - AQUÍ VAN LAS ALERTAS -->
+  <!-- Modal de notificaciones -->
   <div class="notification-modal__overlay" *ngIf="showNotificationModal" (click)="showNotificationModal = false">
     <div class="notification-modal" (click)="$event.stopPropagation()">
       <div class="notification-modal__header">
