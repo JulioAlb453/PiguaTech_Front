@@ -38,7 +38,13 @@
       }
     </div>
     <div class="navbar__user-profile">
-      <img src="https://i.pravatar.cc/40" alt="Avatar del usuario">
+      <img src="https://i.pravatar.cc/40" alt="Avatar del usuario" [matMenuTriggerFor]="userMenu">
+      <mat-menu #userMenu="matMenu" class="navbar__user-menu">
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Cerrar Sesión</span>
+        </button>
+      </mat-menu>
     </div>
   </nav>
 }

@@ -13,7 +13,6 @@ export class AuthAPIService implements IAuthRepository {
 
   private readonly API_URL = 'https://piguatech-back.namixcode.cc/auth';
   
-  //  emitir el usuario actual
   private currentUserSubject = new BehaviorSubject<UserModel | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -76,11 +75,20 @@ export class AuthAPIService implements IAuthRepository {
     );
   }
 
-  logout(): void {
-    localStorage.removeItem('user');
-    // no hay usuario logueado
-    this.currentUserSubject.next(null);
-  }
+logout(): Observable<void> {
+  return new Observable(observer => {
+    try {
+      localStorage.removeItem('user');
+      
+      this.currentUserSubject.next(null);
+      
+      observer.next();
+      observer.complete();
+    } catch (error) {
+      observer.error(error);
+    }
+  });
+}
 
   getLoggedUser(): UserModel | null {
     return this.currentUserSubject.getValue();

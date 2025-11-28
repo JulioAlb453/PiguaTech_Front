@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,6 +25,7 @@ interface NavLink {
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
+    CommonModule,
   ],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
@@ -38,7 +39,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   constructor(
     private navbarService: NavbarService,
-    private authService: AuthAPIService
+    private authService: AuthAPIService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -59,14 +61,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
             this.userRole = UserRole.Acuicultor;
           }
         } else {
-          this.userRole = UserRole.Acuicultor; 
+          this.userRole = UserRole.Acuicultor;
         }
       })
     );
   }
 
   ngOnDestroy(): void {
-
     this.subscriptions.unsubscribe();
   }
 
@@ -107,5 +108,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   isMobile(): boolean {
     return window.innerHeight < 992;
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        console.error('Error durante el logout:', error);
+        this.router.navigate(['/login']);
+      },
+    });
   }
 }
