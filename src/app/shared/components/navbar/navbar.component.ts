@@ -31,7 +31,7 @@ interface NavLink {
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  userRole: UserRole = UserRole.Acuicultor; // Fallback por defecto
+  userRole: UserRole = UserRole.Acuicultor; 
   showNavbar = true;
   public isMobileMenuOpen = false;
 
@@ -50,7 +50,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
       })
     );
 
-    // Suscribirse al observable que emite el usuario actual
     this.subscriptions.add(
       this.authService.currentUser$.subscribe((user) => {
         if (user?.role) {

@@ -1,0 +1,56 @@
+<div class="error-container">
+  <div class="error-content">
+    @if (isAuthenticated()) {
+      <div class="user-info">
+        <small>Conectado como: <strong>{{ getRoleDisplayName() }}</strong></small>
+      </div>
+    }
+    
+   
+    <h1 class="error-code">{{ errorCode }}</h1>
+    <h2 class="error-title">{{ errorTitle }}</h2>
+    <p class="error-message">{{ errorMessage }}</p>
+
+    <div class="error-actions">
+      <button class="btn btn-primary" (click)="goHome()">
+        Volver al Inicio ({{ getRoleDisplayName() }})
+      </button>
+      <button class="btn btn-secondary" (click)="goBack()">
+        Regresar
+      </button>
+      @if (!isAuthenticated()) {
+        <button class="btn btn-outline" (click)="goToLogin()">
+          Iniciar Sesión
+        </button>
+      }
+    </div>
+
+    @if (getNavigationLinks().length > 0 && isAuthenticated()) {
+      <div class="suggested-links">
+        <h3>Páginas sugeridas para {{ getRoleDisplayName() }}:</h3>
+        <div class="links-grid">
+          @for (link of getNavigationLinks(); track link.path) {
+            <a [routerLink]="link.path" class="suggested-link">
+              {{ link.label }}
+            </a>
+          }
+        </div>
+      </div>
+    }
+
+    @if (errorCode === '403') {
+      <div class="error-specific-info">
+        <div class="info-box">
+          <h4>Información de permisos</h4>
+          <p>Tu rol actual: <strong>{{ getRoleDisplayName() }}</strong></p>
+          @if (userRole === UserRole.Acuicultor) {
+            <p>Como Acuicultor, tienes acceso a las secciones de monitoreo y alertas.</p>
+          }
+          @if (userRole === UserRole.Supervisor) {
+            <p>Como Supervisor, tienes acceso a reportes y resumen del sistema.</p>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
