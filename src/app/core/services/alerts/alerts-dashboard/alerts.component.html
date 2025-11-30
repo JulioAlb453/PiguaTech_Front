@@ -1,0 +1,42 @@
+<div class="alerts-container">
+  <header class="alerts-header" *ngIf="showHeader">
+    <h1>Alertas y Notificaciones</h1>
+    <div class="header-actions">
+      <div class="icon-bell-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor">
+          <path d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"></path>
+        </svg>
+      </div>
+      <button class="btn-clear" (click)="clearAllAlerts()" *ngIf="alerts.length > 0">
+        Limpiar Todo
+      </button>
+    </div>
+  </header>
+
+  <div class="alerts-list">
+    <div *ngIf="alerts.length === 0" class="no-alerts">
+      <p>No hay alertas en este momento</p>
+    </div>
+    
+    <div *ngFor="let alert of alerts" class="alert-item" [class]="'alert-' + alert.type">
+      <div class="alert-icon">
+        <span class="icon">{{ getTypeIcon(alert.type) }}</span>
+      </div>
+      <div class="alert-content">
+        <h2 class="alert-title">{{ alert.title }}</h2>
+        <p class="alert-priority">
+          Prioridad: <span [ngClass]="getPriorityClass(alert.priority)">{{ alert.priority }}</span>
+        </p>
+        <p class="alert-description">{{ alert.description }}</p>
+      </div>
+      <div class="alert-actions">
+        <button class="btn-dismiss" (click)="removeAlert(alert.id)">
+          ×
+        </button>
+      </div>
+      <div class="alert-timestamp">
+        <p>{{ alert.timestamp | date:'short' }}</p>
+      </div>
+    </div>
+  </div>
+</div>

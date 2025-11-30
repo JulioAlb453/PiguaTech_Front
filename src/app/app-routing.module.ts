@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { PreloadAllModules,RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/views/login/login.component';
 import { RegisterComponent } from './features/auth/views/register/register.component';
-import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { ErrorComponent } from './pages/not-found/error.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -26,11 +26,13 @@ const routes: Routes = [
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
-  { path: '**', component: NotFoundComponent },
+  { path: '**', component: ErrorComponent },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes,{
+     preloadingStrategy: PreloadAllModules
+  })],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

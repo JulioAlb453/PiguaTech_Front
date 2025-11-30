@@ -38,7 +38,6 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(credentials).subscribe({
       next: (user) => {
-        console.log('Usuario logueado:', user);
 
         const normalizedRole = user.role?.trim().toLowerCase();
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,12 +25,13 @@ interface NavLink {
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
+    CommonModule,
   ],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  userRole: UserRole = UserRole.Acuicultor; // Fallback por defecto
+  userRole: UserRole = UserRole.Acuicultor; 
   showNavbar = true;
   public isMobileMenuOpen = false;
 
@@ -38,7 +39,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   constructor(
     private navbarService: NavbarService,
-    private authService: AuthAPIService
+    private authService: AuthAPIService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -48,7 +50,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
       })
     );
 
-    // Suscribirse al observable que emite el usuario actual
     this.subscriptions.add(
       this.authService.currentUser$.subscribe((user) => {
         if (user?.role) {
@@ -59,15 +60,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
             this.userRole = UserRole.Acuicultor;
           }
         } else {
-          this.userRole = UserRole.Acuicultor; 
+          this.userRole = UserRole.Acuicultor;
         }
-        console.log('Rol actualizado en navbar:', this.userRole);
       })
     );
   }
 
   ngOnDestroy(): void {
-
     this.subscriptions.unsubscribe();
   }
 
@@ -108,5 +107,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   isMobile(): boolean {
     return window.innerHeight < 992;
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        console.error('Error durante el logout:', error);
+        this.router.navigate(['/login']);
+      },
+    });
   }
 }

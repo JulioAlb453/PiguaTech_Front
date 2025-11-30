@@ -8,7 +8,8 @@ import { TemperatureDashboardComponent } from './views/temperature-dashboard/tem
 import { WeightDashboardComponent } from './views/weight-dashboard/weight-dashboard.component';
 import { WaterMonitoringDashboardComponent } from './views/water-monitoring-dashboard/water-monitoring-dashboard.component';
 import { GrowthMonitoringDashboardComponent } from './views/growth-monitoring-dashboard/growth-monitoring-dashboard.component';
-import { AlertsDashboardComponent } from './views/alerts-dashboard/alerts-dashboard.component';
+import { FormsModule } from '@angular/forms';
+import { AlertsModule } from '../../core/services/alerts/alerts.module';
 
 
 
@@ -17,13 +18,14 @@ import { AlertsDashboardComponent } from './views/alerts-dashboard/alerts-dashbo
   WeightDashboardComponent,
     WaterMonitoringDashboardComponent,
     GrowthMonitoringDashboardComponent,
-    AlertsDashboardComponent, 
     TemperatureDashboardComponent 
   ],
   imports: [
     CommonModule,
+    FormsModule,
     DashboardAquaculturistRoutingModule,
     NgApexchartsModule,
+    AlertsModule,
   ],
  
 })

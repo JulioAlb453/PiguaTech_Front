@@ -10,108 +10,62 @@
           <div class="weight-page__buttons">
             <button
               class="weight-page__button"
-              (click)="toggleMeasurement()"
-              [class.weight-page__button--stop]="isMeasuring"
+              (click)="performWeighing()"
+              [disabled]="isWeighing"
+              [class.weight-page__button--stop]="isWeighing"
             >
-              @if (!isMeasuring) {
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              } @if (isMeasuring) {
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              </svg>
-              }
-              <span>{{
-                isMeasuring ? "Detener Medición" : "Empezar Medición"
-              }}</span>
+              <ng-container *ngIf="!isWeighing">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 12.22C21 6.73 16.73 3 12 3S3 6.73 3 12.22c0 4.6 3.05 8.51 7 9.56V22h2v-1.22c3.95-1.05 7-4.96 7-9.56z"></path>
+                  <path d="M12 2L12 6"></path>
+                  <path d="M12 20L12 22"></path>
+                  <path d="M22 12L20 12"></path>
+                  <path d="M4 12L2 12"></path>
+                </svg>
+                <span>Realizar Pesaje</span>
+              </ng-container>
+              <ng-container *ngIf="isWeighing">
+                <span class="spinner"></span>
+                <span>Pesando...</span>
+              </ng-container>
             </button>
           </div>
 
           <div class="weight-page__illustration-container">
             <div
               class="weight-page__illustration"
-              [ngClass]="{ 'is-measuring': isMeasuring }"
+              [ngClass]="{ 'is-measuring': isWeighing }"
             >
               <svg class="weight-page__scale" viewBox="0 0 100 80">
-                <path
-                  class="weight-page__scale-plate"
-                  d="M5,25 H95 C90,35 10,35 5,25 Z"
-                  fill="#ccc"
-                  stroke="#888"
-                  stroke-width="1"
-                />
-                <path
-                  d="M20,75 L30,35 H70 L80,75 Z"
-                  fill="#ddd"
-                  stroke="#999"
-                  stroke-width="1"
-                />
-                <rect
-                  x="15"
-                  y="75"
-                  width="70"
-                  height="5"
-                  rx="2"
-                  fill="#ccc"
-                  stroke="#888"
-                  stroke-width="1"
-                />
-                <circle
-                  cx="50"
-                  cy="55"
-                  r="18"
-                  fill="white"
-                  stroke="#555"
-                  stroke-width="1.5"
-                />
-                <path
-                  class="weight-page__scale-needle"
-                  d="M50,55 L65,50"
-                  stroke="black"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
+                <path class="weight-page__scale-plate" d="M5,25 H95 C90,35 10,35 5,25 Z" fill="#ccc" stroke="#888" stroke-width="1" />
+                <path d="M20,75 L30,35 H70 L80,75 Z" fill="#ddd" stroke="#999" stroke-width="1" />
+                <rect x="15" y="75" width="70" height="5" rx="2" fill="#ccc" stroke="#888" stroke-width="1" />
+                <circle cx="50" cy="55" r="18" fill="white" stroke="#555" stroke-width="1.5" />
+                <path class="weight-page__scale-needle" d="M50,55 L65,50" stroke="black" stroke-width="2" stroke-linecap="round" />
               </svg>
               <svg class="weight-page__shrimp" viewBox="0 0 120 80"></svg>
             </div>
           </div>
 
-          <p class="weight-page__status-text">
-            {{ isMeasuring ? "Midiendo peso..." : "Sensor en espera" }}
-          </p>
+          <div *ngIf="lastWeighingResult === null">
+            <p class="weight-page__status-text">
+              {{ isWeighing ? "Midiendo peso..." : "Sensor en espera" }}
+            </p>
+          </div>
+
+          <div *ngIf="lastWeighingResult !== null" class="weight-page__result-display">
+            <label>Último Peso Registrado</label>
+            <span>{{ lastWeighingResult | number:'1.2-2' }} g</span>
+          </div>
         </section>
 
-        <!-- Panel de la Gráfica (Derecha) -->
         <section class="weight-page__chart-panel">
           <div class="chart-header">
-            <h2>Crecimiento del Peso</h2>
+            <h2>Historial de Pesajes</h2>
           </div>
           <div class="chart-container">
             <apx-chart
               #chart
-              *ngIf="chartOptions?.series"
               [series]="chartOptions.series!"
               [chart]="chartOptions.chart!"
               [xaxis]="chartOptions.xaxis!"
@@ -120,111 +74,71 @@
               [title]="chartOptions.title!"
               [theme]="chartOptions.theme!"
               [colors]="chartOptions.colors!"
+              [grid]="chartOptions.grid!"
+              [plotOptions]="chartOptions.plotOptions!"
+              [legend]="chartOptions.legend!"
             >
             </apx-chart>
           </div>
         </section>
       </div>
 
-                <!-- Footer con las Métricas Clave -->
-                <footer class="weight-page__metrics">
-                  <h3 class="metrics-title">Métricas Clave</h3>
-
-                  <div class="metrics-sections">
-                    <!-- Sección 1: Estadísticas Generales -->
-                    <div class="metrics-section">
-                      <h4 class="section-title">
-                        <svg
-                          class="section-icon"
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          >
-                          <line x1="12" y1="20" x2="12" y2="10"></line>
-                          <line x1="18" y1="20" x2="18" y2="4"></line>
-                          <line x1="6" y1="20" x2="6" y2="16"></line>
-                        </svg>
-                        Estadísticas
-                      </h4>
-                      <div class="metrics-grid">
-                        <div class="metric-card">
-                          <label>Peso Promedio</label>
-                          <span>25.4 <small>gramos</small></span>
-                        </div>
-                        <div class="metric-card">
-                          <label>Crecimiento Diario</label>
-                          <span>0.8 <small>g/día</small></span>
-                        </div>
-                        <div class="metric-card">
-                          <label>Muestra</label>
-                          <span>120 <small>camarones</small></span>
-                        </div>
-                      </div>
-                    </div>
-
-          <!-- Sección 2: Variabilidad -->
+      <footer class="weight-page__metrics">
+        <h3 class="metrics-title">Métricas Clave</h3>
+        <div class="metrics-sections">
           <div class="metrics-section">
             <h4 class="section-title">
-              <svg
-                class="section-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M18 16.98h-5.99c-1.1 0-1.95.9-1.95 2s.85 2 1.95 2H18c1.1 0 2-.9 2-2s-.9-2-2-2z"
-                ></path>
-                <path
-                  d="M18 6.98h-5.99c-1.1 0-1.95.9-1.95 2s.85 2 1.95 2H18c1.1 0 2-.9 2-2s-.9-2-2-2z"
-                ></path>
-                <path
-                  d="M12 12h-1.97c-1.1 0-2 .9-2 2s.9 2 2 2H12c1.1 0 2-.9 2-2s-.9-2-2-2z"
-                ></path>
+              <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="20" x2="12" y2="10"></line>
+                <line x1="18" y1="20" x2="18" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="16"></line>
               </svg>
-              Variabilidad
+              Estadísticas
             </h4>
             <div class="metrics-grid">
               <div class="metric-card">
-                <label>Mínimo Registrado</label>
-                <span>18.2 <small>gramos</small></span>
+                <label>Peso Promedio</label>
+                <span>{{ dynamicMetrics.averageWeight | number:'1.2-2' }} <small>gramos</small></span>
               </div>
               <div class="metric-card">
-                <label>Máximo Registrado</label>
-                <span>32.6 <small>gramos</small></span>
+                <label>Crecimiento Últ. Pesaje</label>
+                <span>{{ dynamicMetrics.growthSinceLast | number:'1.1-1' }} <small>%</small></span>
               </div>
               <div class="metric-card">
-                <label>Coef. Variación</label>
-                <span>12.4%</span>
+                <label>Muestra</label>
+                <span>{{ dynamicMetrics.sampleSize }} <small>pesajes</small></span>
               </div>
             </div>
           </div>
 
           <div class="metrics-section">
             <h4 class="section-title">
-              <svg
-                class="section-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
+              <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 16.98h-5.99c-1.1 0-1.95.9-1.95 2s.85 2 1.95 2H18c1.1 0 2-.9 2-2s-.9-2-2-2z"></path>
+                <path d="M18 6.98h-5.99c-1.1 0-1.95.9-1.95 2s.85 2 1.95 2H18c1.1 0 2-.9 2-2s-.9-2-2-2z"></path>
+                <path d="M12 12h-1.97c-1.1 0-2 .9-2 2s.9 2 2 2H12c1.1 0 2-.9 2-2s-.9-2-2-2z"></path>
+              </svg>
+              Variabilidad
+            </h4>
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <label>Mínimo Registrado</label>
+                <span>{{ dynamicMetrics.minWeight | number:'1.2-2' }} <small>gramos</small></span>
+              </div>
+              <div class="metric-card">
+                <label>Máximo Registrado</label>
+                <span>{{ dynamicMetrics.maxWeight | number:'1.2-2' }} <small>gramos</small></span>
+              </div>
+              <div class="metric-card">
+                <label>Coef. Variación</label>
+                <span>{{ dynamicMetrics.variationCoefficient | number:'1.1-1' }}<small>%</small></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="metrics-section">
+            <h4 class="section-title">
+              <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <path d="M16 12l-4-4-4 4M12 16V8"></path>
               </svg>
@@ -233,13 +147,13 @@
             <div class="metrics-grid">
               <div class="metric-card">
                 <label>Peso Meta</label>
-                <span>30 <small>gramos</small></span>
+                <span>{{ GOAL_WEIGHT }} <small>gramos</small></span>
               </div>
               <div class="metric-card">
                 <label>Progreso</label>
-                <span>84.6%</span>
+                <span>{{ dynamicMetrics.progressPercentage | number:'1.1-1' }}%</span>
                 <div class="progress-bar">
-                  <div class="progress-fill" style="width: 84.6%"></div>
+                  <div class="progress-fill" [style.width.%]="dynamicMetrics.progressPercentage"></div>
                 </div>
               </div>
               <div class="metric-card">
