@@ -61,11 +61,17 @@ export class RegisterComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = err.message || 'Error en el registro';
-        console.error('Error:', err);
+
+        if (err.error && err.error.detail) {
+              this.errorMessage = err.error.detail;
+            } else {
+              this.errorMessage = err.message || 'Error en el registro';
+            }
+
+            console.error('Error:', err);
+          }
+        });
       }
-    });
-  }
 
   getFormProgress(): number {
   const controls = this.registerForm.controls;
