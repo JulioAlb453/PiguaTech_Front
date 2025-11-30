@@ -6,10 +6,12 @@ import {
   Inject,
   PLATFORM_ID,
   NgZone,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { AlertsService, Alert } from '../../../../core/services/alerts/alerts.service';
 import {
@@ -64,8 +66,6 @@ export class WaterMonitoringDashboardComponent implements OnInit, OnDestroy {
   public levelBarChartOptions!: Partial<StateBarChartOptions>;
 
   public showAlertModal = false;
-  public showNotificationModal = false;
-  public hasNewNotifications = false;
   public modalAlerts$: Observable<Alert[]>;
 
   public turbidityAlert = { high: 125, low: 95, enabled: true };
@@ -93,24 +93,34 @@ export class WaterMonitoringDashboardComponent implements OnInit, OnDestroy {
   };
 
   private simulationSubscription!: Subscription;
+  private alertsSubscription!: Subscription;
   private readonly UPDATE_INTERVAL = 3000;
   private readonly MAX_DATA_POINTS = 3;
+  private destroy$ = new Subject<void>();
 
   private realtimeCategories: string[] = [];
   private realtimeTurbidityData: number[] = [];
   private realtimeLevelData: number[] = [];
+
+  showNotificationModal = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private notificationService: NotificationService,
     private alertsService: AlertsService,
     public router: Router,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
   ) {
     this.modalAlerts$ = this.alertsService.getRecentAlerts(5);
   }
 
   ngOnInit(): void {
+    this.subscribeToAlerts();
+    this.modalAlerts$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.cdr.detectChanges();
+    });
+
     if (isPlatformBrowser(this.platformId)) {
       this.initializeTurbidityChart();
       this.initializeLevelBarChart();
@@ -119,10 +129,28 @@ export class WaterMonitoringDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
     if (this.simulationSubscription) {
       this.simulationSubscription.unsubscribe();
     }
+    if (this.alertsSubscription) {
+      this.alertsSubscription.unsubscribe();
+    }
   }
+
+  private subscribeToAlerts(): void {
+    this.alertsSubscription = this.alertsService.alerts$.subscribe(alerts => {
+      this.cdr.detectChanges();
+    });
+  }
+
+
+  markAllAsRead(): void {
+    // Este método se implementará cuando el servicio tenga la funcionalidad
+    console.log('Marcar todas como leídas - funcionalidad pendiente');
+  }
+
 
   startRealtimeSimulation(): void {
     let time = 0;
@@ -216,14 +244,13 @@ export class WaterMonitoringDashboardComponent implements OnInit, OnDestroy {
   }
 
   initializeTurbidityChart(): void {
+    if (!this.turbidityChartOptions) {
+      this.turbidityChartOptions = {};
+    }
     this.turbidityChartOptions = {
+      ...this.turbidityChartOptions,
       series: [{ name: 'Turbidez (Gramos/Litros)', data: [] }],
-      chart: {
-        type: 'line',
-        height: 350,
-        toolbar: { show: false },
-        foreColor: '#ffffff',
-      },
+      chart: { type: 'line', height: 350, toolbar: { show: false } },
       stroke: { curve: 'smooth', width: 3, colors: ['#00E396'] },
       fill: {
         type: 'gradient',
@@ -285,12 +312,7 @@ export class WaterMonitoringDashboardComponent implements OnInit, OnDestroy {
   initializeLevelBarChart(): void {
     this.levelBarChartOptions = {
       series: [{ name: 'Estado del Nivel', data: [] }],
-      chart: {
-        type: 'bar',
-        height: 350,
-        toolbar: { show: false },
-        foreColor: '#ffffff',
-      },
+      chart: { type: 'bar', height: 350, toolbar: { show: false } },
       plotOptions: {
         bar: {
           borderRadius: 4,
@@ -352,7 +374,6 @@ export class WaterMonitoringDashboardComponent implements OnInit, OnDestroy {
         if (!this.isTurbidityHighAlertActive) {
           this.isTurbidityHighAlertActive = true;
           this.isTurbidityLowAlertActive = false;
-          this.hasNewNotifications = true;
           const message = `Turbidez alta: ${this.turbidityMetric.value} g/L (Límite: ${this.turbidityAlert.high} g/L)`;
           this.notificationService.showSensorAnomaly(
             'warning',
@@ -370,7 +391,6 @@ export class WaterMonitoringDashboardComponent implements OnInit, OnDestroy {
         if (!this.isTurbidityLowAlertActive) {
           this.isTurbidityLowAlertActive = true;
           this.isTurbidityHighAlertActive = false;
-          this.hasNewNotifications = true;
           const message = `Turbidez baja: ${this.turbidityMetric.value} g/L (Límite: ${this.turbidityAlert.low} g/L)`;
           this.notificationService.showSensorAnomaly(
             'warning',
@@ -393,7 +413,6 @@ export class WaterMonitoringDashboardComponent implements OnInit, OnDestroy {
     if (this.volumeAlert.enabled && this.volumeMetric.isLow) {
       if (!this.isVolumeLowAlertActive) {
         this.isVolumeLowAlertActive = true;
-        this.hasNewNotifications = true;
         const message = `El nivel del agua es bajo. Se requiere atención.`;
         this.notificationService.showSensorAnomaly('error', `💧 ${message}`);
         this.alertsService.addAlert({

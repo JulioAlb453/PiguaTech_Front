@@ -1,62 +1,71 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Alert, AlertsService } from '../alerts.service';
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-alerts',
   standalone: false,
   templateUrl: './alerts.component.html',
   styleUrls: ['./alerts.component.scss'],
 })
-export class AlertsComponent {
+export class AlertsComponent implements OnInit, OnDestroy {
   @Input() showHeader: boolean = true;
   @Input() maxAlerts?: number;
   @Input() filterByPriority?: 'Alta' | 'Media' | 'Baja';
-  @Input() filterByType?:
-    | 'error'
-    | 'warning'
-    | 'info'
-    | ('error' | 'warning' | 'info')[];
+  @Input() filterByType?: string | string[];
   @Input() autoRefresh: boolean = true;
+  @Input() showHistoryLink: boolean = true;
+  @Input() isModal: boolean = false; // Nueva propiedad para modal
+  @Output() modalClosed = new EventEmitter<void>(); // Evento para cerrar modal
 
   alerts: Alert[] = [];
   private alertsSubscription!: Subscription;
 
-  constructor(public alertsService: AlertsService) {}
+  constructor(
+    public alertsService: AlertsService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    console.log('AlertsComponent iniciado - Modal:', this.isModal);
+    this.subscribeToAlerts();
+  }
+
   private subscribeToAlerts(): void {
     this.alertsSubscription = this.alertsService.alerts$
       .pipe(
         map((alerts) => {
           let filteredAlerts = [...alerts];
 
-          // Aplicar filtro por tipo (ahora soporta array)
+          // Filtro por tipo
           if (this.filterByType) {
             const filterType = this.filterByType;
             if (Array.isArray(filterType)) {
-              // Si es array, filtrar por múltiples tipos
               filteredAlerts = filteredAlerts.filter((alert) =>
                 filterType.includes(alert.type)
               );
             } else {
-              // Si es string individual, filtrar por un tipo
               filteredAlerts = filteredAlerts.filter(
                 (alert) => alert.type === filterType
               );
             }
           }
 
-          // Aplicar filtro por prioridad
+          // Filtro por prioridad
           if (this.filterByPriority) {
             filteredAlerts = filteredAlerts.filter(
               (alert) => alert.priority === this.filterByPriority
             );
           }
 
-          // Aplicar límite
+          // Limitar cantidad
           if (this.maxAlerts) {
             filteredAlerts = filteredAlerts.slice(0, this.maxAlerts);
           }
 
+          console.log('Alertas filtradas:', filteredAlerts);
           return filteredAlerts;
         })
       )
@@ -92,11 +101,21 @@ export class AlertsComponent {
   }
 
   removeAlert(alertId: string): void {
-    console.log('Eliminar alerta:', alertId);
+    this.alertsService.removeAlert(alertId);
   }
 
   clearAllAlerts(): void {
-    console.log('Limpiar todas las alertas');
+    this.alertsService.clearAlerts();
+  }
+
+  goToAlertsHistory(): void {
+    console.log('Navegando al historial de alertas');
+    this.router.navigate(['/alertas/historial']);
+  }
+
+  // Método para cerrar el modal
+  closeModal(): void {
+    this.modalClosed.emit();
   }
 
   ngOnDestroy() {

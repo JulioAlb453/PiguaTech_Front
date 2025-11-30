@@ -27,6 +27,8 @@ import { AlertsModule } from '../../core/services/alerts/alerts.module';
     NgApexchartsModule,
     AlertsModule,
   ],
- 
+   providers: [
+    provideHttpClient(withFetch()), 
+  ]
 })
 export class DashboardAquaculturistModule {}

@@ -73,82 +73,7 @@
     margin-bottom: 2rem;
   }
 
-  /* Overlay */
-  .habitat-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
 
-  /* Modal */
-  .habitat-modal {
-    background: #2b2b2b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    width: 90%;
-    max-width: 500px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    color: #f8f8f8;
-    font-family: "Inter", "Montserrat", sans-serif;
-  }
-
-  /* Header */
-  .habitat-modal__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .habitat-modal__title {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-
-  .habitat-modal__close {
-    background: transparent;
-    border: none;
-    color: #a0a0a0;
-    cursor: pointer;
-    font-size: 1.5rem;
-    padding: 0.25rem;
-
-    &:hover {
-      color: #f8f8f8;
-    }
-  }
-
-  /* Body */
-  .habitat-modal__body {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .habitat-form-group {
-    background: var(--surface-color);
-    border: 1px solid var(--surface-border);
-    border-radius: 8px;
-    padding: 1rem;
-
-    h4 {
-      margin: 0 0 1rem 0;
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--text-color);
-    }
-  }
 
   .habitat-form-row {
     display: flex;
@@ -183,47 +108,29 @@
       }
     }
   }
+.habitat-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
 
-  /* Footer */
-  .habitat-modal__footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 1.5rem;
-
-    .habitat-button {
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      font-size: 0.95rem;
-      transition: background 0.2s ease;
-
-      &--secondary {
-        background: #1f1f1f;
-        color: #f8f8f8;
-
-        &:hover {
-          background: #2a2a2a;
-        }
-      }
-
-      &--primary {
-        background: #f59e0b;
-        color: #000;
-
-        &:hover {
-          background: #d88b09;
-        }
-
-        &:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-      }
-    }
-  }
+.habitat-modal {
+  background: #1a1a1a;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
 
   #{&}__metric-section {
     background: var(--surface-color);
@@ -289,6 +196,8 @@
     gap: 1rem;
   }
 
+  
+
   .notification-list {
     list-style: none;
     padding: 0;
@@ -337,17 +246,6 @@
     color: var(--text-muted);
   }
 
-  .habitat-modal__link {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: white;
-      text-decoration: underline;
-    }
-  }
 
   // --- ESTILOS PARA LOS BOTONES ---
   .habitat-button {
